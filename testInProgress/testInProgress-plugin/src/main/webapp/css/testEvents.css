@@ -1,0 +1,104 @@
+.testNode { 
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/test.gif) no-repeat;
+} 
+.testSuiteNode { 
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/tsuite.gif) no-repeat;
+}
+.testFailedNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/testfail.gif) no-repeat;
+}
+.testErrorNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/testerr.gif) no-repeat;
+}
+.testIgnoredNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/testignored.gif) no-repeat;
+}
+.testPassedNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/testok.gif) no-repeat;
+}
+.testRunNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/testrun.gif) no-repeat;
+}
+.testSuiteRunNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/tsuiterun.gif) no-repeat;
+}
+.testSuiteFailedNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/tsuitefail.gif) no-repeat;
+}
+.testSuitePassedNode {
+display:block; 
+height: 22px; 
+padding-left: 20px; 
+background: transparent url(../images/tsuiteok.gif) no-repeat;
+}
+.htmlnodelabel { margin-left: 20px; }
+
+.testpanel .stat {
+size: 10 px;
+border: 1px solid;
+padding: 2px;
+margin-right:30px;
+display:inline-block;
+min-width:50px
+}
+
+.testpanel fieldset {
+	border: thin solid silver;
+	background-color:#F0F0F0;
+	padding:1em;
+	margin:1em;
+
+	*position: relative;
+	*margin: 0 0 1em 0;
+    *padding-top:2em;
+}
+
+.testpanel fieldset p {
+	margin:0 1em;
+}
+
+.testpanel legend {
+	font-weight:bold;
+	margin:0 0.5em;
+	padding:0 0.2em;
+
+	*position:absolute;
+    *top: -.5em;
+    *left: .5em;
+}
+.stacktrace {
+	position:absolute;
+	display:none;
+	width:400px;
+}
+
+.stacktrace div { 
+	white-space:pre;
+}

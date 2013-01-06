@@ -1,0 +1,32 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+
+<link rel="stylesheet" type="text/css"
+        href="${rootURL}/scripts/yui/treeview/assets/skins/sam/treeview.css" />
+<link rel="stylesheet" type="text/css" 
+		href="${rootURL}/scripts/yui/treeview/assets/css/menu/tree.css"/> 
+				
+<link rel="stylesheet" type="text/css"
+        href="${rootURL}/plugin/testInProgress-plugin/css/testEvents.css" />
+<l:layout>
+    <st:include it="${it.build}" page="sidepanel.jelly" /> 
+    <l:main-panel>
+		<l:yui module="treeview" />
+
+		<script src="${rootURL}/plugin/testInProgress-plugin/yui/progressbar/progressbar-${yuiSuffix}.js"></script>
+		<script src='${rootURL}/plugin/testInProgress-plugin/js/testEvents.js' type='text/javascript'/>
+
+		<div>
+			<st:bind var="remoteAction" value="${it}"/>
+			<div id="demo"></div>
+			<div id="results"/>
+			<script type="text/javascript">
+				YAHOO.util.Event.onDOMReady( function () {
+
+					testRuns = new TestRuns("results");
+					testRuns.start();
+			      });
+			</script>
+		</div>
+	</l:main-panel>
+</l:layout>
+</j:jelly>

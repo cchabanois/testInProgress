@@ -113,5 +113,5 @@ public class JUnit4ProgressRunListener extends RunListener {
 		messageSender.testStarted(id, description.getDisplayName(), true);
 		messageSender.testEnded(id, description.getDisplayName(), true);
 	}
-
+	
 }

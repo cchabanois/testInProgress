@@ -1,4 +1,4 @@
-package org.jenkinsci.testinprogress.tests;
+package tests;
 
 import static org.junit.Assert.assertEquals;
 

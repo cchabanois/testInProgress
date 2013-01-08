@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -44,11 +45,15 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	public Environment setUp(AbstractBuild build, Launcher launcher,
 			BuildListener listener) throws IOException, InterruptedException {
 		RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
-		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(new File(build.getRootDir(), UNIT_EVENTS_FILENAME));
-		final ListeningPort listeningPort = PortForwarder.create(
-				launcher.getChannel(), 0, new ForwarderImpl(saveTestEventsListener, runningBuildTestEvents));
-		final TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(build, runningBuildTestEvents);
-		build.addAction(new TestInProgressRunAction(build, runningBuildTestEvents));
+		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(
+				new File(build.getRootDir(), UNIT_EVENTS_FILENAME));
+		final ListeningPort listeningPort = PortForwarder.create(launcher
+				.getChannel(), 0, new ForwarderImpl(saveTestEventsListener,
+				runningBuildTestEvents));
+		final TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(
+				build, runningBuildTestEvents);
+		build.addAction(new TestInProgressRunAction(build,
+				runningBuildTestEvents));
 		saveTestEventsListener.init();
 		return new Environment() {
 
@@ -116,7 +121,8 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 			PipedInputStream pipedInputStream = new PipedInputStream();
 			pipedOutputStream.connect(pipedInputStream);
 			new TestEventsReceiverThread("Test events receiver",
-					pipedInputStream, listeners).start();
+					pipedInputStream, new StackTraceFilter(), listeners)
+					.start();
 			return new RemoteOutputStream(pipedOutputStream);
 		}
 

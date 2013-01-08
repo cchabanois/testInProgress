@@ -10,7 +10,7 @@ import com.google.common.base.Splitter;
 /**
  * Generates events from calls to {@link ITestRunListener}
  * 
- * @author cedric
+ * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
 public class EventsGenerator implements ITestRunListener {

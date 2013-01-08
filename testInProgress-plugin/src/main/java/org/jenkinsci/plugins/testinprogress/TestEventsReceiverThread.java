@@ -4,8 +4,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.jenkinsci.plugins.testinprogress.events.EventsGenerator;
-import org.jenkinsci.plugins.testinprogress.events.ITestEvent;
 import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
+import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilterTestRunnerWrapper;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 
@@ -19,19 +20,23 @@ import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 public class TestEventsReceiverThread extends Thread {
 	private final InputStream in;
 	private final ITestEventListener[] listeners;
+	private final StackTraceFilter stackTraceFilter;
 
 	public TestEventsReceiverThread(String threadName, InputStream in,
-			ITestEventListener[] listeners) {
+			StackTraceFilter stackTraceFilter, ITestEventListener[] listeners) {
 		super(threadName);
 		this.in = in;
 		this.listeners = listeners;
+		this.stackTraceFilter = stackTraceFilter;
 	}
 
 	public void run() {
-		EventsGenerator eventsGenerator = new EventsGenerator("runId", listeners);
+		EventsGenerator eventsGenerator = new EventsGenerator("runId",
+				listeners);
+		StackTraceFilterTestRunnerWrapper wrapper = new StackTraceFilterTestRunnerWrapper(
+				eventsGenerator, stackTraceFilter); 
 		TestMessagesParser parser = new TestMessagesParser(
-				new ITestRunListener[] { eventsGenerator });
+				new ITestRunListener[] { wrapper });
 		parser.processTestMessages(new InputStreamReader(in));
 	}
-
 }

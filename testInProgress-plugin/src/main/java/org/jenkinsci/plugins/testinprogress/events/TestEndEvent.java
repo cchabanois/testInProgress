@@ -8,7 +8,7 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class TestEndEvent implements ITestEvent {
+public class TestEndEvent implements IRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean ignored;

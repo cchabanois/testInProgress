@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jenkinsci.plugins.testinprogress.events.ITestEvent;
+import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
 
 public class SaveTestEventsListener implements
@@ -21,7 +21,7 @@ public class SaveTestEventsListener implements
 		this.eventsFile = eventsFile;
 	}
 
-	private synchronized void saveEvent(ITestEvent testEvent) {
+	private synchronized void saveEvent(IRunTestEvent testEvent) {
 		try {
 			fileWriter.write(testEvent.toString() + '\n');
 		} catch (IOException e) {
@@ -41,7 +41,7 @@ public class SaveTestEventsListener implements
 		}
 	}
 
-	public void event(ITestEvent testEvent) {
+	public void event(IRunTestEvent testEvent) {
 		saveEvent(testEvent);
 	}
 

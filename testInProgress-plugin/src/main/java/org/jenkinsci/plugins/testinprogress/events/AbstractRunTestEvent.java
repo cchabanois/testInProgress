@@ -6,10 +6,10 @@ package org.jenkinsci.plugins.testinprogress.events;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public abstract class AbstractTestEvent implements ITestEvent {
+public abstract class AbstractRunTestEvent implements IRunTestEvent {
 	private final String runId;
 	
-	public AbstractTestEvent(String runId) {
+	public AbstractRunTestEvent(String runId) {
 		this.runId = runId;
 	}
 
@@ -33,7 +33,7 @@ public abstract class AbstractTestEvent implements ITestEvent {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbstractTestEvent other = (AbstractTestEvent) obj;
+		AbstractRunTestEvent other = (AbstractRunTestEvent) obj;
 		if (runId == null) {
 			if (other.runId != null)
 				return false;

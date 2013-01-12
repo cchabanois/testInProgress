@@ -71,7 +71,7 @@ public class EventsGenerator implements ITestRunListener {
 		}
 	}
 
-	private void fireEvent(ITestEvent testEvent) {
+	private void fireEvent(IRunTestEvent testEvent) {
 		for (ITestEventListener listener : listeners) {
 			listener.event(testEvent);
 		}

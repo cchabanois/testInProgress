@@ -2,10 +2,10 @@ package org.jenkinsci.plugins.testinprogress;
 
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.ITestEvent;
+import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
 
 public interface ITestEvents {
 
-	public abstract List<ITestEvent> getEvents();
+	public abstract List<IRunTestEvent> getEvents();
 
 }

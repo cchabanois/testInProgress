@@ -8,7 +8,7 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class RunStartEvent implements ITestEvent {
+public class RunStartEvent implements IRunTestEvent {
 	private final int testCount;
 	
 	public RunStartEvent(int testCount) {

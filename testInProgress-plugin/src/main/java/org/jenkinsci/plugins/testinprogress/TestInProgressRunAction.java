@@ -29,7 +29,7 @@ import hudson.model.AbstractBuild;
 import java.io.File;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.ITestEvent;
+import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -54,9 +54,9 @@ public class TestInProgressRunAction implements Action {
 	}
     
     @JavaScriptMethod
-    public List<ITestEvent> getTestEvents(int fromIndex) {
+    public List<IRunTestEvent> getTestEvents(int fromIndex) {
     	ITestEvents testEvents = getTestEvents();    	
-    	List<ITestEvent> events = testEvents.getEvents();
+    	List<IRunTestEvent> events = testEvents.getEvents();
 		return events.subList(fromIndex, events.size());
 	}
     

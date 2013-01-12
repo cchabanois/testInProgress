@@ -5,7 +5,7 @@ package org.jenkinsci.plugins.testinprogress.events;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public interface ITestEvent {
+public interface IRunTestEvent {
 
 	String getType();	
 	

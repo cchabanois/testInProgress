@@ -8,7 +8,7 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class RunEndEvent implements ITestEvent {
+public class RunEndEvent implements IRunTestEvent {
 	private final long elapsedTime;
 	
 	public RunEndEvent(long elapsedTime) {

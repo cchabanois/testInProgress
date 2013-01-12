@@ -1,27 +1,26 @@
-package org.jenkinsci.plugins.testinprogress.events;
+package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
 
 /**
- * Notification that a test has ended
+ * Notification that a test has started
  * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class TestEndEvent implements IRunTestEvent {
+public class TestStartEvent implements IRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean ignored;
 
-	public TestEndEvent(String testId, String testName,
-			boolean ignored) {
+	public TestStartEvent(String testId, String testName, boolean ignored) {
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
 	}
 
 	public String getType() {
-		return "TESTE";
+		return "TESTS";
 	}
 
 	public String getTestId() {
@@ -38,14 +37,14 @@ public class TestEndEvent implements IRunTestEvent {
 
 	@Override
 	public String toString() {
-		return MessageIds.TEST_END + testId + ","
+		return MessageIds.TEST_START + testId + ","
 				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + (ignored ? 1231 : 1237);
 		result = prime * result + ((testId == null) ? 0 : testId.hashCode());
 		result = prime * result
@@ -57,11 +56,11 @@ public class TestEndEvent implements IRunTestEvent {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TestEndEvent other = (TestEndEvent) obj;
+		TestStartEvent other = (TestStartEvent) obj;
 		if (ignored != other.ignored)
 			return false;
 		if (testId == null) {

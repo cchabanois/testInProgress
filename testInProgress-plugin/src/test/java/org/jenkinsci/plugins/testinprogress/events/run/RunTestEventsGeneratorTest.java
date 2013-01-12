@@ -1,17 +1,21 @@
-package org.jenkinsci.plugins.testinprogress.events;
+package org.jenkinsci.plugins.testinprogress.events.run;
 
+import org.jenkinsci.plugins.testinprogress.events.run.RunTestEventsGenerator;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.run.TestStartEvent;
+import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 
-public class TestEventsGeneratorTest {
-	private EventsGenerator eventsGenerator;
-	private ITestEventListener listener = mock(ITestEventListener.class);
+public class RunTestEventsGeneratorTest {
+	private RunTestEventsGenerator eventsGenerator;
+	private IRunTestEventListener listener = mock(IRunTestEventListener.class);
 
 	@Before
 	public void setUp() {
-		this.eventsGenerator = new EventsGenerator(
-				new ITestEventListener[] { listener });
+		this.eventsGenerator = new RunTestEventsGenerator(
+				new IRunTestEventListener[] { listener });
 	}
 
 	@Test

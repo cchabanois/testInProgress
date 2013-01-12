@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.testinprogress.events;
+package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
 
@@ -71,13 +71,14 @@ public class TestFailedEvent implements IRunTestEvent {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result + ((actual == null) ? 0 : actual.hashCode());
 		result = prime * result
 				+ ((expected == null) ? 0 : expected.hashCode());
 		result = prime * result + ((testId == null) ? 0 : testId.hashCode());
 		result = prime * result
 				+ ((testName == null) ? 0 : testName.hashCode());
+		result = prime * result + ((trace == null) ? 0 : trace.hashCode());
 		return result;
 	}
 
@@ -85,7 +86,7 @@ public class TestFailedEvent implements IRunTestEvent {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -109,6 +110,11 @@ public class TestFailedEvent implements IRunTestEvent {
 			if (other.testName != null)
 				return false;
 		} else if (!testName.equals(other.testName))
+			return false;
+		if (trace == null) {
+			if (other.trace != null)
+				return false;
+		} else if (!trace.equals(other.trace))
 			return false;
 		return true;
 	}

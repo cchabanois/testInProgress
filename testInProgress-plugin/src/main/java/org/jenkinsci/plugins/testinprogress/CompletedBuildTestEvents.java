@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.EventsGenerator;
-import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
-import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.run.RunTestEventsGenerator;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 
@@ -29,8 +29,8 @@ public class CompletedBuildTestEvents implements ITestEvents {
 		FileReader fileReader;
 		try {
 			fileReader = new FileReader(eventsFile);
-			EventsGenerator eventsGenerator = new EventsGenerator(
-					new ITestEventListener[] { new ITestEventListener() {
+			RunTestEventsGenerator eventsGenerator = new RunTestEventsGenerator(
+					new IRunTestEventListener[] { new IRunTestEventListener() {
 						public void event(IRunTestEvent testEvent) {
 							testEvents.add(testEvent);
 						}

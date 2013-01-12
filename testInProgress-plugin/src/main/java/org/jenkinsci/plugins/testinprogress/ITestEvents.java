@@ -2,7 +2,7 @@ package org.jenkinsci.plugins.testinprogress;
 
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
 
 public interface ITestEvents {
 

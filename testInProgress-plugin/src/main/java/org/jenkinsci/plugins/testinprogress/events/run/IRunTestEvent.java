@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.testinprogress.events;
+package org.jenkinsci.plugins.testinprogress.events.run;
 
 /**
  * 

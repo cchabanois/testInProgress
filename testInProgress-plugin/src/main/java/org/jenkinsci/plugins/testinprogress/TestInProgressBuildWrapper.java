@@ -22,7 +22,7 @@ import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -110,9 +110,9 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	 * 
 	 */
 	private static class ForwarderImpl implements Forwarder {
-		private final ITestEventListener[] listeners;
+		private final IRunTestEventListener[] listeners;
 
-		public ForwarderImpl(ITestEventListener... listeners) {
+		public ForwarderImpl(IRunTestEventListener... listeners) {
 			this.listeners = listeners;
 		}
 

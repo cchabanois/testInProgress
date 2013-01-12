@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.testinprogress;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.jenkinsci.plugins.testinprogress.events.EventsGenerator;
-import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.run.RunTestEventsGenerator;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
 import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilterTestRunnerWrapper;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
@@ -19,11 +19,11 @@ import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
  */
 public class TestEventsReceiverThread extends Thread {
 	private final InputStream in;
-	private final ITestEventListener[] listeners;
+	private final IRunTestEventListener[] listeners;
 	private final StackTraceFilter stackTraceFilter;
 
 	public TestEventsReceiverThread(String threadName, InputStream in,
-			StackTraceFilter stackTraceFilter, ITestEventListener[] listeners) {
+			StackTraceFilter stackTraceFilter, IRunTestEventListener[] listeners) {
 		super(threadName);
 		this.in = in;
 		this.listeners = listeners;
@@ -31,7 +31,7 @@ public class TestEventsReceiverThread extends Thread {
 	}
 
 	public void run() {
-		EventsGenerator eventsGenerator = new EventsGenerator(listeners);
+		RunTestEventsGenerator eventsGenerator = new RunTestEventsGenerator(listeners);
 		StackTraceFilterTestRunnerWrapper wrapper = new StackTraceFilterTestRunnerWrapper(
 				eventsGenerator, stackTraceFilter);
 		TestMessagesParser parser = new TestMessagesParser(

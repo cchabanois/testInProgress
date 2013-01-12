@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
-import org.jenkinsci.plugins.testinprogress.events.ITestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 
 public class SaveTestEventsListener implements
-		ITestEventListener {
+		IRunTestEventListener {
 	private final static Logger LOG = Logger
 			.getLogger(SaveTestEventsListener.class.getName());
 

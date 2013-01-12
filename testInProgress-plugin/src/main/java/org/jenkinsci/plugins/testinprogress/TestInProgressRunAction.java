@@ -29,7 +29,7 @@ import hudson.model.AbstractBuild;
 import java.io.File;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.IRunTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**

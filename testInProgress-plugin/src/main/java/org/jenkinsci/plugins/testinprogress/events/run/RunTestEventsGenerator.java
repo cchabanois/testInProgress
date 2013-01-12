@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.testinprogress.events;
+package org.jenkinsci.plugins.testinprogress.events.run;
 
 import java.util.Iterator;
 
@@ -13,10 +13,10 @@ import com.google.common.base.Splitter;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class EventsGenerator implements ITestRunListener {
-	private final ITestEventListener[] listeners;
+public class RunTestEventsGenerator implements ITestRunListener {
+	private final IRunTestEventListener[] listeners;
 
-	public EventsGenerator(ITestEventListener[] listeners) {
+	public RunTestEventsGenerator(IRunTestEventListener[] listeners) {
 		this.listeners = listeners;
 	}
 
@@ -72,7 +72,7 @@ public class EventsGenerator implements ITestRunListener {
 	}
 
 	private void fireEvent(IRunTestEvent testEvent) {
-		for (ITestEventListener listener : listeners) {
+		for (IRunTestEventListener listener : listeners) {
 			listener.event(testEvent);
 		}
 	}

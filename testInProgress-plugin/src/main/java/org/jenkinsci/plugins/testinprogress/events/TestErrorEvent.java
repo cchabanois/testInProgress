@@ -8,14 +8,13 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestErrorEvent extends AbstractTestEvent {
+public class TestErrorEvent implements ITestEvent {
 	private final String testId;
 	private final String testName;
 	private final String trace;
 
-	public TestErrorEvent(String runId, String testId, String testName,
+	public TestErrorEvent(String testId, String testName,
 			String trace) {
-		super(runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.trace = trace;

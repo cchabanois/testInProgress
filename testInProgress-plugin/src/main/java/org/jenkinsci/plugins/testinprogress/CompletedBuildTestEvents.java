@@ -29,7 +29,7 @@ public class CompletedBuildTestEvents implements ITestEvents {
 		FileReader fileReader;
 		try {
 			fileReader = new FileReader(eventsFile);
-			EventsGenerator eventsGenerator = new EventsGenerator("runId",
+			EventsGenerator eventsGenerator = new EventsGenerator(
 					new ITestEventListener[] { new ITestEventListener() {
 						public void event(ITestEvent testEvent) {
 							testEvents.add(testEvent);

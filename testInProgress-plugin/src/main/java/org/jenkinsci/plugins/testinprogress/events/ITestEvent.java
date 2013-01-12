@@ -7,8 +7,12 @@ package org.jenkinsci.plugins.testinprogress.events;
  */
 public interface ITestEvent {
 
-	String getRunId();
-	
 	String getType();	
+	
+	@Override
+	public boolean equals(Object obj);
+	
+	@Override
+	public int hashCode();
 	
 }

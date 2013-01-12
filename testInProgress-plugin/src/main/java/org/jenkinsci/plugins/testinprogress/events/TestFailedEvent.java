@@ -8,16 +8,15 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestFailedEvent extends AbstractTestEvent {
+public class TestFailedEvent implements ITestEvent {
 	private final String testId;
 	private final String testName;
 	private final String expected;
 	private final String actual;
 	private final String trace;
 
-	public TestFailedEvent(String runId, String testId, String testName,
+	public TestFailedEvent(String testId, String testName,
 			String expected, String actual, String trace) {
-		super(runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.expected = expected;

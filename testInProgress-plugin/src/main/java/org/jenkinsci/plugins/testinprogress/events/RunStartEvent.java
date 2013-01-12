@@ -8,11 +8,10 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class RunStartEvent extends AbstractTestEvent {
+public class RunStartEvent implements ITestEvent {
 	private final int testCount;
 	
-	public RunStartEvent(String runId, int testCount) {
-		super(runId);
+	public RunStartEvent(int testCount) {
 		this.testCount = testCount;
 	}
 

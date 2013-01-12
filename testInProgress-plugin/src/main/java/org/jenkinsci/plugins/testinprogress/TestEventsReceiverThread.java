@@ -31,10 +31,9 @@ public class TestEventsReceiverThread extends Thread {
 	}
 
 	public void run() {
-		EventsGenerator eventsGenerator = new EventsGenerator("runId",
-				listeners);
+		EventsGenerator eventsGenerator = new EventsGenerator(listeners);
 		StackTraceFilterTestRunnerWrapper wrapper = new StackTraceFilterTestRunnerWrapper(
-				eventsGenerator, stackTraceFilter); 
+				eventsGenerator, stackTraceFilter);
 		TestMessagesParser parser = new TestMessagesParser(
 				new ITestRunListener[] { wrapper });
 		parser.processTestMessages(new InputStreamReader(in));

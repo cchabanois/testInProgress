@@ -8,14 +8,13 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestStartEvent extends AbstractTestEvent {
+public class TestStartEvent implements ITestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean ignored;
 
-	public TestStartEvent(String runId, String testId, String testName,
+	public TestStartEvent(String testId, String testName,
 			boolean ignored) {
-		super(runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;

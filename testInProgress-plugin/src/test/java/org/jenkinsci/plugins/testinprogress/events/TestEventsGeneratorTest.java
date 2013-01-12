@@ -5,13 +5,12 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 
 public class TestEventsGeneratorTest {
-	private static final String RUN_ID = "runId";
 	private EventsGenerator eventsGenerator;
 	private ITestEventListener listener = mock(ITestEventListener.class);
 
 	@Before
 	public void setUp() {
-		this.eventsGenerator = new EventsGenerator(RUN_ID,
+		this.eventsGenerator = new EventsGenerator(
 				new ITestEventListener[] { listener });
 	}
 
@@ -25,8 +24,8 @@ public class TestEventsGeneratorTest {
 
 		// Then
 		verify(listener).event(
-				new TestStartEvent(RUN_ID, "4",
-						"testIgnored(testproject.CalcTest)", true));
+				new TestStartEvent("4", "testIgnored(testproject.CalcTest)",
+						true));
 	}
 
 	@Test
@@ -37,9 +36,8 @@ public class TestEventsGeneratorTest {
 		eventsGenerator.testTreeEntry("1,testproject.AllTests,true,2");
 
 		// Then
-		verify(listener)
-				.event(new TestTreeEvent(RUN_ID, "1", "testproject.AllTests",
-						true, 2));
+		verify(listener).event(
+				new TestTreeEvent("1", "testproject.AllTests", true, 2));
 	}
 
 }

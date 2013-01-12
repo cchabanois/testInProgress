@@ -14,20 +14,18 @@ import com.google.common.base.Splitter;
  * 
  */
 public class EventsGenerator implements ITestRunListener {
-	private final String runId;
 	private final ITestEventListener[] listeners;
 
-	public EventsGenerator(String runId, ITestEventListener[] listeners) {
-		this.runId = runId;
+	public EventsGenerator(ITestEventListener[] listeners) {
 		this.listeners = listeners;
 	}
 
 	public void testRunStarted(int testCount) {
-		fireEvent(new RunStartEvent(runId, testCount));
+		fireEvent(new RunStartEvent(testCount));
 	}
 
 	public void testRunEnded(long elapsedTime) {
-		fireEvent(new RunEndEvent(runId, elapsedTime));
+		fireEvent(new RunEndEvent(elapsedTime));
 	}
 
 	public void testStarted(String testId, String testName) {
@@ -37,7 +35,7 @@ public class EventsGenerator implements ITestRunListener {
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestStartEvent(runId, testId, testName, ignored));
+		fireEvent(new TestStartEvent(testId, testName, ignored));
 	}
 
 	public void testEnded(String testId, String testName) {
@@ -47,7 +45,7 @@ public class EventsGenerator implements ITestRunListener {
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestEndEvent(runId, testId, testName, ignored));
+		fireEvent(new TestEndEvent(testId, testName, ignored));
 	}
 
 	public void testRunTerminated() {
@@ -60,16 +58,16 @@ public class EventsGenerator implements ITestRunListener {
 		String testName = it.next();
 		boolean isSuite = Boolean.parseBoolean(it.next());
 		int testCount = Integer.parseInt(it.next());
-		fireEvent(new TestTreeEvent(runId, testId, testName, isSuite, testCount));
+		fireEvent(new TestTreeEvent(testId, testName, isSuite, testCount));
 	}
 
 	public void testFailed(int status, String testId, String testName,
 			String trace, String expected, String actual) {
 		if (status == ITestRunListener.STATUS_FAILURE) {
-			fireEvent(new TestFailedEvent(runId, testId, testName, expected,
+			fireEvent(new TestFailedEvent(testId, testName, expected,
 					actual, trace));
 		} else {
-			fireEvent(new TestErrorEvent(runId, testId, testName, trace));
+			fireEvent(new TestErrorEvent(testId, testName, trace));
 		}
 	}
 

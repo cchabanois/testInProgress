@@ -8,11 +8,10 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class RunEndEvent extends AbstractTestEvent {
+public class RunEndEvent implements ITestEvent {
 	private final long elapsedTime;
 	
-	public RunEndEvent(String runId, long elapsedTime) {
-		super(runId);
+	public RunEndEvent(long elapsedTime) {
 		this.elapsedTime = elapsedTime;
 	}
 

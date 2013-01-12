@@ -8,15 +8,14 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestTreeEvent extends AbstractTestEvent {
+public class TestTreeEvent implements ITestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean isSuite;
 	private final int testCount;
 
-	public TestTreeEvent(String runId, String testId, String testName,
+	public TestTreeEvent(String testId, String testName,
 			boolean isSuite, int testCount) {
-		super(runId);
 		this.testCount = testCount;
 		this.testId = testId;
 		this.isSuite = isSuite;

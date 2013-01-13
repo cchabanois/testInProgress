@@ -55,7 +55,7 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 				.getChannel(), 0, new ForwarderImpl(testRunIds, saveTestEventsListener,
 				runningBuildTestEvents));
 		final TestEvents testEvents = new TestEvents(build, testRunIds, runningBuildTestEvents);
-		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(testEvents);
+		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(build, testEvents);
 		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();
 		return new Environment() {

@@ -17,18 +17,33 @@ TestRun.prototype = {
 		var failuresId = "failures-" + this.runId;
 		var panelStackTraceId = "panel-stackTrace-" + this.runId;
 		var stackTraceId = "stackTrace-" + this.runId;
-		var panelTreeId = "panel-tree-"+this.runId;
+		var panelTreeId = "panel-tree-" + this.runId;
 		var element = document.getElementById(this.elementId);
 		element.innerHTML += "<div id='toto'></div>"
 				+ "<div class='testpanel'>" + "<fieldset>" + "<fieldset>"
-				+ "<div id='" + testMessageId + "'></div>"
-				+ "Runs : <span class='stat' id='" + runsId + "'></span>"
-				+ "Errors: <span class='stat' id='" + errorsId + "'></span>"
-				+ "Failures : <span class='stat' id='" + failuresId
-				+ "'></span><div id='" + progressId + "'></div></fieldset>"
-				+ "<fieldset class='stacktrace' id='" + panelStackTraceId
-				+ "'><legend>Stacktrace</legend><div id='" + stackTraceId
-				+ "'></div></fieldset>" + "<fieldset id='"+panelTreeId+"'><div id='" + treeId
+				+ "<div id='"
+				+ testMessageId
+				+ "'></div>"
+				+ "Runs : <span class='stat' id='"
+				+ runsId
+				+ "'></span>"
+				+ "Errors: <span class='stat' id='"
+				+ errorsId
+				+ "'></span>"
+				+ "Failures : <span class='stat' id='"
+				+ failuresId
+				+ "'></span><div id='"
+				+ progressId
+				+ "'></div></fieldset>"
+				+ "<fieldset class='stacktrace' id='"
+				+ panelStackTraceId
+				+ "'><legend>Stacktrace</legend><div id='"
+				+ stackTraceId
+				+ "'></div></fieldset>"
+				+ "<fieldset id='"
+				+ panelTreeId
+				+ "'><div id='"
+				+ treeId
 				+ "'></div></fieldset></fieldset></div>";
 	},
 	handleTestEvents : function(events) {
@@ -209,25 +224,34 @@ TestRun.prototype = {
 				.subscribe(
 						"clickEvent",
 						function(event) {
-							var panelStackTrace = document.getElementById("panel-stackTrace-"
-									+ $this.runId);
+							var panelStackTrace = document
+									.getElementById("panel-stackTrace-"
+											+ $this.runId);
 							panelStackTrace.style.display = "block";
-// panelStackTrace.style.top =
-// YAHOO.util.Dom.getY(document.getElementById(event.node.contentElId));
-							var panelTree = document.getElementById("panel-tree-"+ $this.runId);
-							panelStackTrace.style.left= YAHOO.util.Dom.getX(panelTree)+panelTree.offsetWidth/2;
-							var left = YAHOO.util.Dom.getX(panelTree)+panelTree.offsetWidth/2;
+							// panelStackTrace.style.top =
+							// YAHOO.util.Dom.getY(document.getElementById(event.node.contentElId));
+							var panelTree = document
+									.getElementById("panel-tree-" + $this.runId);
+							panelStackTrace.style.left = YAHOO.util.Dom
+									.getX(panelTree)
+									+ panelTree.offsetWidth / 2;
+							var left = YAHOO.util.Dom.getX(panelTree)
+									+ panelTree.offsetWidth / 2;
 							document
-									.getElementById("stackTrace-" + $this.runId).innerHTML = event.node.trace+document.getElementById(event.node.contentElId).offsetTop;
-							
-							var myAnim = new YAHOO.util.Anim("panel-stackTrace-"
-									+ $this.runId, {
-							    top: {
-							        to: YAHOO.util.Dom.getY(document.getElementById(event.node.contentElId))
-							    } 
-							}, 1, YAHOO.util.Easing.easeOut);
+									.getElementById("stackTrace-" + $this.runId).innerHTML = event.node.trace
+									+ document
+											.getElementById(event.node.contentElId).offsetTop;
+
+							var myAnim = new YAHOO.util.Anim(
+									"panel-stackTrace-" + $this.runId,
+									{
+										top : {
+											to : YAHOO.util.Dom
+													.getY(document
+															.getElementById(event.node.contentElId))
+										}
+									}, 1, YAHOO.util.Easing.easeOut);
 							myAnim.animate();
-							
 
 						});
 		this.treeView.render();
@@ -303,15 +327,15 @@ TestRuns.prototype = {
 			if (runIdToEvents[event.runId] == null) {
 				runIdToEvents[event.runId] = [];
 			}
-			runIdToEvents[event.runId].push(event);
+			runIdToEvents[event.runId].push(event.runTestEvent);
 		}
 		for ( var runId in runIdToEvents) {
-			var testRun = this.testRuns[event.runId];
+			var testRun = this.testRuns[runId];
 			if (testRun == null) {
 				document.getElementById(this.elementId).innerHTML += "<div id='runId-"
-						+ event.runId + "'></div>";
-				testRun = new TestRun("runId-" + event.runId, event.runId);
-				this.testRuns[event.runId] = testRun;
+						+ runId + "'></div>";
+				testRun = new TestRun("runId-" + runId, runId);
+				this.testRuns[runId] = testRun;
 			}
 			testRun.handleTestEvents(runIdToEvents[runId]);
 		}

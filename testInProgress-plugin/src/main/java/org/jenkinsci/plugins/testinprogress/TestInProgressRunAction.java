@@ -24,6 +24,7 @@
 package org.jenkinsci.plugins.testinprogress;
 
 import hudson.model.Action;
+import hudson.model.AbstractBuild;
 
 import java.util.List;
 
@@ -38,11 +39,19 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  */
 public class TestInProgressRunAction implements Action {
 	private static final String ICON_FILENAME = "/plugin/ivy-report/ivyReport.png";
-    private ITestEvents testEvents;
+    private final ITestEvents testEvents;
+    private final AbstractBuild build;
     
-    public TestInProgressRunAction(ITestEvents testEvents) {
+    
+    public TestInProgressRunAction(AbstractBuild build, ITestEvents testEvents) {
+    	this.build = build;
     	this.testEvents = testEvents;
     }
+    
+    public AbstractBuild getBuild() {
+		return build;
+	}    
+    
     
     @JavaScriptMethod
     public List<BuildTestEvent> getTestEvents(int fromIndex) {

@@ -307,16 +307,16 @@ TestRuns.prototype = {
 			$this.eventsCount += testEvents.length;
 		});
 	},
-	handleTestEvents : function(events) {
-		var runIdToEvents = {};
-		for ( var i = 0; i < events.length; i++) {
-			var event = events[i];
-			if (runIdToEvents[event.runId] == null) {
-				runIdToEvents[event.runId] = [];
+	handleTestEvents : function(buildEvents) {
+		var runIdToRunEvents = {};
+		for ( var i = 0; i < buildEvents.length; i++) {
+			var buildEvent = buildEvents[i];
+			if (runIdToRunEvents[buildEvent.runId] == null) {
+				runIdToRunEvents[buildEvent.runId] = [];
 			}
-			runIdToEvents[event.runId].push(event.runTestEvent);
+			runIdToRunEvents[buildEvent.runId].push(buildEvent.runTestEvent);
 		}
-		for ( var runId in runIdToEvents) {
+		for ( var runId in runIdToRunEvents) {
 			var testRun = this.testRuns[runId];
 			if (testRun == null) {
 				document.getElementById(this.elementId).innerHTML += "<div id='runId-"
@@ -324,7 +324,7 @@ TestRuns.prototype = {
 				testRun = new TestRun("runId-" + runId, runId);
 				this.testRuns[runId] = testRun;
 			}
-			testRun.handleTestEvents(runIdToEvents[runId]);
+			testRun.handleTestEvents(runIdToRunEvents[runId]);
 		}
 	}
 }

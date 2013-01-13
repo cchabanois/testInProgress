@@ -50,20 +50,6 @@ TestRun.prototype = {
 		for ( var i = 0; i < events.length; i++) {
 			this.handleTestEvent(events[i]);
 		}
-		if (this.treeView != null) {
-			this.refresh();
-		}
-	},
-	refresh : function() {
-		if (this.treeView == null) {
-			return;
-		}
-		var currentFocus = this.treeView.currentFocus;
-		this.treeView.getRoot().refresh();
-		if (currentFocus != null) {
-			var node = this.getNodeByTestId(currentFocus.testId);
-			node.focus();
-		}
 	},
 	handleTestEvent : function(event) {
 		switch (event.type) {
@@ -131,7 +117,7 @@ TestRun.prototype = {
 			this.createTreeView();
 		}
 		var node = this.getNodeByTestId(event.testId);
-		node.contentStyle = "testRunNode";
+		this.setContentStyle(node,"testRunNode");
 		this.updateParentNode(node);
 		this.expandParent(node);
 	},
@@ -156,7 +142,7 @@ TestRun.prototype = {
 	handleTestFailedEvent : function(event) {
 		this.failures++;
 		var node = this.getNodeByTestId(event.testId);
-		node.contentStyle = "testFailedNode";
+		this.setContentStyle(node, "testFailedNode");
 		node.trace = event.trace;
 		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
 				'backgroundColor', 'darkred');
@@ -164,7 +150,7 @@ TestRun.prototype = {
 	handleTestErrorEvent : function(event) {
 		this.errors++;
 		var node = this.getNodeByTestId(event.testId);
-		node.contentStyle = "testErrorNode";
+		this.setContentStyle(node, "testErrorNode");
 		node.trace = event.trace;
 		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
 				'backgroundColor', 'darkred');
@@ -173,9 +159,9 @@ TestRun.prototype = {
 		var node = this.getNodeByTestId(event.testId);
 		if (node.contentStyle == "testRunNode") {
 			if (event.ignored) {
-				node.contentStyle = "testIgnoredNode";
+				this.setContentStyle(node, "testIgnoredNode");
 			} else {
-				node.contentStyle = "testPassedNode";
+				this.setContentStyle(node, "testPassedNode");
 			}
 		}
 		this.progressBar.set('value', this.progressBar.get('value') + 1);
@@ -211,7 +197,7 @@ TestRun.prototype = {
 				parentStyle = "testSuiteFailedNode";
 			}
 		}
-		parentNode.contentStyle = parentStyle;
+		this.setContentStyle(parentNode, parentStyle);
 		this.updateParentNode(parentNode);
 	},
 	createTreeView : function() {
@@ -293,6 +279,13 @@ TestRun.prototype = {
 			return;
 		}
 		return event.testName.slice(0, index);
+	},
+	setContentStyle : function(node, contentStyle) {
+		node.contentStyle = contentStyle;
+		var el = node.getContentEl();
+		if (el) {
+			el.className = "ygtvcell "+ node.contentStyle  + " ygtvcontent";
+		}
 	}
 };
 

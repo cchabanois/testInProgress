@@ -19,7 +19,7 @@ public class StackTraceFilter {
 			"junit.framework.Assert", "junit.framework.TestCase",
 			"junit.framework.TestResult", "junit.framework.TestResult$1",
 			"junit.framework.TestSuite", "org.eclipse.jdt.internal.*",
-			"org.apache.tools.ant.*" };
+			"org.apache.tools.ant.*", "org.jenkinsci.testinprogress.*" };
 
 	public StackTraceFilter() {
 		this(DEFAULT_FILTER_PATTERNS);

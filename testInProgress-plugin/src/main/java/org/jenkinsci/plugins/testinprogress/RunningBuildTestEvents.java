@@ -7,14 +7,10 @@ import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener;
 
 public class RunningBuildTestEvents implements
-		IBuildTestEventListener, ITestEvents {
+		IBuildTestEventListener, IBuildTestEvents {
 	private final List<BuildTestEvent> testEvents = new ArrayList<BuildTestEvent>();
 
-	public void event(BuildTestEvent testEvent) {
-		addEvent(testEvent);
-	}
-
-	private synchronized void addEvent(BuildTestEvent testEvent) {
+	public synchronized void event(BuildTestEvent testEvent) {
 		testEvents.add(testEvent);
 	}
 

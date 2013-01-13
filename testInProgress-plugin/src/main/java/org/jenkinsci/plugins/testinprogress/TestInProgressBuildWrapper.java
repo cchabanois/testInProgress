@@ -51,10 +51,11 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
 		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(
 				new File(build.getRootDir(), UNIT_EVENTS_DIR));
+		BuildTestStats buildTestStats = new BuildTestStats();
 		final ListeningPort listeningPort = PortForwarder.create(launcher
 				.getChannel(), 0, new ForwarderImpl(testRunIds, saveTestEventsListener,
-				runningBuildTestEvents));
-		final TestEvents testEvents = new TestEvents(build, testRunIds, runningBuildTestEvents);
+				runningBuildTestEvents, buildTestStats));
+		final BuildTestEvents testEvents = new BuildTestEvents(build, testRunIds, runningBuildTestEvents, buildTestStats);
 		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(build, testEvents);
 		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 
-public interface ITestEvents {
+public interface IBuildTestEvents {
 
 	public abstract List<BuildTestEvent> getEvents();
 

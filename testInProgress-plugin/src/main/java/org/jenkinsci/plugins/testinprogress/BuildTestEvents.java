@@ -8,16 +8,18 @@ import java.util.List;
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 
-public class TestEvents implements ITestEvents {
+public class BuildTestEvents implements IBuildTestEvents {
 	private static final String UNIT_EVENTS_DIR = "unitevents";
-    private transient ITestEvents testEvents;
+    private transient IBuildTestEvents testEvents;
     private final PersistenceRoot persitenceRoot;
     private final TestRunIds testRunIds;
+    private final BuildTestStats buildTestStats;
     
-    public TestEvents(PersistenceRoot persitenceRoot, TestRunIds testRunIds, RunningBuildTestEvents testEvents) {
+    public BuildTestEvents(PersistenceRoot persitenceRoot, TestRunIds testRunIds, RunningBuildTestEvents testEvents, BuildTestStats buildTestStats) {
         this.persitenceRoot = persitenceRoot;
         this.testRunIds = testRunIds;
     	this.testEvents = testEvents;
+    	this.buildTestStats = buildTestStats;
     }
 
 	public synchronized void onBuildComplete() {
@@ -35,4 +37,8 @@ public class TestEvents implements ITestEvents {
 
 	}
 
+	public BuildTestStats getBuildTestStats() {
+		return buildTestStats;
+	}
+	
 }

@@ -12,7 +12,7 @@ import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 
 /**
  * Thread that receives test messages from an InputStream and add test events to
- * {@link TestEvents}. We use the same message format that eclipse uses.
+ * {@link BuildTestEvents}. We use the same message format that eclipse uses.
  * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 

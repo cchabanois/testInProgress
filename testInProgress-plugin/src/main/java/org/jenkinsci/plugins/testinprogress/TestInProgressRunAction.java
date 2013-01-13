@@ -39,13 +39,13 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  */
 public class TestInProgressRunAction implements Action {
 	private static final String ICON_FILENAME = "/plugin/ivy-report/ivyReport.png";
-    private final ITestEvents testEvents;
+    private final IBuildTestEvents testEvents;
     private final AbstractBuild build;
     
     
-    public TestInProgressRunAction(AbstractBuild build, ITestEvents testEvents) {
+    public TestInProgressRunAction(AbstractBuild build, IBuildTestEvents buildTestEvents) {
     	this.build = build;
-    	this.testEvents = testEvents;
+    	this.testEvents = buildTestEvents;
     }
     
     public AbstractBuild getBuild() {

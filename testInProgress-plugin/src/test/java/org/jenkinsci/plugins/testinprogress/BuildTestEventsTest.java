@@ -16,36 +16,41 @@ import org.jenkinsci.plugins.testinprogress.utils.TestAreaUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-
-public class TestEventsTest {
+public class BuildTestEventsTest {
 	private PersistenceRoot persistenceRoot = mock(PersistenceRoot.class);
 	private TestRunIds testRunIds = new TestRunIds();
 	private SaveTestEventsListener saveTestEventsListener;
 	private RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
-	
+	private BuildTestStats buildTestStats = new BuildTestStats();
+
 	@Before
 	public void setUp() throws IOException {
-		File persistenceRootFile = TestAreaUtils.getNonExistingFileInTestArea("persistenceRoot");
+		File persistenceRootFile = TestAreaUtils
+				.getNonExistingFileInTestArea("persistenceRoot");
 		when(persistenceRoot.getRootDir()).thenReturn(persistenceRootFile);
-		saveTestEventsListener = new SaveTestEventsListener(new File(persistenceRootFile,"unitevents"));
+		saveTestEventsListener = new SaveTestEventsListener(new File(
+				persistenceRootFile, "unitevents"));
 		saveTestEventsListener.init();
 	}
-	
+
 	@Test
 	public void testGetEventsWhenBuildIsRunning() {
 		// Given
-		TestEvents testEvents = new TestEvents(persistenceRoot, testRunIds, runningBuildTestEvents);
+		BuildTestEvents testEvents = new BuildTestEvents(persistenceRoot,
+				testRunIds, runningBuildTestEvents, buildTestStats);
 		event(new BuildTestEvent("run1", new RunStartEvent(1)));
 		event(new BuildTestEvent("run2", new RunStartEvent(2)));
-		
+
 		// When
 		List<BuildTestEvent> events = testEvents.getEvents();
-		
+
 		// Then
-		assertTrue(events.contains(new BuildTestEvent("run1", new RunStartEvent(1))));
-		assertTrue(events.contains(new BuildTestEvent("run2", new RunStartEvent(2))));
+		assertTrue(events.contains(new BuildTestEvent("run1",
+				new RunStartEvent(1))));
+		assertTrue(events.contains(new BuildTestEvent("run2",
+				new RunStartEvent(2))));
 	}
-	
+
 	private void event(BuildTestEvent buildTestEvent) {
 		if (!testRunIds.getRunIds().contains(buildTestEvent.getRunId())) {
 			testRunIds.addRunId(buildTestEvent.getRunId());
@@ -53,26 +58,27 @@ public class TestEventsTest {
 		runningBuildTestEvents.event(buildTestEvent);
 		saveTestEventsListener.event(buildTestEvent);
 	}
-	
 
 	@Test
 	public void testGetEventsAfterBuildHasRun() {
 		// Given
-		BuildTestEvent firstEvent = new BuildTestEvent("run1", new RunStartEvent(1));
-		BuildTestEvent secondEvent = new BuildTestEvent("run2", new RunStartEvent(1));
-		TestEvents testEvents = new TestEvents(persistenceRoot, testRunIds, runningBuildTestEvents);
+		BuildTestEvent firstEvent = new BuildTestEvent("run1",
+				new RunStartEvent(1));
+		BuildTestEvent secondEvent = new BuildTestEvent("run2",
+				new RunStartEvent(1));
+		BuildTestEvents testEvents = new BuildTestEvents(persistenceRoot,
+				testRunIds, runningBuildTestEvents, buildTestStats);
 		event(firstEvent);
 		event(secondEvent);
 		saveTestEventsListener.destroy();
 		testEvents.onBuildComplete();
-		
+
 		// When
 		List<BuildTestEvent> events = testEvents.getEvents();
-		
+
 		// Then
 		assertTrue(events.contains(firstEvent));
 		assertTrue(events.contains(secondEvent));
 	}
-	
-	
+
 }

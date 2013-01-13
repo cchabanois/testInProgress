@@ -14,7 +14,7 @@ import org.jenkinsci.plugins.testinprogress.events.run.RunTestEventsGenerator;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 
-public class CompletedBuildTestEvents implements ITestEvents {
+public class CompletedBuildTestEvents implements IBuildTestEvents {
 
 	public final File directory;
 	private final TestRunIds runIds;

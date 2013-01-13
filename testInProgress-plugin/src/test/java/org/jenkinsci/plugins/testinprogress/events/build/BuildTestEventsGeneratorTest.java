@@ -11,7 +11,7 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
 import org.junit.Test;
 
 
-public class BuildTestEventsGeneratorForRunTest {
+public class BuildTestEventsGeneratorTest {
 	private TestRunIds testRunIds = new TestRunIds();
 	
 	
@@ -19,7 +19,7 @@ public class BuildTestEventsGeneratorForRunTest {
 	public void testBuildTestEventsGenerator() {
 		// Given
 		IBuildTestEventListener listener = mock(IBuildTestEventListener.class);
-		BuildTestEventsGeneratorForRun buildTestEventsGenerator = new BuildTestEventsGeneratorForRun(testRunIds, new IBuildTestEventListener[] { listener });
+		BuildTestEventsGenerator buildTestEventsGenerator = new BuildTestEventsGenerator(testRunIds, new IBuildTestEventListener[] { listener });
 		
 		// When
 		buildTestEventsGenerator.event(new RunStartEvent(2));

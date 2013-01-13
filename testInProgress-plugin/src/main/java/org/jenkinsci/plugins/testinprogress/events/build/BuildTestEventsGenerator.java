@@ -11,19 +11,19 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
 /**
  * Generates {@link BuildTestEvent}s for a run.
  * 
- * A {@link BuildTestEventsGeneratorForRun} must be used for each run.
+ * A {@link BuildTestEventsGenerator} must be used for each run.
  * 
  * @author cedric
  * 
  */
-public class BuildTestEventsGeneratorForRun implements IRunTestEventListener {
+public class BuildTestEventsGenerator implements IRunTestEventListener {
 	private RunStartEvent runStartEvent;
 	private List<TestTreeEvent> testTreeEvents = new ArrayList<TestTreeEvent>();
 	private String runId = null;
 	private final IBuildTestEventListener[] listeners;
 	private final TestRunIds testRunIds;
 
-	public BuildTestEventsGeneratorForRun(TestRunIds testRunIds,
+	public BuildTestEventsGenerator(TestRunIds testRunIds,
 			IBuildTestEventListener[] listeners) {
 		this.testRunIds = testRunIds;
 		this.listeners = listeners;

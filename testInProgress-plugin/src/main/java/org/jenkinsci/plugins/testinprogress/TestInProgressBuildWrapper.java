@@ -22,6 +22,9 @@ import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEventsGenerator;
+import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -35,7 +38,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  */
 public class TestInProgressBuildWrapper extends BuildWrapper {
-	private static final String UNIT_EVENTS_FILENAME = "unit.events";
+	private static final String UNIT_EVENTS_DIR = "unitevents";
 
 	@DataBoundConstructor
 	public TestInProgressBuildWrapper() {
@@ -44,16 +47,16 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	@Override
 	public Environment setUp(AbstractBuild build, Launcher launcher,
 			BuildListener listener) throws IOException, InterruptedException {
+		TestRunIds testRunIds = new TestRunIds();
 		RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
 		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(
-				new File(build.getRootDir(), UNIT_EVENTS_FILENAME));
+				new File(build.getRootDir(), UNIT_EVENTS_DIR));
 		final ListeningPort listeningPort = PortForwarder.create(launcher
-				.getChannel(), 0, new ForwarderImpl(saveTestEventsListener,
+				.getChannel(), 0, new ForwarderImpl(testRunIds, saveTestEventsListener,
 				runningBuildTestEvents));
-		final TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(
-				build, runningBuildTestEvents);
-		build.addAction(new TestInProgressRunAction(build,
-				runningBuildTestEvents));
+		final TestEvents testEvents = new TestEvents(build, testRunIds, runningBuildTestEvents);
+		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(testEvents);
+		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();
 		return new Environment() {
 
@@ -67,7 +70,7 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 			public boolean tearDown(AbstractBuild build, BuildListener listener)
 					throws IOException, InterruptedException {
 				saveTestEventsListener.destroy();
-				testInProgressRunAction.onBuildComplete();
+				testEvents.onBuildComplete();
 				listeningPort.close();
 				return true;
 			}
@@ -110,9 +113,12 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	 * 
 	 */
 	private static class ForwarderImpl implements Forwarder {
-		private final IRunTestEventListener[] listeners;
-
-		public ForwarderImpl(IRunTestEventListener... listeners) {
+		private final IBuildTestEventListener[] listeners;
+		private final TestRunIds testRunIds;
+		
+		public ForwarderImpl(TestRunIds testRunIds,
+				IBuildTestEventListener... listeners) {
+			this.testRunIds = testRunIds;
 			this.listeners = listeners;
 		}
 
@@ -121,8 +127,9 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 			PipedInputStream pipedInputStream = new PipedInputStream();
 			pipedOutputStream.connect(pipedInputStream);
 			new TestEventsReceiverThread("Test events receiver",
-					pipedInputStream, new StackTraceFilter(), listeners)
-					.start();
+					pipedInputStream, new StackTraceFilter(),
+					new IRunTestEventListener[] { new BuildTestEventsGenerator(
+							testRunIds, listeners) }).start();
 			return new RemoteOutputStream(pipedOutputStream);
 		}
 

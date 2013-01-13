@@ -3,23 +3,23 @@ package org.jenkinsci.plugins.testinprogress;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
-import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
+import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener;
 
 public class RunningBuildTestEvents implements
-		IRunTestEventListener, ITestEvents {
-	private final List<IRunTestEvent> testEvents = new ArrayList<IRunTestEvent>();
+		IBuildTestEventListener, ITestEvents {
+	private final List<BuildTestEvent> testEvents = new ArrayList<BuildTestEvent>();
 
-	public void event(IRunTestEvent testEvent) {
+	public void event(BuildTestEvent testEvent) {
 		addEvent(testEvent);
 	}
 
-	private synchronized void addEvent(IRunTestEvent testEvent) {
+	private synchronized void addEvent(BuildTestEvent testEvent) {
 		testEvents.add(testEvent);
 	}
 
-	public synchronized List<IRunTestEvent> getEvents() {
-		return new ArrayList<IRunTestEvent>(testEvents);
+	public synchronized List<BuildTestEvent> getEvents() {
+		return new ArrayList<BuildTestEvent>(testEvents);
 	}
 
 }

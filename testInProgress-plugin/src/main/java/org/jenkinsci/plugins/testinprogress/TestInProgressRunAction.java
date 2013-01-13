@@ -24,12 +24,10 @@
 package org.jenkinsci.plugins.testinprogress;
 
 import hudson.model.Action;
-import hudson.model.AbstractBuild;
 
-import java.io.File;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
+import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**
@@ -39,35 +37,18 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * 
  */
 public class TestInProgressRunAction implements Action {
-    private static final String UNIT_EVENTS_FILENAME = "unit.events";
 	private static final String ICON_FILENAME = "/plugin/ivy-report/ivyReport.png";
-    private transient ITestEvents testEvents;
-    private final AbstractBuild build;
+    private ITestEvents testEvents;
     
-    public TestInProgressRunAction(AbstractBuild build, RunningBuildTestEvents testEvents) {
-        this.build = build;
+    public TestInProgressRunAction(ITestEvents testEvents) {
     	this.testEvents = testEvents;
     }
-
-    public AbstractBuild getBuild() {
-		return build;
-	}
     
     @JavaScriptMethod
-    public List<IRunTestEvent> getTestEvents(int fromIndex) {
-    	ITestEvents testEvents = getTestEvents();    	
-    	List<IRunTestEvent> events = testEvents.getEvents();
+    public List<BuildTestEvent> getTestEvents(int fromIndex) {
+    	List<BuildTestEvent> events = testEvents.getEvents();
 		return events.subList(fromIndex, events.size());
 	}
-    
-    private synchronized ITestEvents getTestEvents() {
-    	if (testEvents != null) {
-    		return testEvents;
-    	}
-    	File file = new File(build.getRootDir(), UNIT_EVENTS_FILENAME);
-    	testEvents = new CompletedBuildTestEvents(file);
-    	return testEvents;
-    }
     
     public String getUrlName() {
         return "testinprogress";
@@ -80,10 +61,5 @@ public class TestInProgressRunAction implements Action {
     public String getIconFileName() {
         return ICON_FILENAME;
     }
-
-	public synchronized void onBuildComplete() {
-		File file = new File(build.getRootDir(), UNIT_EVENTS_FILENAME);
-    	this.testEvents = new CompletedBuildTestEvents(file);
-	}
     
 }

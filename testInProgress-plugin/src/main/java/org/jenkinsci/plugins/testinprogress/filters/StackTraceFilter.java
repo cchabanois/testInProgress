@@ -18,12 +18,13 @@ public class StackTraceFilter {
 			"org.junit.*", "sun.reflect.*", "java.lang.reflect.Method.invoke",
 			"junit.framework.Assert", "junit.framework.TestCase",
 			"junit.framework.TestResult", "junit.framework.TestResult$1",
-			"junit.framework.TestSuite", "org.eclipse.jdt.internal.*" };
+			"junit.framework.TestSuite", "org.eclipse.jdt.internal.*",
+			"org.apache.tools.ant.*" };
 
 	public StackTraceFilter() {
 		this(DEFAULT_FILTER_PATTERNS);
 	}
-	
+
 	public StackTraceFilter(String[] filterPatterns) {
 		this.filterPatterns = filterPatterns;
 	}

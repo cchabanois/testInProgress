@@ -19,9 +19,8 @@ TestRun.prototype = {
 		var stackTraceId = "stackTrace-" + this.runId;
 		var panelTreeId = "panel-tree-" + this.runId;
 		var element = document.getElementById(this.elementId);
-		element.innerHTML += "<div id='toto'></div>"
-				+ "<div class='testpanel'>" + "<fieldset>" + "<fieldset>"
-				+ "<div id='"
+		element.innerHTML += "<div class='testpanel'>" + "<fieldset>"
+				+ "<fieldset>" + "<div id='"
 				+ testMessageId
 				+ "'></div>"
 				+ "Runs : <span class='stat' id='"
@@ -117,7 +116,7 @@ TestRun.prototype = {
 			this.createTreeView();
 		}
 		var node = this.getNodeByTestId(event.testId);
-		this.setContentStyle(node,"testRunNode");
+		this.setContentStyle(node, "testRunNode");
 		this.updateParentNode(node);
 		this.expandParent(node);
 	},
@@ -165,9 +164,6 @@ TestRun.prototype = {
 			}
 		}
 		this.progressBar.set('value', this.progressBar.get('value') + 1);
-		document.getElementById("toto").innerHTML = this.progressBar
-				.get('value')
-				+ "/" + this.progressBar.get('maxValue');
 		this.updateParentNode(node);
 		this.collapseParentIfPassed(node);
 	},
@@ -224,9 +220,7 @@ TestRun.prototype = {
 							var left = YAHOO.util.Dom.getX(panelTree)
 									+ panelTree.offsetWidth / 2;
 							document
-									.getElementById("stackTrace-" + $this.runId).innerHTML = event.node.trace
-									+ document
-											.getElementById(event.node.contentElId).offsetTop;
+									.getElementById("stackTrace-" + $this.runId).innerHTML = event.node.trace;
 
 							var myAnim = new YAHOO.util.Anim(
 									"panel-stackTrace-" + $this.runId,
@@ -284,7 +278,7 @@ TestRun.prototype = {
 		node.contentStyle = contentStyle;
 		var el = node.getContentEl();
 		if (el) {
-			el.className = "ygtvcell "+ node.contentStyle  + " ygtvcontent";
+			el.className = "ygtvcell " + node.contentStyle + " ygtvcontent";
 		}
 	}
 };

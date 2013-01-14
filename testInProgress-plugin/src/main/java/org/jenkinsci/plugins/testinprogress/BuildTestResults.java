@@ -8,14 +8,15 @@ import java.util.List;
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 
-public class BuildTestEvents implements IBuildTestEvents {
+public class BuildTestResults implements IBuildTestEvents {
 	private static final String UNIT_EVENTS_DIR = "unitevents";
     private transient IBuildTestEvents testEvents;
     private final PersistenceRoot persitenceRoot;
     private final TestRunIds testRunIds;
     private final BuildTestStats buildTestStats;
+    private boolean isBuildComplete = false;
     
-    public BuildTestEvents(PersistenceRoot persitenceRoot, TestRunIds testRunIds, RunningBuildTestEvents testEvents, BuildTestStats buildTestStats) {
+    public BuildTestResults(PersistenceRoot persitenceRoot, TestRunIds testRunIds, RunningBuildTestEvents testEvents, BuildTestStats buildTestStats) {
         this.persitenceRoot = persitenceRoot;
         this.testRunIds = testRunIds;
     	this.testEvents = testEvents;
@@ -25,6 +26,7 @@ public class BuildTestEvents implements IBuildTestEvents {
 	public synchronized void onBuildComplete() {
 		File dir = new File(persitenceRoot.getRootDir(), UNIT_EVENTS_DIR);
     	this.testEvents = new CompletedBuildTestEvents(testRunIds, dir);
+    	this.isBuildComplete = true;
 	}
 
 	public synchronized List<BuildTestEvent> getEvents() {
@@ -39,6 +41,10 @@ public class BuildTestEvents implements IBuildTestEvents {
 
 	public BuildTestStats getBuildTestStats() {
 		return buildTestStats;
+	}
+	
+	public boolean isBuildComplete() {
+		return isBuildComplete;
 	}
 	
 }

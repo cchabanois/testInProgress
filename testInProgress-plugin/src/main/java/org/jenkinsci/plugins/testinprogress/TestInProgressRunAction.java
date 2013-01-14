@@ -38,37 +38,47 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * 
  */
 public class TestInProgressRunAction implements Action {
-	private static final String ICON_FILENAME = "/plugin/ivy-report/ivyReport.png";
-    private final IBuildTestEvents testEvents;
-    private final AbstractBuild build;
-    
-    
-    public TestInProgressRunAction(AbstractBuild build, IBuildTestEvents buildTestEvents) {
-    	this.build = build;
-    	this.testEvents = buildTestEvents;
-    }
-    
-    public AbstractBuild getBuild() {
+	private static final String ICON_JUNIT_FILENAME = "/plugin/testInProgress-plugin/images/junit.gif";
+	private static final String ICON_JUNIT_SUCCESS_FILENAME = "/plugin/testInProgress-plugin/images/junitsucc.gif";
+	private static final String ICON_JUNIT_ERR_FILENAME = "/plugin/testInProgress-plugin/images/juniterr.gif";
+	private final BuildTestResults buildTestResults;
+	private final AbstractBuild build;
+
+	public TestInProgressRunAction(AbstractBuild build,
+			BuildTestResults buildTestResults) {
+		this.build = build;
+		this.buildTestResults = buildTestResults;
+	}
+
+	public AbstractBuild getBuild() {
 		return build;
-	}    
-    
-    
-    @JavaScriptMethod
-    public List<BuildTestEvent> getTestEvents(int fromIndex) {
-    	List<BuildTestEvent> events = testEvents.getEvents();
+	}
+
+	@JavaScriptMethod
+	public List<BuildTestEvent> getTestEvents(int fromIndex) {
+		List<BuildTestEvent> events = buildTestResults.getEvents();
 		return events.subList(fromIndex, events.size());
 	}
-    
-    public String getUrlName() {
-        return "testinprogress";
-    }
 
-    public String getDisplayName() {
-        return "Test progress report";
-    }
+	public String getUrlName() {
+		return "testinprogress";
+	}
 
-    public String getIconFileName() {
-        return ICON_FILENAME;
-    }
-    
+	public String getDisplayName() {
+		return "Test progress report";
+	}
+
+	public String getIconFileName() {
+		BuildTestStats buildTestStats = buildTestResults.getBuildTestStats();
+		if (buildTestStats.getTestsErrorCount() > 0
+				|| buildTestStats.getTestsFailedCount() > 0) {
+			return ICON_JUNIT_ERR_FILENAME;
+		} else if (buildTestResults.isBuildComplete()
+				&& buildTestStats.getTestsCount() == buildTestStats
+						.getTestsEndedCount()) {
+			return ICON_JUNIT_SUCCESS_FILENAME;
+		} else
+			return ICON_JUNIT_FILENAME;
+	}
+
 }

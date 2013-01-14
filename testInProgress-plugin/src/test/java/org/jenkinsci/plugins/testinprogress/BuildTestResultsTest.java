@@ -16,7 +16,7 @@ import org.jenkinsci.plugins.testinprogress.utils.TestAreaUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BuildTestEventsTest {
+public class BuildTestResultsTest {
 	private PersistenceRoot persistenceRoot = mock(PersistenceRoot.class);
 	private TestRunIds testRunIds = new TestRunIds();
 	private SaveTestEventsListener saveTestEventsListener;
@@ -36,7 +36,7 @@ public class BuildTestEventsTest {
 	@Test
 	public void testGetEventsWhenBuildIsRunning() {
 		// Given
-		BuildTestEvents testEvents = new BuildTestEvents(persistenceRoot,
+		BuildTestResults testEvents = new BuildTestResults(persistenceRoot,
 				testRunIds, runningBuildTestEvents, buildTestStats);
 		event(new BuildTestEvent("run1", new RunStartEvent(1)));
 		event(new BuildTestEvent("run2", new RunStartEvent(2)));
@@ -66,7 +66,7 @@ public class BuildTestEventsTest {
 				new RunStartEvent(1));
 		BuildTestEvent secondEvent = new BuildTestEvent("run2",
 				new RunStartEvent(1));
-		BuildTestEvents testEvents = new BuildTestEvents(persistenceRoot,
+		BuildTestResults testEvents = new BuildTestResults(persistenceRoot,
 				testRunIds, runningBuildTestEvents, buildTestStats);
 		event(firstEvent);
 		event(secondEvent);

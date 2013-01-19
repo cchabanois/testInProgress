@@ -1,64 +1,63 @@
-.testNode { 
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/test.gif) no-repeat;
-} 
-.testSuiteNode { 
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/tsuite.gif) no-repeat;
+.ztree li span.button.test_ico_docu {
+	margin-right:2px; 
+	background: url(../images/test.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testFailedNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/testfail.gif) no-repeat;
+.ztree li span.button.testSuite_ico_open, .ztree li span.button.testSuite_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuite.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testErrorNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/testerr.gif) no-repeat;
+.ztree li span.button.testFailed_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testfail.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testIgnoredNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/testignored.gif) no-repeat;
+.ztree li span.button.testError_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testerr.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testPassedNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/testok.gif) no-repeat;
+.ztree li span.button.testIgnored_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testignored.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testRunNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/testrun.gif) no-repeat;
+.ztree li span.button.testPassed_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testok.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testSuiteRunNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/tsuiterun.gif) no-repeat;
+.ztree li span.button.testRun_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testrun.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testSuiteFailedNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/tsuitefail.gif) no-repeat;
+.ztree li span.button.testSuiteRun_ico_open, .ztree li span.button.testSuiteRun_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuiterun.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.testSuitePassedNode {
-display:block; 
-height: 22px; 
-padding-left: 20px; 
-background: transparent url(../images/tsuiteok.gif) no-repeat;
+.ztree li span.button.testSuiteFailed_ico_open, .ztree li span.button.testSuiteFailed_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuitefail.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
 }
-.htmlnodelabel { margin-left: 20px; }
+.ztree li span.button.testSuitePassed_ico_open, .ztree li span.button.testSuitePassed_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuiteok.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
 
 .testpanel .stat {
 size: 10 px;

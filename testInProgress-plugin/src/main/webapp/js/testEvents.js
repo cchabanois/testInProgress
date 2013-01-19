@@ -1,330 +1,333 @@
-var TestRun = Class.create();
-TestRun.prototype = {
-	initialize : function(elementId, runId) {
+var TestRun = (function($) {
+
+	TestRun.index = 0;
+
+	function TestRun(elementId, runId) {
+		console.log("Test run : " + runId);
+		TestRun.index++;
+		this.tree = null;
 		this.runId = runId;
 		this.treeEvents = [];
 		this.elementId = elementId;
 		this.testCount = 0;
 		this.testStarted = 0;
 		this.testIgnored = 0;
+		this.testEnded = 0;
 		this.errors = 0;
 		this.failures = 0;
-		var testMessageId = "testMessage-" + this.runId;
-		var progressId = "progress-" + this.runId;
-		var treeId = "tree-" + this.runId;
-		var runsId = "runs-" + this.runId;
-		var errorsId = "errors-" + this.runId;
-		var failuresId = "failures-" + this.runId;
-		var panelStackTraceId = "panel-stackTrace-" + this.runId;
-		var stackTraceId = "stackTrace-" + this.runId;
-		var panelTreeId = "panel-tree-" + this.runId;
-		var element = document.getElementById(this.elementId);
-		element.innerHTML += "<div class='testpanel'>" + "<fieldset>"
-				+ "<fieldset>" + "<div id='"
-				+ testMessageId
-				+ "'></div>"
-				+ "Runs : <span class='stat' id='"
-				+ runsId
-				+ "'></span>"
-				+ "Errors: <span class='stat' id='"
-				+ errorsId
-				+ "'></span>"
-				+ "Failures : <span class='stat' id='"
-				+ failuresId
-				+ "'></span><div id='"
-				+ progressId
-				+ "'></div></fieldset>"
-				+ "<fieldset class='stacktrace' id='"
-				+ panelStackTraceId
-				+ "'><legend>Stacktrace</legend><div id='"
-				+ stackTraceId
-				+ "'></div></fieldset>"
-				+ "<fieldset id='"
-				+ panelTreeId
-				+ "'><div id='"
-				+ treeId
-				+ "'></div></fieldset></fieldset></div>";
-	},
-	handleTestEvents : function(events) {
-		for ( var i = 0; i < events.length; i++) {
-			this.handleTestEvent(events[i]);
-		}
-	},
-	handleTestEvent : function(event) {
-		switch (event.type) {
-		case "TESTC":
-			this.handleRunStartEvent(event);
-			break;
-		case "TSTTREE":
-			this.treeEvents.push(event);
-			break;
-		case "FAILED":
-			this.handleTestFailedEvent(event);
-			break;
-		case "ERROR":
-			this.handleTestErrorEvent(event);
-			break;
-		case "TESTS":
-			this.handleTestStartEvent(event);
-			break;
-		case "TESTE":
-			this.handleTestEndEvent(event);
-			break;
-		case "RUNTIME":
-			this.handleRunStopEvent(event);
-			break;
-		default:
-			break;
-		}
-		this.updateStats();
-	},
-	updateStats : function() {
-		var runs = this.testStarted + "/" + this.testCount;
-		if (this.testIgnored > 0) {
-			runs += " (" + this.testIgnored + " ignored)";
-		}
-		document.getElementById("runs-" + this.runId).innerHTML = runs;
-		document.getElementById("errors-" + this.runId).innerHTML = this.errors;
-		document.getElementById("failures-" + this.runId).innerHTML = this.failures;
-	},
-	setMessage : function(message) {
-		document.getElementById("testMessage-" + this.runId).innerHTML = message;
-	},
-	handleRunStartEvent : function(event) {
-		this.testCount = event.testCount;
-		this.progressBar = new YAHOO.widget.ProgressBar({
-			value : 0,
-			maxValue : event.testCount,
-			width : "500px"
-		});
-		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
-				'backgroundColor', 'green');
-		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
-				'backgroundImage', 'none');
-		this.progressBar.render("progress-" + this.runId);
-	},
-	handleRunStopEvent : function(event) {
-		this.setMessage("Finished after "
-				+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
-	},
-	handleTestStartEvent : function(event) {
-		this.testStarted++;
-		if (event.ignored) {
-			this.testIgnored++;
-		}
-		if (this.treeView == null) {
-			this.createTreeView();
-		}
-		var node = this.getNodeByTestId(event.testId);
-		this.setContentStyle(node, "testRunNode");
-		this.updateParentNode(node);
-		this.expandParent(node);
-	},
-	expandParent : function(node) {
-		var parent = node.parent;
-		while (parent != null) {
-			parent.expand();
-			parent = parent.parent;
-		}
-	},
-	collapseParentIfPassed : function(node) {
-		var parent = node.parent;
-		while (parent != null) {
-			if (parent.contentStyle == "testSuitePassedNode") {
-				parent.collapse();
+		this.testMessageId = "testMessage-" + TestRun.index;
+		this.progressId = "progress-" + TestRun.index;
+		this.treeId = "tree-" + TestRun.index;
+		this.runsId = "runs-" + TestRun.index;
+		this.errorsId = "errors-" + TestRun.index;
+		this.failuresId = "failures-" + TestRun.index;
+		this.panelStackTraceId = "panel-stackTrace-" + TestRun.index;
+		this.stackTraceId = "stackTrace-" + TestRun.index;
+		this.panelTreeId = "panel-tree-" + TestRun.index;
+		$('#' + this.elementId).html(
+				"<div class='testpanel'>" + "<fieldset>" + "<fieldset>"
+						+ "<div id='"
+						+ this.testMessageId
+						+ "'></div>"
+						+ "Runs : <span class='stat' id='"
+						+ this.runsId
+						+ "'></span>"
+						+ "Errors: <span class='stat' id='"
+						+ this.errorsId
+						+ "'></span>"
+						+ "Failures : <span class='stat' id='"
+						+ this.failuresId
+						+ "'></span><div id='"
+						+ this.progressId
+						+ "'></div></fieldset>"
+						+ "<fieldset class='stacktrace' id='"
+						+ this.panelStackTraceId
+						+ "'><legend>Stacktrace</legend><div id='"
+						+ this.stackTraceId
+						+ "'></div></fieldset>"
+						+ "<fieldset id='"
+						+ this.panelTreeId
+						+ "'><div id='"
+						+ this.treeId
+						+ "' class='ztree'></div></fieldset></fieldset></div>");
+	}
+
+	TestRun.prototype = {
+
+		handleTestEvents : function(events) {
+			if (this.tree == null) {
+				this.treeWillBeRefreshed = true;
 			} else {
+				this.treeWillBeRefreshed = false;
+			}
+			for ( var i = 0; i < events.length; i++) {
+				this.handleTestEvent(events[i]);
+			}
+			if (this.tree != null && this.treeWillBeRefreshed == true) {
+				this.tree.refresh();
+			}
+		},
+		handleTestEvent : function(event) {
+			switch (event.type) {
+			case "TESTC":
+				this.handleRunStartEvent(event);
+				break;
+			case "TSTTREE":
+				this.treeEvents.push(event);
+				break;
+			case "FAILED":
+				this.handleTestFailedEvent(event);
+				break;
+			case "ERROR":
+				this.handleTestErrorEvent(event);
+				break;
+			case "TESTS":
+				this.handleTestStartEvent(event);
+				break;
+			case "TESTE":
+				this.handleTestEndEvent(event);
+				break;
+			case "RUNTIME":
+				this.handleRunStopEvent(event);
+				break;
+			default:
 				break;
 			}
-			parent = parent.parent;
-		}
-	},
-	handleTestFailedEvent : function(event) {
-		this.failures++;
-		var node = this.getNodeByTestId(event.testId);
-		this.setContentStyle(node, "testFailedNode");
-		node.trace = event.trace;
-		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
-				'backgroundColor', 'darkred');
-	},
-	handleTestErrorEvent : function(event) {
-		this.errors++;
-		var node = this.getNodeByTestId(event.testId);
-		this.setContentStyle(node, "testErrorNode");
-		node.trace = event.trace;
-		YAHOO.util.Dom.setStyle(this.progressBar.get('barEl'),
-				'backgroundColor', 'darkred');
-	},
-	handleTestEndEvent : function(event) {
-		var node = this.getNodeByTestId(event.testId);
-		if (node.contentStyle == "testRunNode") {
+			this.updateStats();
+		},
+		updateStats : function() {
+			var runs = this.testStarted + "/" + this.testCount;
+			if (this.testIgnored > 0) {
+				runs += " (" + this.testIgnored + " ignored)";
+			}
+			$("#" + this.runsId).text(runs);
+			$("#" + this.errorsId).text(this.errors);
+			$("#" + this.failuresId).text(this.failures);
+		},
+		setMessage : function(message) {
+			$("#" + this.testMessageId).text(message);
+		},
+		handleRunStartEvent : function(event) {
+			this.testCount = event.testCount;
+			$("#" + this.progressId).progressbar({
+				value : 0,
+				max : this.testCount
+			});
+			$("#" + this.progressId + " > div").css({
+				'background' : 'green'
+			});
+		},
+		handleRunStopEvent : function(event) {
+			this.setMessage("Finished after "
+					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
+		},
+		handleTestStartEvent : function(event) {
+			this.testStarted++;
 			if (event.ignored) {
-				this.setContentStyle(node, "testIgnoredNode");
-			} else {
-				this.setContentStyle(node, "testPassedNode");
+				this.testIgnored++;
 			}
-		}
-		this.progressBar.set('value', this.progressBar.get('value') + 1);
-		this.updateParentNode(node);
-		this.collapseParentIfPassed(node);
-	},
-	updateParentNode : function(childNode) {
-		var parentNode = childNode.parent;
-		if (parentNode == null) {
-			return;
-		}
-		var parentStyle = "testSuiteNode";
-		for ( var i = 0; i < parentNode.children.length; i++) {
-			var childNode = parentNode.children[i];
-			if (childNode.contentStyle == "testRunNode"
-					|| childNode.contentStyle == "testSuiteRunNode") {
-				parentStyle = "testSuiteRunNode";
-				break;
+			if (this.tree == null) {
+				this.createTreeView();
 			}
-			if (parentStyle == "testSuiteNode") {
-				if (childNode.contentStyle == "testIgnoredNode"
-						|| childNode.contentStyle == "testPassedNode"
-						|| childNode.contentStyle == "testSuitePassedNode") {
-					parentStyle = "testSuitePassedNode";
+			var node = this.getNodeByTestId(event.testId);
+			this.updateIcon(node, "testRun");
+			this.updateParentNode(node);
+			this.expandParent(node);
+		},
+		updateIcon : function(node, iconSkin) {
+			node.iconSkin = iconSkin;
+			if (this.treeWillBeRefreshed == false) {
+				this.tree.updateNode(node);
+			}
+		},
+		expandParent : function(node) {
+			var parent = node.getParentNode();
+			while (parent != null && parent.open == false) {
+				if (this.treeWillBeRefreshed == true) {
+					parent.open = true;
+				} else {
+					this.tree.expandNode(parent, true, false, false, false);
+				}
+				parent = parent.getParentNode();
+			}
+		},
+		collapseParentIfPassed : function(node) {
+			var parent = node.getParentNode();
+			while (parent != null) {
+				if (parent.iconSkin == "testSuitePassed") {
+					if (this.treeWillBeRefreshed == true) {
+						parent.open = false;
+					} else {
+						this.tree.expandNode(parent, false, false, false, false);
+					}
+				} else {
+					break;
+				}
+				parent = parent.getParentNode();
+			}
+		},
+		handleTestFailedEvent : function(event) {
+			this.failures++;
+			var node = this.getNodeByTestId(event.testId);
+			this.updateIcon(node, "testFailed");
+			// node.trace = event.trace;
+			$("#" + this.progressId + " > div").css({
+				'background' : 'darkred'
+			});
+		},
+		handleTestErrorEvent : function(event) {
+			this.errors++;
+			var node = this.getNodeByTestId(event.testId);
+			this.updateIcon(node, "testError");
+			// node.trace = event.trace;
+			$("#" + this.progressId + " > div").css({
+				'background' : 'darkred'
+			});
+		},
+		handleTestEndEvent : function(event) {
+			this.testEnded++;
+			var node = this.getNodeByTestId(event.testId);
+			if (node.iconSkin == "testRun") {
+				if (event.ignored) {
+					this.updateIcon(node, "testIgnored");
+				} else {
+					this.updateIcon(node, "testPassed");
 				}
 			}
-			if (childNode.contentStyle == "testFailedNode"
-					|| childNode.contentStyle == "testErrorNode"
-					|| childNode.contentStyle == "testSuiteFailedNode") {
-				parentStyle = "testSuiteFailedNode";
+			$("#" + this.progressId).progressbar("value", this.testEnded);
+			this.updateParentNode(node);
+			this.collapseParentIfPassed(node);
+		},
+		updateParentNode : function(childNode) {
+			var parentNode = childNode.getParentNode();
+			if (parentNode == null) {
+				return;
 			}
-		}
-		this.setContentStyle(parentNode, parentStyle);
-		this.updateParentNode(parentNode);
-	},
-	createTreeView : function() {
-		this.treeView = new YAHOO.widget.TreeView("tree-" + this.runId);
-		if (this.treeEvents.length > 0) {
-			this.createTreeElement(this.treeView.getRoot(), 0);
-		}
-		var $this = this;
-		this.treeView
-				.subscribe(
-						"clickEvent",
-						function(event) {
-							var panelStackTrace = document
-									.getElementById("panel-stackTrace-"
-											+ $this.runId);
-							panelStackTrace.style.display = "block";
-							// panelStackTrace.style.top =
-							// YAHOO.util.Dom.getY(document.getElementById(event.node.contentElId));
-							var panelTree = document
-									.getElementById("panel-tree-" + $this.runId);
-							panelStackTrace.style.left = YAHOO.util.Dom
-									.getX(panelTree)
-									+ panelTree.offsetWidth / 2;
-							var left = YAHOO.util.Dom.getX(panelTree)
-									+ panelTree.offsetWidth / 2;
-							document
-									.getElementById("stackTrace-" + $this.runId).innerHTML = event.node.trace;
-
-							var myAnim = new YAHOO.util.Anim(
-									"panel-stackTrace-" + $this.runId,
-									{
-										top : {
-											to : YAHOO.util.Dom
-													.getY(document
-															.getElementById(event.node.contentElId))
-										}
-									}, 1, YAHOO.util.Easing.easeOut);
-							myAnim.animate();
-
-						});
-		this.treeView.render();
-	},
-	createTreeElement : function(parent, eventIndex) {
-		var event = this.treeEvents[eventIndex];
-		if (event.suite == false) {
-			var testName = this.getShortTestName(event);
-			var node = new YAHOO.widget.HTMLNode({
-				html : "<span class='htmlnodelabel'>" + testName + "</span>",
-				expanded : false
-			}, parent);
-			node.testId = event.testId;
-			node.contentStyle = "testNode";
-			eventIndex++;
-			return eventIndex;
-		} else {
-			var node = new YAHOO.widget.HTMLNode({
-				html : "<span class='htmlnodelabel'>" + event.testName
-						+ "</span>",
-				expanded : false
-			}, parent);
-			node.testId = event.testId;
-			node.contentStyle = "testSuiteNode";
-			eventIndex++;
-			for ( var i = 0; i < event.testCount; i++) {
-				eventIndex = this.createTreeElement(node, eventIndex);
+			var parentStyle = "testSuite";
+			for ( var i = 0; i < parentNode.children.length; i++) {
+				var childNode = parentNode.children[i];
+				if (childNode.iconSkin == "testRun"
+						|| childNode.iconSkin == "testSuiteRun") {
+					parentStyle = "testSuiteRun";
+					break;
+				}
+				if (parentStyle == "testSuite") {
+					if (childNode.iconSkin == "testIgnored"
+							|| childNode.iconSkin == "testPassed"
+							|| childNode.iconSkin == "testSuitePassed") {
+						parentStyle = "testSuitePassed";
+					}
+				}
+				if (childNode.iconSkin == "testFailed"
+						|| childNode.iconSkin == "testError"
+						|| childNode.iconSkin == "testSuiteFailed") {
+					parentStyle = "testSuiteFailed";
+				}
 			}
-			return eventIndex;
+			this.updateIcon(parentNode, parentStyle);
+			this.updateParentNode(parentNode);
+		},
+		createTreeNodes : function(treeEvents) {
+			var eventIndex = 0;
+			var testRun = this;
+			function createTreeNode() {
+				var event = treeEvents[eventIndex];
+				if (event.suite == false) {
+					var testName = testRun.getShortTestName(event);
+					var newNode = {
+						id : event.testId,
+						name : testName,
+						iconSkin : "test"
+					};
+					eventIndex++;
+					return newNode;
+				} else {
+					var newNode = {
+						id : event.testId,
+						name : event.testName,
+						iconSkin : "testSuite",
+						children : []
+					};
+					eventIndex++;
+					for ( var i = 0; i < event.testCount; i++) {
+						newNode.children.push(createTreeNode());
+					}
+					return newNode;
+				}
+			}
+			return [ createTreeNode() ];
+		},
+		createTreeView : function() {
+			var treeNodes = this.createTreeNodes(this.treeEvents);
+			$.fn.zTree.init($("#" + this.treeId), {}, treeNodes);
+			this.tree = $.fn.zTree.getZTreeObj(this.treeId);
+		},
+		getNodeByTestId : function(testId) {
+			var node = this.tree.getNodeByParam("id", testId, null);
+			return node;
+		},
+		getShortTestName : function(event) {
+			var index = event.testName.indexOf('(');
+			if (index == -1) {
+				return;
+			}
+			return event.testName.slice(0, index);
 		}
-	},
-	getNodeByTestId : function(testId) {
-		var node = this.treeView.getNodeByProperty("testId", testId);
-		return node;
-	},
-	getShortTestName : function(event) {
-		var index = event.testName.indexOf('(');
-		if (index == -1) {
-			return;
-		}
-		return event.testName.slice(0, index);
-	},
-	setContentStyle : function(node, contentStyle) {
-		node.contentStyle = contentStyle;
-		var el = node.getContentEl();
-		if (el) {
-			el.className = "ygtvcell " + node.contentStyle + " ygtvcontent";
-		}
-	}
-};
+	};
 
-var TestRuns = Class.create();
+	return TestRun;
+}(jQuery));
 
-TestRuns.prototype = {
-	initialize : function(elementId) {
+var TestRuns = (function($) {
+
+	function TestRuns(elementId) {
 		this.elementId = elementId;
 		this.eventsCount = 0;
 		this.testRuns = [];
-	},
-	start : function(event) {
-		var $this = this;
-		(function() {
-			$this.handleNextTestEvents();
-			// call the function again in 2 seconds
-			setTimeout(arguments.callee, 2000);
-		})();
-	},
-	handleNextTestEvents : function() {
-		var $this = this;
-		remoteAction.getTestEvents(this.eventsCount, function(t) {
-			var testEvents = t.responseObject();
-			$this.handleTestEvents(testEvents);
-			$this.eventsCount += testEvents.length;
-		});
-	},
-	handleTestEvents : function(buildEvents) {
-		var runIdToRunEvents = {};
-		for ( var i = 0; i < buildEvents.length; i++) {
-			var buildEvent = buildEvents[i];
-			if (runIdToRunEvents[buildEvent.runId] == null) {
-				runIdToRunEvents[buildEvent.runId] = [];
-			}
-			runIdToRunEvents[buildEvent.runId].push(buildEvent.runTestEvent);
-		}
-		for ( var runId in runIdToRunEvents) {
-			var testRun = this.testRuns[runId];
-			if (testRun == null) {
-				document.getElementById(this.elementId).innerHTML += "<div id='runId-"
-						+ runId + "'></div>";
-				testRun = new TestRun("runId-" + runId, runId);
-				this.testRuns[runId] = testRun;
-			}
-			testRun.handleTestEvents(runIdToRunEvents[runId]);
-		}
+		this.index = 0;
 	}
-}
+
+	TestRuns.prototype = {
+		start : function(event) {
+			var $this = this;
+			(function() {
+				$this.handleNextTestEvents();
+				// call the function again in 2 seconds
+				setTimeout(arguments.callee, 2000);
+			})();
+		},
+		handleNextTestEvents : function() {
+			var $this = this;
+			remoteAction.getTestEvents(this.eventsCount, function(t) {
+				var testEvents = t.responseObject();
+				$this.handleTestEvents(testEvents);
+				$this.eventsCount += testEvents.length;
+			});
+		},
+		handleTestEvents : function(buildEvents) {
+			var runIdToRunEvents = {};
+			for ( var i = 0; i < buildEvents.length; i++) {
+				var buildEvent = buildEvents[i];
+				if (runIdToRunEvents[buildEvent.runId] == null) {
+					runIdToRunEvents[buildEvent.runId] = [];
+				}
+				runIdToRunEvents[buildEvent.runId]
+						.push(buildEvent.runTestEvent);
+			}
+			for ( var runId in runIdToRunEvents) {
+				var testRun = this.testRuns[runId];
+
+				if (testRun == null) {
+					this.index++;
+					$('#' + this.elementId).append(
+							"<div id='runId-" + this.index + "'></div>");
+					testRun = new TestRun("runId-" + this.index, runId);
+					this.testRuns[runId] = testRun;
+				}
+				testRun.handleTestEvents(runIdToRunEvents[runId]);
+			}
+		}
+	};
+
+	return TestRuns;
+}(jQuery));

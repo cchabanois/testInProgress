@@ -33,22 +33,24 @@ var TestRun = (function($) {
 						+ "Failures : <span class='stat' id='"
 						+ this.failuresId + "'></span><div id='"
 						+ this.progressId + "'></div></fieldset>"
+						+ "<div><div id='" + this.treeId
+						+ "' class='ztree'></div>"
 						+ "<fieldset class='stacktrace' id='"
-						+ this.panelStackTraceId
-						+ "'><legend>Stacktrace</legend><div id='"
-						+ this.stackTraceId + "'></div></fieldset>"
-						+ "<div id='" + this.treeId
-						+ "' class='ztree'></div></fieldset></div>");
+						+ this.panelStackTraceId + "'><div id='"
+						+ this.stackTraceId + "'></div></div></fieldset>"
+						+ "</fieldset></div>");
 		this.createScrollLockButton();
 	}
 	TestRun.prototype = {
 
 		createScrollLockButton : function() {
 			this.scrollLockId = "scrollLock-" + TestRun.index;
-			$('#' + this.treeId).before(
-					'<input type="checkbox" class="scrollLock" id="'
-							+ this.scrollLockId + '" /><label for="'
-							+ this.scrollLockId + '">Scroll Lock</label>');
+			$('#' + this.elementId + " > div.testpanel > fieldset > fieldset")
+					.after(
+							'<input type="checkbox" class="scrollLock" id="'
+									+ this.scrollLockId + '" /><label for="'
+									+ this.scrollLockId
+									+ '">Scroll Lock</label>');
 			$("#" + this.scrollLockId).button({
 				text : true,
 				icons : {
@@ -180,7 +182,7 @@ var TestRun = (function($) {
 			this.failures++;
 			var node = this.getNodeByTestId(event.testId);
 			this.updateNodeIcon(node, "testFailed");
-			// node.trace = event.trace;
+			node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
@@ -191,7 +193,7 @@ var TestRun = (function($) {
 			this.errors++;
 			var node = this.getNodeByTestId(event.testId);
 			this.updateNodeIcon(node, "testError");
-			// node.trace = event.trace;
+			node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
@@ -273,7 +275,17 @@ var TestRun = (function($) {
 		},
 		createTreeView : function() {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
-			$.fn.zTree.init($("#" + this.treeId), {}, treeNodes);
+			$.fn.zTree.init($("#" + this.treeId), {
+				callback : {
+					onClick : $.proxy(function(event, treeId, treeNode, clickFlag) {
+						var trace = treeNode.trace;
+						if (trace == null) {
+							trace = "";
+						}
+						$('#'+this.stackTraceId).html(trace);
+					}, this)
+				}
+			}, treeNodes);
 			this.tree = $.fn.zTree.getZTreeObj(this.treeId);
 		},
 		getNodeByTestId : function(testId) {

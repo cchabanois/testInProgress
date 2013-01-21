@@ -1,11 +1,3 @@
-div.ztree {
-	margin-top: 10px;
-	border: 1px solid #617775;
-	background: #f0f6e4;
-	height:360px;
-	overflow-y:scroll;
-	overflow-x:auto;
-}
 .ztree li span.button.test_ico_docu {
 	margin-right:2px; 
 	background: url(../images/test.gif) no-repeat scroll 0 0 transparent; 
@@ -76,14 +68,21 @@ display:inline-block;
 min-width:50px
 }
 
-.testpanel fieldset {
+.testpanel > fieldset {
 	border: thin solid silver;
 	background-color:#F0F0F0;
 	padding:1em;
 	margin:1em;
 }
 
-.testpanel fieldset p {
+.testpanel > fieldset > fieldset {
+	border: thin solid silver;
+	background-color:#F0F0F0;
+	padding:1em;
+	margin:1em;
+}
+
+.testpanel > fieldset > fieldset p {
 	margin:0 1em;
 }
 
@@ -104,11 +103,6 @@ min-width:50px
 .testpanel > fieldset > legend.errorSuite {
 	background-image:url(../images/juniterr.gif);
 }
-.stacktrace {
-	position:absolute;
-	display:none;
-	width:400px;
-}
 
 .stacktrace div { 
 	white-space:pre;
@@ -124,4 +118,22 @@ min-width:50px
 .scrollLock+label > span.ui-button-text {
 	margin-left:5px;
 	font-size : 0.8em;	
+}
+div.ztree, .stacktrace {
+	margin : 10px 10px 10px 10px;
+	padding : 10px 10px 10px 10px;
+	border: 1px solid #617775;
+	width : 45%;
+	height:360px;
+	overflow-y:scroll;
+	overflow-x:auto;
+	float: left;
+}
+
+div.ztree {
+	background: #f0f6e4;
+}
+
+.stacktrace {
+	background: white;
 }

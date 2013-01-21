@@ -29,14 +29,16 @@ public class CompletedBuildTestEvents implements IBuildTestEvents {
 		for (final String runId : runIds.getRunIds()) {
 			FileReader fileReader;
 			try {
-				fileReader = new FileReader(new File(directory, runId+".events"));
+				fileReader = new FileReader(new File(directory, runId
+						+ ".events"));
 				RunTestEventsGenerator eventsGenerator = new RunTestEventsGenerator(
 						new IRunTestEventListener[] { new IRunTestEventListener() {
 							public void event(IRunTestEvent testEvent) {
-								testEvents.add(new BuildTestEvent(runId, testEvent));
+								testEvents.add(new BuildTestEvent(runId,
+										testEvent));
 							}
 						} });
-				TestMessagesParser parser = new TestMessagesParser(true,
+				TestMessagesParser parser = new TestMessagesParser(
 						new ITestRunListener[] { eventsGenerator });
 				parser.processTestMessages(fileReader);
 			} catch (FileNotFoundException e) {

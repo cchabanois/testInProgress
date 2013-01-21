@@ -24,10 +24,8 @@ import java.io.Reader;
  * modified
  */
 public class TestMessagesParser {
-	private final boolean timeFieldPresent;
 	
-	public TestMessagesParser(boolean timeFieldPresent,ITestRunListener[] listeners) {
-		this.timeFieldPresent = timeFieldPresent;
+	public TestMessagesParser(ITestRunListener[] listeners) {
 		this.fListeners = listeners;
 	}
 
@@ -63,15 +61,14 @@ public class TestMessagesParser {
 
 	class DefaultProcessingState extends ProcessingState {
 		ProcessingState readMessage(String message) {
-			if (timeFieldPresent) {
-				int index = message.indexOf(' ');
-				String timeAsString = message.substring(0, index);
+			int index = message.indexOf('%');
+			if (index != 0) {
+				String timeAsString = message.substring(0, index).trim();
 				timestamp = Long.parseLong(timeAsString);
-				message = message.substring(index+1);
+				message = message.substring(index);
 			} else {
 				timestamp = System.currentTimeMillis();
 			}
-			
 			if (message.startsWith(MessageIds.TRACE_START)) {
 				fFailedTrace.setLength(0);
 				return fTraceState;

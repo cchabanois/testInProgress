@@ -25,7 +25,9 @@ package org.jenkinsci.plugins.testinprogress;
 
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
@@ -60,6 +62,19 @@ public class TestInProgressRunAction implements Action {
 		return events.subList(fromIndex, events.size());
 	}
 
+	@JavaScriptMethod
+	public List<BuildTestEvent> getPreviousTestEvents() {
+		Run previousCompletedBuild = build.getPreviousCompletedBuild();
+		if (previousCompletedBuild == null) {
+			return Collections.emptyList();
+		}
+		TestInProgressRunAction action = previousCompletedBuild.getAction(TestInProgressRunAction.class);
+		if (action == null) {
+			return Collections.emptyList();
+		}
+		return action.getTestEvents(0);
+	}
+	
 	public String getUrlName() {
 		return "testinprogress";
 	}

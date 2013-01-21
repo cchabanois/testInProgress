@@ -23,33 +23,22 @@ var TestRun = (function($) {
 		this.failuresId = "failures-" + TestRun.index;
 		this.panelStackTraceId = "panel-stackTrace-" + TestRun.index;
 		this.stackTraceId = "stackTrace-" + TestRun.index;
-		this.panelTreeId = "panel-tree-" + TestRun.index;
 		$('#' + this.elementId).html(
-				"<div class='testpanel'>" + "<fieldset>" + "<fieldset>"
-						+ "<div id='"
-						+ this.testMessageId
-						+ "'></div>"
-						+ "Runs : <span class='stat' id='"
-						+ this.runsId
-						+ "'></span>"
-						+ "Errors: <span class='stat' id='"
-						+ this.errorsId
-						+ "'></span>"
+				"<div class='testpanel'>" + "<fieldset><legend>" + runId
+						+ "</legend>" + "<fieldset>" + "<div id='"
+						+ this.testMessageId + "'></div>"
+						+ "Runs : <span class='stat' id='" + this.runsId
+						+ "'></span>" + "Errors: <span class='stat' id='"
+						+ this.errorsId + "'></span>"
 						+ "Failures : <span class='stat' id='"
-						+ this.failuresId
-						+ "'></span><div id='"
-						+ this.progressId
-						+ "'></div></fieldset>"
+						+ this.failuresId + "'></span><div id='"
+						+ this.progressId + "'></div></fieldset>"
 						+ "<fieldset class='stacktrace' id='"
 						+ this.panelStackTraceId
 						+ "'><legend>Stacktrace</legend><div id='"
-						+ this.stackTraceId
-						+ "'></div></fieldset>"
-						+ "<fieldset id='"
-						+ this.panelTreeId
-						+ "'><div id='"
-						+ this.treeId
-						+ "' class='ztree'></div></fieldset></fieldset></div>");
+						+ this.stackTraceId + "'></div></fieldset>"
+						+ "<div id='" + this.treeId
+						+ "' class='ztree'></div></fieldset></div>");
 	}
 
 	TestRun.prototype = {
@@ -158,7 +147,8 @@ var TestRun = (function($) {
 					if (this.treeWillBeRefreshed == true) {
 						parent.open = false;
 					} else {
-						this.tree.expandNode(parent, false, false, false, false);
+						this.tree
+								.expandNode(parent, false, false, false, false);
 					}
 				} else {
 					break;

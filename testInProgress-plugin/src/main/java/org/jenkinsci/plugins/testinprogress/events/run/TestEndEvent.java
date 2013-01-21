@@ -12,13 +12,15 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean ignored;
-
+	private final long elapsedTime;
+	
 	public TestEndEvent(long timestamp, String testId, String testName,
-			boolean ignored) {
+			boolean ignored, long elapsedTime) {
 		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
+		this.elapsedTime = elapsedTime;
 	}
 
 	public String getType() {
@@ -37,6 +39,10 @@ public class TestEndEvent extends AbstractRunTestEvent {
 		return ignored;
 	}
 
+	public long getElapsedTime() {
+		return elapsedTime;
+	}
+	
 	@Override
 	public String toString() {
 		return toString(true);
@@ -51,7 +57,8 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
+		result = prime * result + (int) (elapsedTime ^ (elapsedTime >>> 32));
 		result = prime * result + (ignored ? 1231 : 1237);
 		result = prime * result + ((testId == null) ? 0 : testId.hashCode());
 		result = prime * result
@@ -63,11 +70,13 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		TestEndEvent other = (TestEndEvent) obj;
+		if (elapsedTime != other.elapsedTime)
+			return false;
 		if (ignored != other.ignored)
 			return false;
 		if (testId == null) {
@@ -82,5 +91,6 @@ public class TestEndEvent extends AbstractRunTestEvent {
 			return false;
 		return true;
 	}
+
 
 }

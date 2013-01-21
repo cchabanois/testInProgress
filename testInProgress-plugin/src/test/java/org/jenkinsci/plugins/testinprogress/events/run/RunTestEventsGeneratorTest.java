@@ -44,4 +44,21 @@ public class RunTestEventsGeneratorTest {
 				new TestTreeEvent(200, "1", "testproject.AllTests", true, 2));
 	}
 
+	@Test
+	public void testTimeElapsedForTestEndEvent() {
+		// Given
+		
+		// When
+		eventsGenerator.testStarted(200, "4", 
+				"test1(testproject.CalcTest)");
+		eventsGenerator.testStarted(500, "5",
+				"test2(testproject.CalcTest)");
+		eventsGenerator.testEnded(1000, "4", "test1(testproject.CalcTest)");
+		eventsGenerator.testEnded(1100, "5", "test2(testproject.CalcTest)");
+		
+		// Then 
+		verify(listener).event(new TestEndEvent(1000, "4", "test1(testproject.CalcTest)", false, 800));
+		verify(listener).event(new TestEndEvent(1100, "5", "test2(testproject.CalcTest)", false, 600));
+	}
+	
 }

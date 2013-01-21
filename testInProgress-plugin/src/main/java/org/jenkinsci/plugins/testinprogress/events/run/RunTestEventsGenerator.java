@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
@@ -15,7 +17,8 @@ import com.google.common.base.Splitter;
  */
 public class RunTestEventsGenerator implements ITestRunListener {
 	private final IRunTestEventListener[] listeners;
-
+	private final ConcurrentMap<String, TestStartEvent> runningTests = new ConcurrentHashMap<String, TestStartEvent>(); 
+	
 	public RunTestEventsGenerator(IRunTestEventListener[] listeners) {
 		this.listeners = listeners;
 	}
@@ -35,7 +38,9 @@ public class RunTestEventsGenerator implements ITestRunListener {
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestStartEvent(timestamp,testId, testName, ignored));
+		TestStartEvent testStartEvent = new TestStartEvent(timestamp,testId, testName, ignored);
+		runningTests.put(testId, testStartEvent);
+		fireEvent(testStartEvent);
 	}
 
 	public void testEnded(long timestamp,String testId, String testName) {
@@ -45,7 +50,12 @@ public class RunTestEventsGenerator implements ITestRunListener {
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestEndEvent(timestamp,testId, testName, ignored));
+		TestStartEvent testStartEvent = runningTests.remove(testId);
+		long timeElapsed = 0;
+		if (testStartEvent != null) {
+			timeElapsed = timestamp-testStartEvent.getTimestamp();
+		}
+		fireEvent(new TestEndEvent(timestamp,testId, testName, ignored, timeElapsed));
 	}
 
 	public void testRunTerminated() {

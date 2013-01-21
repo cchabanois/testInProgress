@@ -1,7 +1,9 @@
 package org.jenkinsci.testinprogress;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.PrintWriter;
@@ -14,6 +16,8 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
 import tests.CalcTestsSuite;
+import tests.InitializationErrorTest;
+import tests.RuleErrorTest;
 import tests.SameTestsSuite;
 
 
@@ -41,10 +45,35 @@ public class JUnit4ProgressRunListenerTest {
 		assertEquals(2,matchingMessages.size());
 	}
 	
-	private List<String> getTestMessagesMatching(String[] messages, String regex)  {
+	@Test
+	public void testInitializationErrorTest() {
+		String[] messages = runTests(InitializationErrorTest.class);
+		assertNotNull(getTestMessageMatching(messages, "%TSTTREE3,initializationError(tests.InvalidTest),false,1"));
+		assertNotNull(getTestMessageMatching(messages, "%ERROR  3,initializationError(tests.InvalidTest)"));
+	}
+	
+	@Test
+	public void testRuleErrorTest() {
+		String[] messages = runTests(RuleErrorTest.class);
+		printTestMessages(messages);
+	}
+	
+	private String getTestMessageMatching(String[] messages, String regex) {
+		List<String> testMatchings = getTestMessagesMatching(messages, regex);
+		if (testMatchings.size() == 0) {
+			return null;
+		} else if (testMatchings.size() == 1) {
+			return testMatchings.get(0);
+		} else {
+			fail("More than one message matching "+regex);
+			return null;
+		}
+	}
+	
+	private List<String> getTestMessagesMatching(String[] messages, String expectedMessage)  {
 		List<String> result = new ArrayList<String>();
 		for (String message : messages) {
-			if (message.matches(regex)) {
+			if (message.equals(expectedMessage)) {
 				result.add(message);
 			}
 		}

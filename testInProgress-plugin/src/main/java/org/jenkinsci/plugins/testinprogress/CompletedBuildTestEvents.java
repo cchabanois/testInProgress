@@ -36,7 +36,7 @@ public class CompletedBuildTestEvents implements IBuildTestEvents {
 								testEvents.add(new BuildTestEvent(runId, testEvent));
 							}
 						} });
-				TestMessagesParser parser = new TestMessagesParser(
+				TestMessagesParser parser = new TestMessagesParser(true,
 						new ITestRunListener[] { eventsGenerator });
 				parser.processTestMessages(fileReader);
 			} catch (FileNotFoundException e) {

@@ -8,10 +8,11 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class RunStartEvent implements IRunTestEvent {
+public class RunStartEvent extends AbstractRunTestEvent {
 	private final int testCount;
 
-	public RunStartEvent(int testCount) {
+	public RunStartEvent(long timestamp, int testCount) {
+		super(timestamp);
 		this.testCount = testCount;
 	}
 
@@ -23,10 +24,15 @@ public class RunStartEvent implements IRunTestEvent {
 		return "TESTC";
 	}
 
+	public String toString(boolean includeTimeStamp) {
+		return (includeTimeStamp ? Long.toString(getTimestamp())+" " : "")
+				+ MessageIds.TEST_RUN_START + Integer.toString(testCount) + " "
+				+ "v2";
+	}
+
 	@Override
 	public String toString() {
-		return MessageIds.TEST_RUN_START + Integer.toString(testCount) + " "
-				+ "v2";
+		return toString(true);
 	}
 
 	@Override

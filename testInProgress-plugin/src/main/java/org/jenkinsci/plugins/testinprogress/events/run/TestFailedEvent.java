@@ -8,15 +8,16 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestFailedEvent implements IRunTestEvent {
+public class TestFailedEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final String expected;
 	private final String actual;
 	private final String trace;
 
-	public TestFailedEvent(String testId, String testName,
+	public TestFailedEvent(long timestamp, String testId, String testName,
 			String expected, String actual, String trace) {
+		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.expected = expected;
@@ -48,9 +49,11 @@ public class TestFailedEvent implements IRunTestEvent {
 		return "FAILED";
 	}
 
-	@Override
-	public String toString() {
+	public String toString(boolean includeTimeStamp) {
 		StringBuilder sb = new StringBuilder();
+		if (includeTimeStamp) {
+			sb.append(Long.toString(getTimestamp())).append(' ');
+		}
 		sb.append(MessageIds.TEST_FAILED).append(testId).append(",").append(testName);
 		sb.append("\n");
 		if (expected != null) {
@@ -66,6 +69,11 @@ public class TestFailedEvent implements IRunTestEvent {
 		sb.append('\n');
 		sb.append(MessageIds.TRACE_END);
 		return sb.toString();
+	}
+	
+	@Override
+	public String toString() {
+		return toString(true);
 	}
 
 	@Override

@@ -8,13 +8,14 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class TestErrorEvent implements IRunTestEvent {
+public class TestErrorEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final String trace;
 
-	public TestErrorEvent(String testId, String testName,
+	public TestErrorEvent(long timestamp, String testId, String testName,
 			String trace) {
+		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.trace = trace;
@@ -36,9 +37,11 @@ public class TestErrorEvent implements IRunTestEvent {
 		return "ERROR";
 	}
 
-	@Override
-	public String toString() {
+	public String toString(boolean includeTimeStamp) {
 		StringBuilder sb = new StringBuilder();
+		if (includeTimeStamp) {
+			sb.append(Long.toString(getTimestamp())).append(' ');
+		}
 		sb.append(MessageIds.TEST_ERROR).append(testId).append(",").append(testName);
 		sb.append("\n");
 		sb.append(MessageIds.TRACE_START).append("\n");
@@ -46,6 +49,11 @@ public class TestErrorEvent implements IRunTestEvent {
 		sb.append('\n');
 		sb.append(MessageIds.TRACE_END);
 		return sb.toString();
+	}
+	
+	@Override
+	public String toString() {
+		return toString(true);
 	}
 
 	@Override

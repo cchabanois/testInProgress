@@ -8,12 +8,14 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class TestStartEvent implements IRunTestEvent {
+public class TestStartEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean ignored;
 
-	public TestStartEvent(String testId, String testName, boolean ignored) {
+	public TestStartEvent(long timestamp, String testId, String testName,
+			boolean ignored) {
+		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
@@ -35,10 +37,16 @@ public class TestStartEvent implements IRunTestEvent {
 		return ignored;
 	}
 
+	public String toString(boolean includeTimeStamp) {
+		return (includeTimeStamp ? Long.toString(getTimestamp()) + " " : "")
+				+ MessageIds.TEST_START + testId + ","
+				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName;
+
+	}
+
 	@Override
 	public String toString() {
-		return MessageIds.TEST_START + testId + ","
-				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName;
+		return toString(true);
 	}
 
 	@Override

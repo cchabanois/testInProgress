@@ -7,6 +7,8 @@ package org.jenkinsci.plugins.testinprogress.events.run;
  */
 public interface IRunTestEvent {
 
+	long getTimestamp();
+	
 	String getType();	
 	
 	@Override
@@ -14,5 +16,6 @@ public interface IRunTestEvent {
 	
 	@Override
 	public int hashCode();
-	
+
+	public String toString(boolean includeTimeStamp);
 }

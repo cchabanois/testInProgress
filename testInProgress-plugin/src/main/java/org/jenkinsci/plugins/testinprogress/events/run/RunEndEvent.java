@@ -8,10 +8,11 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class RunEndEvent implements IRunTestEvent {
+public class RunEndEvent extends AbstractRunTestEvent {
 	private final long elapsedTime;
 
-	public RunEndEvent(long elapsedTime) {
+	public RunEndEvent(long timestamp, long elapsedTime) {
+		super(timestamp);
 		this.elapsedTime = elapsedTime;
 	}
 
@@ -23,9 +24,14 @@ public class RunEndEvent implements IRunTestEvent {
 		return elapsedTime;
 	}
 
+	public String toString(boolean includeTimeStamp) {
+		return (includeTimeStamp ? Long.toString(getTimestamp())+ " " : "")
+				+ MessageIds.TEST_RUN_END + elapsedTime;
+	}
+
 	@Override
 	public String toString() {
-		return MessageIds.TEST_RUN_END + elapsedTime;
+		return toString(true);
 	}
 
 	@Override

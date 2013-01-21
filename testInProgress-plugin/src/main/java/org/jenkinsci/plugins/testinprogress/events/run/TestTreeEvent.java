@@ -8,14 +8,15 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class TestTreeEvent implements IRunTestEvent {
+public class TestTreeEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final boolean isSuite;
 	private final int testCount;
 
-	public TestTreeEvent(String testId, String testName, boolean isSuite,
-			int testCount) {
+	public TestTreeEvent(long timestamp, String testId, String testName,
+			boolean isSuite, int testCount) {
+		super(timestamp);
 		this.testCount = testCount;
 		this.testId = testId;
 		this.isSuite = isSuite;
@@ -42,10 +43,15 @@ public class TestTreeEvent implements IRunTestEvent {
 		return "TSTTREE";
 	}
 
+	public String toString(boolean includeTimeStamp) {
+		return (includeTimeStamp ? Long.toString(getTimestamp()) + " " : "")
+				+ MessageIds.TEST_TREE + testId + "," + testName + ","
+				+ Boolean.toString(isSuite) + "," + Integer.toString(testCount);
+	}
+
 	@Override
 	public String toString() {
-		return MessageIds.TEST_TREE + testId + "," + testName + ","
-				+ Boolean.toString(isSuite) + "," + Integer.toString(testCount);
+		return toString(true);
 	}
 
 	@Override

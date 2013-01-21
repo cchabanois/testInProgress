@@ -17,34 +17,34 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 		this.stackTraceFilter = stackTraceFilter;
 	}
 
-	public void testRunStarted(int testCount) {
-		testRunListener.testRunStarted(testCount);
+	public void testRunStarted(long timestamp, int testCount) {
+		testRunListener.testRunStarted(timestamp, testCount);
 	}
 
-	public void testRunEnded(long elapsedTime) {
-		testRunListener.testRunEnded(elapsedTime);
+	public void testRunEnded(long timestamp, long elapsedTime) {
+		testRunListener.testRunEnded(timestamp, elapsedTime);
 	}
 
-	public void testStarted(String testId, String testName) {
-		testRunListener.testStarted(testId, testName);
+	public void testStarted(long timestamp, String testId, String testName) {
+		testRunListener.testStarted(timestamp, testId, testName);
 	}
 
-	public void testEnded(String testId, String testName) {
-		testRunListener.testEnded(testId, testName);
+	public void testEnded(long timestamp, String testId, String testName) {
+		testRunListener.testEnded(timestamp, testId, testName);
 	}
 
 	public void testRunTerminated() {
 		testRunListener.testRunTerminated();
 	}
 
-	public void testTreeEntry(String description) {
-		testRunListener.testTreeEntry(description);
+	public void testTreeEntry(long timestamp, String description) {
+		testRunListener.testTreeEntry(timestamp, description);
 	}
 
-	public void testFailed(int status, String testId, String testName,
+	public void testFailed(long timestamp, int status, String testId, String testName,
 			String trace, String expected, String actual) {
 		trace = stackTraceFilter.filter(trace);
-		testRunListener.testFailed(status, testId, testName, trace, expected,
+		testRunListener.testFailed(timestamp, status, testId, testName, trace, expected,
 				actual);
 	}
 

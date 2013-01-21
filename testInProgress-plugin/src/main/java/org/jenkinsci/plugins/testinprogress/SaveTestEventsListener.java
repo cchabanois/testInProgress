@@ -36,7 +36,7 @@ public class SaveTestEventsListener implements IBuildTestEventListener {
 				// should never happen
 				return;
 			}
-			fileWriter.write(runTestEvent.getRunTestEvent().toString() + '\n');
+			fileWriter.write(runTestEvent.getRunTestEvent().toString(true) + '\n');
 			if (runTestEvent.getRunTestEvent() instanceof RunEndEvent) {
 				fileWriter.close();
 				fileWriters.remove(runTestEvent.getRunId());

@@ -24,8 +24,10 @@ import java.io.Reader;
  * modified
  */
 public class TestMessagesParser {
-
-	public TestMessagesParser(ITestRunListener[] listeners) {
+	private final boolean timeFieldPresent;
+	
+	public TestMessagesParser(boolean timeFieldPresent,ITestRunListener[] listeners) {
+		this.timeFieldPresent = timeFieldPresent;
 		this.fListeners = listeners;
 	}
 
@@ -61,6 +63,15 @@ public class TestMessagesParser {
 
 	class DefaultProcessingState extends ProcessingState {
 		ProcessingState readMessage(String message) {
+			if (timeFieldPresent) {
+				int index = message.indexOf(' ');
+				String timeAsString = message.substring(0, index);
+				timestamp = Long.parseLong(timeAsString);
+				message = message.substring(index+1);
+			} else {
+				timestamp = System.currentTimeMillis();
+			}
+			
 			if (message.startsWith(MessageIds.TRACE_START)) {
 				fFailedTrace.setLength(0);
 				return fTraceState;
@@ -189,6 +200,8 @@ public class TestMessagesParser {
 	 */
 	private final StringBuffer fActualResult = new StringBuffer();
 
+	private long timestamp;
+	
 	ProcessingState fDefaultState = new DefaultProcessingState();
 	ProcessingState fTraceState = new TraceProcessingState();
 	ProcessingState fExpectedState = new AppendingProcessingState(
@@ -287,9 +300,9 @@ public class TestMessagesParser {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			if (!hasTestId())
-				listener.testTreeEntry(fakeTestId(treeEntry));
+				listener.testTreeEntry(timestamp, fakeTestId(treeEntry));
 			else
-				listener.testTreeEntry(treeEntry);
+				listener.testTreeEntry(timestamp, treeEntry);
 		}
 	}
 
@@ -303,7 +316,7 @@ public class TestMessagesParser {
 	private void testRunEnded(final long elapsedTime) {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunEnded(elapsedTime);
+			listener.testRunEnded(timestamp, elapsedTime);
 		}
 	}
 
@@ -311,7 +324,7 @@ public class TestMessagesParser {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			String s[] = extractTestId(test);
-			listener.testEnded(s[0], s[1]);
+			listener.testEnded(timestamp, s[0], s[1]);
 		}
 	}
 
@@ -319,21 +332,21 @@ public class TestMessagesParser {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			String s[] = extractTestId(test);
-			listener.testStarted(s[0], s[1]);
+			listener.testStarted(timestamp, s[0], s[1]);
 		}
 	}
 
 	private void notifyTestRunStarted(final int count) {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunStarted(count);
+			listener.testRunStarted(timestamp, count);
 		}
 	}
 
 	private void notifyTestFailed() {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testFailed(fFailureKind, fFailedTestId, fFailedTest,
+			listener.testFailed(timestamp, fFailureKind, fFailedTestId, fFailedTest,
 					fFailedTrace.toString(), nullifyEmpty(fExpectedResult),
 					nullifyEmpty(fActualResult));
 		}

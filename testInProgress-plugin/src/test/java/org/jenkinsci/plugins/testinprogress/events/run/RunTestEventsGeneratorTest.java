@@ -23,13 +23,13 @@ public class RunTestEventsGeneratorTest {
 		// Given
 
 		// When
-		eventsGenerator.testStarted("4",
+		eventsGenerator.testStarted(200, "4",
 				"@Ignore: testIgnored(testproject.CalcTest)");
 
 		// Then
 		verify(listener).event(
-				new TestStartEvent("4", "testIgnored(testproject.CalcTest)",
-						true));
+				new TestStartEvent(200, "4",
+						"testIgnored(testproject.CalcTest)", true));
 	}
 
 	@Test
@@ -37,11 +37,11 @@ public class RunTestEventsGeneratorTest {
 		// Given
 
 		// When
-		eventsGenerator.testTreeEntry("1,testproject.AllTests,true,2");
+		eventsGenerator.testTreeEntry(200, "1,testproject.AllTests,true,2");
 
 		// Then
 		verify(listener).event(
-				new TestTreeEvent("1", "testproject.AllTests", true, 2));
+				new TestTreeEvent(200, "1", "testproject.AllTests", true, 2));
 	}
 
 }

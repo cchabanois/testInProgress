@@ -20,54 +20,54 @@ public class RunTestEventsGenerator implements ITestRunListener {
 		this.listeners = listeners;
 	}
 
-	public void testRunStarted(int testCount) {
-		fireEvent(new RunStartEvent(testCount));
+	public void testRunStarted(long timestamp, int testCount) {
+		fireEvent(new RunStartEvent(timestamp,testCount));
 	}
 
-	public void testRunEnded(long elapsedTime) {
-		fireEvent(new RunEndEvent(elapsedTime));
+	public void testRunEnded(long timestamp, long elapsedTime) {
+		fireEvent(new RunEndEvent(timestamp,elapsedTime));
 	}
 
-	public void testStarted(String testId, String testName) {
+	public void testStarted(long timestamp,String testId, String testName) {
 		boolean ignored = false;
 		if (testName.startsWith(MessageIds.IGNORED_TEST_PREFIX)) {
 			ignored = true;
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestStartEvent(testId, testName, ignored));
+		fireEvent(new TestStartEvent(timestamp,testId, testName, ignored));
 	}
 
-	public void testEnded(String testId, String testName) {
+	public void testEnded(long timestamp,String testId, String testName) {
 		boolean ignored = false;
 		if (testName.startsWith(MessageIds.IGNORED_TEST_PREFIX)) {
 			ignored = true;
 			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
 					.length());
 		}
-		fireEvent(new TestEndEvent(testId, testName, ignored));
+		fireEvent(new TestEndEvent(timestamp,testId, testName, ignored));
 	}
 
 	public void testRunTerminated() {
 
 	}
 
-	public void testTreeEntry(String description) {
+	public void testTreeEntry(long timestamp,String description) {
 		Iterator<String> it = Splitter.on(',').split(description).iterator();
 		String testId = it.next();
 		String testName = it.next();
 		boolean isSuite = Boolean.parseBoolean(it.next());
 		int testCount = Integer.parseInt(it.next());
-		fireEvent(new TestTreeEvent(testId, testName, isSuite, testCount));
+		fireEvent(new TestTreeEvent(timestamp,testId, testName, isSuite, testCount));
 	}
 
-	public void testFailed(int status, String testId, String testName,
+	public void testFailed(long timestamp,int status, String testId, String testName,
 			String trace, String expected, String actual) {
 		if (status == ITestRunListener.STATUS_FAILURE) {
-			fireEvent(new TestFailedEvent(testId, testName, expected,
+			fireEvent(new TestFailedEvent(timestamp,testId, testName, expected,
 					actual, trace));
 		} else {
-			fireEvent(new TestErrorEvent(testId, testName, trace));
+			fireEvent(new TestErrorEvent(timestamp,testId, testName, trace));
 		}
 	}
 

@@ -109,6 +109,9 @@ var TestRun = (function($) {
 		handleRunStopEvent : function(event) {
 			this.setMessage("Finished after "
 					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
+			if (this.errors == 0 && this.failures == 0) {
+				$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("successSuite");
+			}
 		},
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
@@ -119,11 +122,11 @@ var TestRun = (function($) {
 				this.createTreeView();
 			}
 			var node = this.getNodeByTestId(event.testId);
-			this.updateIcon(node, "testRun");
+			this.updateNodeIcon(node, "testRun");
 			this.updateParentNode(node);
 			this.expandParent(node);
 		},
-		updateIcon : function(node, iconSkin) {
+		updateNodeIcon : function(node, iconSkin) {
 			node.iconSkin = iconSkin;
 			if (this.treeWillBeRefreshed == false) {
 				this.tree.updateNode(node);
@@ -159,29 +162,31 @@ var TestRun = (function($) {
 		handleTestFailedEvent : function(event) {
 			this.failures++;
 			var node = this.getNodeByTestId(event.testId);
-			this.updateIcon(node, "testFailed");
+			this.updateNodeIcon(node, "testFailed");
 			// node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
+			$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("errorSuite");
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
 			var node = this.getNodeByTestId(event.testId);
-			this.updateIcon(node, "testError");
+			this.updateNodeIcon(node, "testError");
 			// node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
+			$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("errorSuite");
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;
 			var node = this.getNodeByTestId(event.testId);
 			if (node.iconSkin == "testRun") {
 				if (event.ignored) {
-					this.updateIcon(node, "testIgnored");
+					this.updateNodeIcon(node, "testIgnored");
 				} else {
-					this.updateIcon(node, "testPassed");
+					this.updateNodeIcon(node, "testPassed");
 				}
 			}
 			$("#" + this.progressId).progressbar("value", this.testEnded);
@@ -214,7 +219,7 @@ var TestRun = (function($) {
 					parentStyle = "testSuiteFailed";
 				}
 			}
-			this.updateIcon(parentNode, parentStyle);
+			this.updateNodeIcon(parentNode, parentStyle);
 			this.updateParentNode(parentNode);
 		},
 		createTreeNodes : function(treeEvents) {

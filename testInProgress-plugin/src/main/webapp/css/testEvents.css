@@ -87,13 +87,22 @@ min-width:50px
 	margin:0 1em;
 }
 
-.testpanel legend {
+.testpanel > fieldset > legend {
 	padding: 4px 15px 4px 25px;
   	font-size:90%;
   	text-align:left;
-  	background: url(../images/juniterr.gif) no-repeat scroll 0 0 #F0F0F0;
+  	background-image:url(../images/junit.gif);
+  	background-color:#F0F0F0;
+  	background-repeat:no-repeat;
+  	background-position: top left;
 	border:1px solid silver;
 	border-radius:8px;
+}
+.testpanel > fieldset > legend.successSuite {
+	background-image:url(../images/junitsucc.gif);
+}
+.testpanel > fieldset > legend.errorSuite {
+	background-image:url(../images/juniterr.gif);
 }
 .stacktrace {
 	position:absolute;

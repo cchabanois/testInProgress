@@ -204,6 +204,7 @@ var TestRun = (function($) {
 		handleTestEndEvent : function(event) {
 			this.testEnded++;
 			var node = this.getNodeByTestId(event.testId);
+			node.elapsedTime = event.elapsedTime;
 			var newIconSkin = node.iconSkin;
 			if (node.iconSkin == "testRun") {
 				if (event.ignored) {
@@ -212,8 +213,10 @@ var TestRun = (function($) {
 					newIconSkin = "testPassed";
 				}
 			}
-			var elapsedTimeInSeconds = numeral(event.elapsedTime/1000).format('0,0.000');
-			var newName = node.name+"<span class='testElapsedTime'> ("+elapsedTimeInSeconds+" s)</span";
+			var elapsedTimeInSeconds = numeral(event.elapsedTime / 1000)
+					.format('0,0.000');
+			var newName = node.name + "<span class='testElapsedTime'> ("
+					+ elapsedTimeInSeconds + " s)</span";
 			this.updateNode(node, newName, newIconSkin);
 			$("#" + this.progressId).progressbar("value", this.testEnded);
 			this.updateParentNode(node);
@@ -225,10 +228,13 @@ var TestRun = (function($) {
 				return;
 			}
 			var parentStyle = "testSuite";
+			var elapsedTime = 0;
 			for ( var i = 0; i < parentNode.children.length; i++) {
 				var childNode = parentNode.children[i];
 				if (childNode.iconSkin == "testRun"
-						|| childNode.iconSkin == "testSuiteRun") {
+						|| childNode.iconSkin == "testSuiteRun"
+						|| childNode.iconSkin == "test"
+						|| childNode.iconSkin == "testSuite") {
 					parentStyle = "testSuiteRun";
 					break;
 				}
@@ -244,8 +250,18 @@ var TestRun = (function($) {
 						|| childNode.iconSkin == "testSuiteFailed") {
 					parentStyle = "testSuiteFailed";
 				}
+				elapsedTime += childNode.elapsedTime;
 			}
-			this.updateNode(parentNode, parentNode.name, parentStyle);
+			var newName = parentNode.name;
+			if ((parentStyle == 'testSuitePassed' || parentStyle == 'testSuiteFailed')
+					&& (parentNode.elapsedTime == null)) {
+				parentNode.elapsedTime = elapsedTime;
+				var elapsedTimeInSeconds = numeral(
+						parentNode.elapsedTime / 1000).format('0,0.000');
+				newName = parentNode.name + "<span class='testElapsedTime'> ("
+						+ elapsedTimeInSeconds + " s)</span";
+			}
+			this.updateNode(parentNode, newName, parentStyle);
 			this.updateParentNode(parentNode);
 		},
 		createTreeNodes : function(treeEvents) {
@@ -281,16 +297,17 @@ var TestRun = (function($) {
 		createTreeView : function() {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
 			$.fn.zTree.init($("#" + this.treeId), {
-				view: {
-					nameIsHTML: true
+				view : {
+					nameIsHTML : true
 				},
 				callback : {
-					onClick : $.proxy(function(event, treeId, treeNode, clickFlag) {
+					onClick : $.proxy(function(event, treeId, treeNode,
+							clickFlag) {
 						var trace = treeNode.trace;
 						if (trace == null) {
 							trace = "";
 						}
-						$('#'+this.stackTraceId).html(trace);
+						$('#' + this.stackTraceId).html(trace);
 					}, this)
 				}
 			}, treeNodes);

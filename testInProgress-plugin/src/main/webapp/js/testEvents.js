@@ -138,14 +138,15 @@ var TestRun = (function($) {
 				this.createTreeView();
 			}
 			var node = this.getNodeByTestId(event.testId);
-			this.updateNodeIcon(node, "testRun");
+			this.updateNode(node, node.name, "testRun");
 			this.updateParentNode(node);
 			this.expandParent(node);
 			if (!$('#' + this.scrollLockId).is(':checked')) {
 				this.tree.selectNode(node);
 			}
 		},
-		updateNodeIcon : function(node, iconSkin) {
+		updateNode : function(node, name, iconSkin) {
+			node.name = name;
 			node.iconSkin = iconSkin;
 			if (this.treeWillBeRefreshed == false) {
 				this.tree.updateNode(node);
@@ -181,7 +182,7 @@ var TestRun = (function($) {
 		handleTestFailedEvent : function(event) {
 			this.failures++;
 			var node = this.getNodeByTestId(event.testId);
-			this.updateNodeIcon(node, "testFailed");
+			this.updateNode(node, node.name, "testFailed");
 			node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
@@ -192,7 +193,7 @@ var TestRun = (function($) {
 		handleTestErrorEvent : function(event) {
 			this.errors++;
 			var node = this.getNodeByTestId(event.testId);
-			this.updateNodeIcon(node, "testError");
+			this.updateNode(node, node.name, "testError");
 			node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
@@ -203,13 +204,17 @@ var TestRun = (function($) {
 		handleTestEndEvent : function(event) {
 			this.testEnded++;
 			var node = this.getNodeByTestId(event.testId);
+			var newIconSkin = node.iconSkin;
 			if (node.iconSkin == "testRun") {
 				if (event.ignored) {
-					this.updateNodeIcon(node, "testIgnored");
+					newIconSkin = "testIgnored";
 				} else {
-					this.updateNodeIcon(node, "testPassed");
+					newIconSkin = "testPassed";
 				}
 			}
+			var elapsedTimeInSeconds = numeral(event.elapsedTime/1000).format('0,0.000');
+			var newName = node.name+"<span class='testElapsedTime'> ("+elapsedTimeInSeconds+" s)</span";
+			this.updateNode(node, newName, newIconSkin);
 			$("#" + this.progressId).progressbar("value", this.testEnded);
 			this.updateParentNode(node);
 			this.collapseParentIfPassed(node);
@@ -240,7 +245,7 @@ var TestRun = (function($) {
 					parentStyle = "testSuiteFailed";
 				}
 			}
-			this.updateNodeIcon(parentNode, parentStyle);
+			this.updateNode(parentNode, parentNode.name, parentStyle);
 			this.updateParentNode(parentNode);
 		},
 		createTreeNodes : function(treeEvents) {
@@ -276,6 +281,9 @@ var TestRun = (function($) {
 		createTreeView : function() {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
 			$.fn.zTree.init($("#" + this.treeId), {
+				view: {
+					nameIsHTML: true
+				},
 				callback : {
 					onClick : $.proxy(function(event, treeId, treeNode, clickFlag) {
 						var trace = treeNode.trace;

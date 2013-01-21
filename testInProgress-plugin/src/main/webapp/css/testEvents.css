@@ -137,3 +137,6 @@ div.ztree {
 .stacktrace {
 	background: white;
 }
+.testElapsedTime {
+	color : #99CCFF;
+}

@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="${rootURL}/plugin/testInProgress-plugin/jquery/js/jquery-ui-1.10.0.custom.js"></script>
 		<script type="text/javascript" src="${rootURL}/plugin/testInProgress-plugin/ztree/js/jquery.ztree.core-3.5.min.js"></script>
 		<script type="text/javascript" src="${rootURL}/plugin/testInProgress-plugin/ztree/js/jquery.ztree.exhide-3.5.min.js"></script>
+		<script type="text/javascript" src="${rootURL}/plugin/testInProgress-plugin/numeral/numeral.min.js"></script>
 		<script src='${rootURL}/plugin/testInProgress-plugin/js/testEvents.js' type='text/javascript'/>
 		<div>
 			<st:bind var="remoteAction" value="${it}"/>

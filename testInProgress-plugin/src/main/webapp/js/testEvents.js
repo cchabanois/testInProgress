@@ -39,10 +39,23 @@ var TestRun = (function($) {
 						+ this.stackTraceId + "'></div></fieldset>"
 						+ "<div id='" + this.treeId
 						+ "' class='ztree'></div></fieldset></div>");
+		this.createScrollLockButton();
 	}
-
 	TestRun.prototype = {
 
+		createScrollLockButton : function() {
+			this.scrollLockId = "scrollLock-" + TestRun.index;
+			$('#' + this.treeId).before(
+					'<input type="checkbox" class="scrollLock" id="'
+							+ this.scrollLockId + '" /><label for="'
+							+ this.scrollLockId + '">Scroll Lock</label>');
+			$("#" + this.scrollLockId).button({
+				text : true,
+				icons : {
+					primary : "lock"
+				}
+			});
+		},
 		handleTestEvents : function(events) {
 			if (this.tree == null) {
 				this.treeWillBeRefreshed = true;
@@ -110,7 +123,8 @@ var TestRun = (function($) {
 			this.setMessage("Finished after "
 					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
 			if (this.errors == 0 && this.failures == 0) {
-				$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("successSuite");
+				$('#' + this.elementId + "> .testpanel > fieldset legend")
+						.addClass("successSuite");
 			}
 		},
 		handleTestStartEvent : function(event) {
@@ -125,6 +139,9 @@ var TestRun = (function($) {
 			this.updateNodeIcon(node, "testRun");
 			this.updateParentNode(node);
 			this.expandParent(node);
+			if (!$('#' + this.scrollLockId).is(':checked')) {
+				this.tree.selectNode(node);
+			}
 		},
 		updateNodeIcon : function(node, iconSkin) {
 			node.iconSkin = iconSkin;
@@ -167,7 +184,8 @@ var TestRun = (function($) {
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
-			$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("errorSuite");
+			$('#' + this.elementId + "> .testpanel > fieldset legend")
+					.addClass("errorSuite");
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
@@ -177,7 +195,8 @@ var TestRun = (function($) {
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
-			$('#' + this.elementId+ "> .testpanel > fieldset legend").addClass("errorSuite");
+			$('#' + this.elementId + "> .testpanel > fieldset legend")
+					.addClass("errorSuite");
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;

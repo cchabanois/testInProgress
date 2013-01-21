@@ -113,3 +113,15 @@ min-width:50px
 .stacktrace div { 
 	white-space:pre;
 }
+
+.scrollLock {
+	font-size : 0.8em;
+}
+.scrollLock+label > span.ui-icon {
+	background-image: url(../images/lock.gif);
+	background-position: top left;
+}
+.scrollLock+label > span.ui-button-text {
+	margin-left:5px;
+	font-size : 0.8em;	
+}

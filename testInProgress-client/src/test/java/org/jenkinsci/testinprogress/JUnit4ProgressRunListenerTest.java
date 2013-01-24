@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
 import tests.CalcTestsSuite;
+import tests.EmptyTest;
 import tests.InitializationErrorTest;
 import tests.RuleErrorTest;
 import tests.SameTestsSuite;
@@ -48,14 +49,23 @@ public class JUnit4ProgressRunListenerTest {
 	@Test
 	public void testInitializationErrorTest() {
 		String[] messages = runTests(InitializationErrorTest.class);
-		assertNotNull(getTestMessageMatching(messages, "%TSTTREE3,initializationError(tests.InvalidTest),false,1"));
-		assertNotNull(getTestMessageMatching(messages, "%ERROR  3,initializationError(tests.InvalidTest)"));
+		assertNotNull(getTestMessageMatching(messages, "%TSTTREE3,initializationError(tests.InitializationErrorTest),false,1"));
+		assertNotNull(getTestMessageMatching(messages, "%ERROR  3,initializationError(tests.InitializationErrorTest)"));
 	}
 	
 	@Test
 	public void testRuleErrorTest() {
 		String[] messages = runTests(RuleErrorTest.class);
-		printTestMessages(messages);
+		// error is associated with a suite, not a test
+		assertNotNull(getTestMessageMatching(messages, "%TSTTREE2,tests.RuleErrorTest,true,1"));
+		assertNotNull(getTestMessageMatching(messages, "%ERROR  2,tests.RuleErrorTest"));
+	}
+	
+	@Test
+	public void testEmptyTest() {
+		String[] messages = runTests(EmptyTest.class);
+		assertNotNull(getTestMessageMatching(messages, "%TSTTREE3,initializationError(tests.EmptyTest),false,1"));
+		assertNotNull(getTestMessageMatching(messages, "%ERROR  3,initializationError(tests.EmptyTest)"));
 	}
 	
 	private String getTestMessageMatching(String[] messages, String regex) {

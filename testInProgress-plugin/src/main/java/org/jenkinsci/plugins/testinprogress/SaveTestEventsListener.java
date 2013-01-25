@@ -13,6 +13,11 @@ import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener
 import org.jenkinsci.plugins.testinprogress.events.run.RunEndEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.RunStartEvent;
 
+/**
+ * Save the test events when they occur 
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ */
 public class SaveTestEventsListener implements IBuildTestEventListener {
 	private final static Logger LOG = Logger
 			.getLogger(SaveTestEventsListener.class.getName());
@@ -36,7 +41,8 @@ public class SaveTestEventsListener implements IBuildTestEventListener {
 				// should never happen
 				return;
 			}
-			fileWriter.write(runTestEvent.getRunTestEvent().toString(true) + '\n');
+			fileWriter
+					.write(runTestEvent.getRunTestEvent().toString(true) + '\n');
 			if (runTestEvent.getRunTestEvent() instanceof RunEndEvent) {
 				fileWriter.close();
 				fileWriters.remove(runTestEvent.getRunId());

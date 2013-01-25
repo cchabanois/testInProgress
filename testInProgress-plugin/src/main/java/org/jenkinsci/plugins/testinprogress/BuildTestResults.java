@@ -8,6 +8,12 @@ import java.util.List;
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 
+/**
+ * Test results (run ids used, test events and test stats) for a build
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ *
+ */
 public class BuildTestResults implements IBuildTestEvents {
 	private static final String UNIT_EVENTS_DIR = "unitevents";
     private transient IBuildTestEvents testEvents;

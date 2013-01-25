@@ -2,10 +2,21 @@ package org.jenkinsci.plugins.testinprogress.events.build;
 
 import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
 
+/**
+ * A test event in a build
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ *
+ */
 public class BuildTestEvent {
 	private final String runId;
 	private final IRunTestEvent testEvent;
 
+	/**
+	 * 
+	 * @param runId identifies the run
+	 * @param testEvent the test event
+	 */
 	public BuildTestEvent(String runId, IRunTestEvent testEvent) {
 		this.runId = runId;
 		this.testEvent = testEvent;

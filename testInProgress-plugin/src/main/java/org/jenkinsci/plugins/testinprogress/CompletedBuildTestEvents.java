@@ -14,6 +14,12 @@ import org.jenkinsci.plugins.testinprogress.events.run.RunTestEventsGenerator;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 import org.jenkinsci.plugins.testinprogress.messages.TestMessagesParser;
 
+/**
+ * Retrieve build test events for a completed build
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ *
+ */
 public class CompletedBuildTestEvents implements IBuildTestEvents {
 
 	public final File directory;

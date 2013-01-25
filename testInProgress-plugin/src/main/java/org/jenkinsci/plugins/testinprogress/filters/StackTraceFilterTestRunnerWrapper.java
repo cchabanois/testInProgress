@@ -3,16 +3,18 @@ package org.jenkinsci.plugins.testinprogress.filters;
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
 
 /**
- * 
+ * Wrapper around an {@link ITestRunListener} that filter stacktraces for failed
+ * tests
  * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
- *
+ * 
  */
 public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 	private final ITestRunListener testRunListener;
 	private final StackTraceFilter stackTraceFilter;
-	
-	public StackTraceFilterTestRunnerWrapper(ITestRunListener testRunListener, StackTraceFilter stackTraceFilter) {
+
+	public StackTraceFilterTestRunnerWrapper(ITestRunListener testRunListener,
+			StackTraceFilter stackTraceFilter) {
 		this.testRunListener = testRunListener;
 		this.stackTraceFilter = stackTraceFilter;
 	}
@@ -41,11 +43,11 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 		testRunListener.testTreeEntry(timestamp, description);
 	}
 
-	public void testFailed(long timestamp, int status, String testId, String testName,
-			String trace, String expected, String actual) {
+	public void testFailed(long timestamp, int status, String testId,
+			String testName, String trace, String expected, String actual) {
 		trace = stackTraceFilter.filter(trace);
-		testRunListener.testFailed(timestamp, status, testId, testName, trace, expected,
-				actual);
+		testRunListener.testFailed(timestamp, status, testId, testName, trace,
+				expected, actual);
 	}
 
 }

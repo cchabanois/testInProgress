@@ -10,6 +10,12 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestEndEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.TestErrorEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.TestFailedEvent;
 
+/**
+ * Test statistics for a build
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ *
+ */
 public class BuildTestStats implements IBuildTestEventListener {
 	private AtomicLong testsCount = new AtomicLong(0);
 	private AtomicLong testsFailedCount = new AtomicLong(0);

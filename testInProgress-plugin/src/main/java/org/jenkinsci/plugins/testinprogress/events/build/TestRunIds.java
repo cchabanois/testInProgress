@@ -5,6 +5,12 @@ import java.util.List;
 
 import org.jenkinsci.plugins.testinprogress.ITestRunIds;
 
+/**
+ * Keeps all run ids for a build.
+ * 
+ * @author Cedric Chabanois (cchabanois at gmail.com)
+ *
+ */
 public class TestRunIds implements ITestRunIds {
 	private final List<String> runIds = new ArrayList<String>();
 	

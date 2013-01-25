@@ -13,7 +13,7 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
  * 
  * A {@link BuildTestEventsGenerator} must be used for each run.
  * 
- * @author cedric
+ * @author @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
 public class BuildTestEventsGenerator implements IRunTestEventListener {

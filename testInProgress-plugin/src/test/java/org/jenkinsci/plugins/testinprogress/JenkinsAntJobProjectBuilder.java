@@ -22,7 +22,7 @@ public class JenkinsAntJobProjectBuilder {
 	private final String name;
 	private File resource;
 	private Ant.AntInstallation antInstallation;
-	private String target = "";
+	private String targets = "";
 	private Node node;
 
 	private JenkinsAntJobProjectBuilder(Jenkins jenkins, String name) {
@@ -40,6 +40,11 @@ public class JenkinsAntJobProjectBuilder {
 		return this;
 	}
 
+	public JenkinsAntJobProjectBuilder withTargets(String targets) {
+		this.targets = targets;
+		return this;
+	}
+	
 	public JenkinsAntJobProjectBuilder withAntInstallation(
 			Ant.AntInstallation antInstallation) {
 		this.antInstallation = antInstallation;
@@ -58,7 +63,7 @@ public class JenkinsAntJobProjectBuilder {
 		}
 		FreeStyleProject job = jenkins.createProject(FreeStyleProject.class,
 				name);
-		Ant ant = new Ant(target, antInstallation.getName(), null, "build.xml",
+		Ant ant = new Ant(targets, antInstallation.getName(), null, "build.xml",
 				null);
 		job.setScm(new ExtractResourceSCM(resource.toURI().toURL()));
 		if (node != null) {

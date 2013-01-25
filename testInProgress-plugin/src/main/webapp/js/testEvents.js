@@ -1,7 +1,24 @@
+/*
+ * TestEvents
+ * 
+ */
 var TestRun = (function($) {
 
 	TestRun.index = 0;
 
+	TestRun.IconSkin = {
+		TESTSUITE : "testSuite",
+		TESTSUITE_RUN : "testSuiteRun",
+		TESTSUITE_PASSED : "testSuitePassed",
+		TESTSUITE_FAILED : "testSuiteFailed",
+		TEST : "test",
+		TEST_RUN : "testRun",
+		TEST_IGNORED : "testIgnored",
+		TEST_PASSED : "testPassed",
+		TEST_FAILED : "testFailed",
+		TEST_ERROR : "testError"
+	}
+	
 	function TestRun(elementId, runId) {
 		console.log("Test run : " + runId);
 		TestRun.index++;
@@ -138,7 +155,7 @@ var TestRun = (function($) {
 				this.createTreeView();
 			}
 			var node = this.getNodeByTestId(event.testId);
-			this.updateNode(node, node.name, "testRun");
+			this.updateNode(node, node.name, TestRun.IconSkin.TEST_RUN);
 			this.updateParentNode(node);
 			this.expandParent(node);
 			if (!$('#' + this.scrollLockId).is(':checked')) {
@@ -166,7 +183,7 @@ var TestRun = (function($) {
 		collapseParentIfPassed : function(node) {
 			var parent = node.getParentNode();
 			while (parent != null) {
-				if (parent.iconSkin == "testSuitePassed") {
+				if (parent.iconSkin == TestRun.IconSkin.TESTSUITE_PASSED) {
 					if (this.treeWillBeRefreshed == true) {
 						parent.open = false;
 					} else {
@@ -193,7 +210,7 @@ var TestRun = (function($) {
 		handleTestErrorEvent : function(event) {
 			this.errors++;
 			var node = this.getNodeByTestId(event.testId);
-			this.updateNode(node, node.name, "testError");
+			this.updateNode(node, node.name, TestRun.IconSkin.TEST_ERROR);
 			node.trace = event.trace;
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
@@ -227,33 +244,33 @@ var TestRun = (function($) {
 			if (parentNode == null) {
 				return;
 			}
-			var parentStyle = "testSuite";
+			var parentStyle = TestRun.IconSkin.TESTSUITE;
 			var elapsedTime = 0;
 			for ( var i = 0; i < parentNode.children.length; i++) {
 				var childNode = parentNode.children[i];
-				if (childNode.iconSkin == "testRun"
-						|| childNode.iconSkin == "testSuiteRun"
-						|| childNode.iconSkin == "test"
-						|| childNode.iconSkin == "testSuite") {
-					parentStyle = "testSuiteRun";
+				if (childNode.iconSkin == TestRun.IconSkin.TEST_RUN
+						|| childNode.iconSkin == TestRun.IconSkin.TESTSUITE_RUN
+						|| childNode.iconSkin == TestRun.IconSkin.TEST
+						|| childNode.iconSkin == TestRun.IconSkin.TESTSUITE) {
+					parentStyle = TestRun.IconSkin.TESTSUITE_RUN;
 					break;
 				}
-				if (parentStyle == "testSuite") {
-					if (childNode.iconSkin == "testIgnored"
-							|| childNode.iconSkin == "testPassed"
-							|| childNode.iconSkin == "testSuitePassed") {
-						parentStyle = "testSuitePassed";
+				if (parentStyle == TestRun.IconSkin.TESTSUITE) {
+					if (childNode.iconSkin == TestRun.IconSkin.TEST_IGNORED
+							|| childNode.iconSkin == TestRun.IconSkin.TEST_PASSED
+							|| childNode.iconSkin == TestRun.IconSkin.TESTSUITE_PASSED) {
+						parentStyle = TestRun.IconSkin.TESTSUITE_PASSED;
 					}
 				}
-				if (childNode.iconSkin == "testFailed"
-						|| childNode.iconSkin == "testError"
-						|| childNode.iconSkin == "testSuiteFailed") {
-					parentStyle = "testSuiteFailed";
+				if (childNode.iconSkin == TestRun.IconSkin.TEST_FAILED
+						|| childNode.iconSkin == TestRun.IconSkin.TEST_ERROR
+						|| childNode.iconSkin == TestRun.IconSkin.TESTSUITE_FAILED) {
+					parentStyle = TestRun.IconSkin.TESTSUITE_FAILED;
 				}
 				elapsedTime += childNode.elapsedTime;
 			}
 			var newName = parentNode.name;
-			if ((parentStyle == 'testSuitePassed' || parentStyle == 'testSuiteFailed')
+			if ((parentStyle == TestRun.IconSkin.TESTSUITE_PASSED || parentStyle == TestRun.IconSkin.TESTSUITE_FAILED)
 					&& (parentNode.elapsedTime == null)) {
 				parentNode.elapsedTime = elapsedTime;
 				var elapsedTimeInSeconds = numeral(
@@ -274,7 +291,8 @@ var TestRun = (function($) {
 					var newNode = {
 						id : event.testId,
 						name : testName,
-						iconSkin : "test"
+						iconSkin : TestRun.IconSkin.TEST,
+						suite : false
 					};
 					eventIndex++;
 					return newNode;
@@ -282,7 +300,8 @@ var TestRun = (function($) {
 					var newNode = {
 						id : event.testId,
 						name : event.testName,
-						iconSkin : "testSuite",
+						suite : true,
+						iconSkin : TestRun.IconSkin.TESTSUITE,
 						children : []
 					};
 					eventIndex++;

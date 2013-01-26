@@ -87,6 +87,9 @@ var TestRun = (function($) {
 			});
 		},
 		handleTestEvents : function(events) {
+			if (events.length == 0) {
+				return;
+			}
 			if (this.tree == null) {
 				this.treeWillBeRefreshed = true;
 			} else {
@@ -98,6 +101,7 @@ var TestRun = (function($) {
 			if (this.tree != null && this.treeWillBeRefreshed == true) {
 				this.tree.refresh();
 			}
+			this.updateSuiteIcon();
 		},
 		handleTestEvent : function(event) {
 			switch (event.type) {
@@ -152,10 +156,6 @@ var TestRun = (function($) {
 		handleRunStopEvent : function(event) {
 			this.setMessage("Finished after "
 					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
-			if (this.errors == 0 && this.failures == 0) {
-				$('#' + this.elementId + "> .testpanel > fieldset legend")
-						.addClass("successSuite");
-			}
 		},
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
@@ -260,8 +260,23 @@ var TestRun = (function($) {
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
-			$('#' + this.elementId + "> .testpanel > fieldset legend")
-					.addClass("errorSuite");
+		},
+		updateSuiteIcon : function() {
+			var legendClass = "";
+			if (this.errors > 0 | this.failures > 0) {
+				if (this.testEnded == this.testCount) {
+					legendClass = "errorSuite";
+				} else {
+					legendClass = "errorSuite"+(Math.floor(1+this.testEnded*9/this.testCount));
+				}
+			} else {
+				if (this.testEnded == this.testCount) {
+					legendClass = "successSuite";
+				} else {
+					legendClass = "successSuite"+(Math.floor(1+this.testEnded*9/this.testCount));
+				}
+			}
+			$('#' + this.elementId + "> .testpanel > fieldset legend").addClass(legendClass);
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
@@ -272,8 +287,6 @@ var TestRun = (function($) {
 			$("#" + this.progressId + " > div").css({
 				'background' : 'darkred'
 			});
-			$('#' + this.elementId + "> .testpanel > fieldset legend")
-					.addClass("errorSuite");
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;

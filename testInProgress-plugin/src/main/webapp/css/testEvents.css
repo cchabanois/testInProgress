@@ -97,13 +97,66 @@ min-width:50px
 	border:1px solid silver;
 	border-radius:8px;
 }
-.testpanel > fieldset > legend.successSuite {
+.testpanel legend.successSuite {
 	background-image:url(../images/junitsucc.gif);
 }
-.testpanel > fieldset > legend.errorSuite {
+.testpanel legend.successSuite1 {
+	background-image:url(../images/progress/ss1.gif);
+}
+.testpanel legend.successSuite2 {
+	background-image:url(../images/progress/ss2.gif);
+}
+.testpanel legend.successSuite3 {
+	background-image:url(../images/progress/ss3.gif);
+}
+.testpanel legend.successSuite4 {
+	background-image:url(../images/progress/ss4.gif);
+}
+.testpanel legend.successSuite5 {
+	background-image:url(../images/progress/ss5.gif);
+}
+.testpanel legend.successSuite6 {
+	background-image:url(../images/progress/ss6.gif);
+}
+.testpanel legend.successSuite7 {
+	background-image:url(../images/progress/ss7.gif);
+}
+.testpanel legend.successSuite8 {
+	background-image:url(../images/progress/ss8.gif);
+}
+.testpanel legend.successSuite9 {
+	background-image:url(../images/progress/ss9.gif);
+}
+.testpanel legend.errorSuite {
 	background-image:url(../images/juniterr.gif);
 }
-
+.testpanel legend.errorSuite1 {
+	background-image:url(../images/progress/ff1.gif);
+}
+.testpanel legend.errorSuite2 {
+	background-image:url(../images/progress/ff2.gif);
+}
+.testpanel legend.errorSuite3 {
+	background-image:url(../images/progress/ff3.gif);
+}
+.testpanel legend.errorSuite4 {
+	background-image:url(../images/progress/ff4.gif);
+}
+.testpanel legend.errorSuite5 {
+	background-image:url(../images/progress/ff5.gif);
+}
+.testpanel legend.errorSuite6 {
+	background-image:url(../images/progress/ff6.gif);
+}
+.testpanel legend.errorSuite7 {
+	background-image:url(../images/progress/ff7.gif);
+}
+.testpanel legend.errorSuite8 {
+	background-image:url(../images/progress/ff8.gif);
+}
+.testpanel legend.errorSuite9 {
+	background-image:url(../images/progress/ff9.gif);
+}
 .stacktrace div { 
 	white-space:pre;
 }

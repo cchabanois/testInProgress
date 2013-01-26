@@ -18,6 +18,7 @@ import org.junit.runner.JUnitCore;
 import tests.CalcTestsSuite;
 import tests.EmptyTest;
 import tests.InitializationErrorTest;
+import tests.ParallelSuiteTest;
 import tests.RuleErrorTest;
 import tests.SameTestsSuite;
 
@@ -66,6 +67,12 @@ public class JUnit4ProgressRunListenerTest {
 		String[] messages = runTests(EmptyTest.class);
 		assertNotNull(getTestMessageMatching(messages, "%TSTTREE3,initializationError(tests.EmptyTest),false,1"));
 		assertNotNull(getTestMessageMatching(messages, "%ERROR  3,initializationError(tests.EmptyTest)"));
+	}
+	
+	@Test
+	public void testParallelTests() {
+		String[] messages = runTests(ParallelSuiteTest.class);
+		printTestMessages(messages);
 	}
 	
 	private String getTestMessageMatching(String[] messages, String regex) {

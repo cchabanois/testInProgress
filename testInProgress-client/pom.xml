@@ -17,6 +17,12 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<repositories>
+		<repository>
+			<id>local-repo</id>
+			<url>file://${basedir}/local-repo</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -30,20 +36,26 @@
 			<version>1.8.4</version>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>parallel-junit</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<groupId>org.jenkins-ci</groupId>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
-        <configuration>
-          <excludes>
-            <exclude>tests/*.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.13</version>
+				<configuration>
+					<excludes>
+						<exclude>tests/*.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

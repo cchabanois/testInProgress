@@ -52,7 +52,7 @@ var TestRun = (function($) {
 		this.panelStackTraceId = "panel-stackTrace-" + TestRun.index;
 		this.stackTraceId = "stackTrace-" + TestRun.index;
 		$('#' + this.elementId).html(
-				"<div class='testpanel'>" + "<fieldset><legend>" + runId
+				"<div class='testpanel'>" + "<fieldset><legend><span></span>" + runId
 						+ "</legend>" + "<fieldset>" + "<div id='"
 						+ this.testMessageId + "'></div>"
 						+ "Runs : <span class='stat' id='" + this.runsId
@@ -265,18 +265,23 @@ var TestRun = (function($) {
 			var legendClass = "";
 			if (this.errors > 0 | this.failures > 0) {
 				if (this.testEnded == this.testCount) {
-					legendClass = "errorSuite";
+					legendClass = "runFailureIcon";
 				} else {
-					legendClass = "errorSuite"+(Math.floor(1+this.testEnded*9/this.testCount));
+					legendClass = "runProgressIcon runProgressFailure"
+							+ (Math.floor(1 + this.testEnded * 9
+									/ this.testCount)) + "Icon";
 				}
 			} else {
 				if (this.testEnded == this.testCount) {
-					legendClass = "successSuite";
+					legendClass = "runSuccessIcon";
 				} else {
-					legendClass = "successSuite"+(Math.floor(1+this.testEnded*9/this.testCount));
+					legendClass = "runProgressIcon runProgressSuccess"
+							+ (Math.floor(1 + this.testEnded * 9
+									/ this.testCount)) + "Icon";
 				}
 			}
-			$('#' + this.elementId + "> .testpanel > fieldset legend").addClass(legendClass);
+			$('#' + this.elementId + "> .testpanel > fieldset legend span").attr(
+					"class", legendClass);
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;

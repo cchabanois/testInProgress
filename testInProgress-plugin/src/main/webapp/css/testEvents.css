@@ -87,16 +87,95 @@ min-width:50px
 }
 
 .testpanel > fieldset > legend {
-	padding: 4px 15px 4px 25px;
   	font-size:90%;
   	text-align:left;
-  	background-image:url(../images/junit.gif);
   	background-color:#F0F0F0;
-  	background-repeat:no-repeat;
-  	background-position: top left;
 	border:1px solid silver;
 	border-radius:8px;
+	vertical-align: middle;
 }
+
+legend > span {
+	padding: 4px 4px 4px 4px;
+	display:inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+}
+
+.runIcon {
+	background:url(../images/junit.gif) no-repeat;
+	background-position: top left;
+}
+.runSuccessIcon {
+	background:url(../images/junitsucc.gif) no-repeat;
+	background-position: top left;
+}
+.runFailureIcon {
+	background:url(../images/juniterr.gif) no-repeat;
+	background-position: top left;
+}
+/* sprite generated using stitches (http://draeton.github.com/stitches/) */
+.runProgressIcon {
+    background: url(../images/progress/suiteProgress.png) no-repeat;
+	width: 16px;
+    height: 16px;    
+}
+.runProgressFailure1Icon {
+    background-position: -108px -27px;
+}
+.runProgressFailure2Icon {
+    background-position: -108px -0px;
+}
+.runProgressFailure3Icon {
+    background-position: -81px -81px;
+}
+.runProgressFailure4Icon {
+    background-position: -54px -81px;
+}
+.runProgressFailure5Icon {
+    background-position: -27px -81px;
+}
+.runProgressFailure6Icon {
+    background-position: -0px -81px;
+}
+.runProgressFailure7Icon {
+    background-position: -81px -54px;
+}
+.runProgressFailure8Icon {
+    background-position: -54px -54px;
+}
+.runProgressFailure9Icon {
+    background-position: -27px -54px;
+}
+.runProgressSuccess1Icon {
+    background-position: -0px -54px;
+}
+.runProgressSuccess2Icon {
+    background-position: -81px -27px;
+}
+.runProgressSuccess3Icon {
+    background-position: -54px -27px;
+}
+.runProgressSuccess4Icon {
+    background-position: -27px -27px;
+}
+.runProgressSuccess5Icon {
+    background-position: -0px -27px;
+}
+.runProgressSuccess6Icon {
+    background-position: -81px -0px;
+}
+.runProgressSuccess7Icon {
+    background-position: -54px -0px;
+}
+.runProgressSuccess8Icon {
+    background-position: -27px -0px;
+}
+.runProgressSuccess9Icon {
+    background-position: -0px -0px;
+}
+
 .testpanel legend.successSuite {
 	background-image:url(../images/junitsucc.gif);
 }

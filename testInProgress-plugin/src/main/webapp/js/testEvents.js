@@ -36,6 +36,7 @@ var TestRun = (function($) {
 		this.tree = null;
 		this.runId = runId;
 		this.treeEvents = [];
+		this.currentNode = null;
 		this.elementId = elementId;
 		this.testCount = 0;
 		this.testStarted = 0;
@@ -52,8 +53,8 @@ var TestRun = (function($) {
 		this.panelStackTraceId = "panel-stackTrace-" + TestRun.index;
 		this.stackTraceId = "stackTrace-" + TestRun.index;
 		$('#' + this.elementId).html(
-				"<div class='testpanel'>" + "<fieldset><legend><span></span>" + runId
-						+ "</legend>" + "<fieldset>" + "<div id='"
+				"<div class='testpanel'>" + "<fieldset><legend><span></span>"
+						+ runId + "</legend>" + "<fieldset>" + "<div id='"
 						+ this.testMessageId + "'></div>"
 						+ "Runs : <span class='stat' id='" + this.runsId
 						+ "'></span>" + "Errors: <span class='stat' id='"
@@ -101,7 +102,12 @@ var TestRun = (function($) {
 			if (this.tree != null && this.treeWillBeRefreshed == true) {
 				this.tree.refresh();
 			}
-			this.updateSuiteIcon();
+			if (this.tree != null) {
+				this.updateStats();
+				this.updateProgressBar();
+				this.updateSuiteIcon();
+				this.updateSelectedNode();
+			}
 		},
 		handleTestEvent : function(event) {
 			switch (event.type) {
@@ -129,7 +135,6 @@ var TestRun = (function($) {
 			default:
 				break;
 			}
-			this.updateStats();
 		},
 		updateStats : function() {
 			var runs = this.testStarted + "/" + this.testCount;
@@ -139,6 +144,42 @@ var TestRun = (function($) {
 			$("#" + this.runsId).text(runs);
 			$("#" + this.errorsId).text(this.errors);
 			$("#" + this.failuresId).text(this.failures);
+		},
+		updateProgressBar : function() {
+			if (this.errors > 0 || this.failures > 0) {
+				$("#" + this.progressId + " > div").css({
+					'background' : 'darkred'
+				});
+			}
+			$("#" + this.progressId).progressbar("value", this.testEnded);
+		},
+		updateSuiteIcon : function() {
+			var legendClass = "";
+			if (this.errors > 0 | this.failures > 0) {
+				if (this.testEnded == this.testCount) {
+					legendClass = "runFailureIcon";
+				} else {
+					legendClass = "runProgressIcon runProgressFailure"
+							+ (Math.floor(1 + this.testEnded * 9
+									/ this.testCount)) + "Icon";
+				}
+			} else {
+				if (this.testEnded == this.testCount) {
+					legendClass = "runSuccessIcon";
+				} else {
+					legendClass = "runProgressIcon runProgressSuccess"
+							+ (Math.floor(1 + this.testEnded * 9
+									/ this.testCount)) + "Icon";
+				}
+			}
+			$('#' + this.elementId + "> .testpanel > fieldset legend span")
+					.attr("class", legendClass);
+		},
+		updateSelectedNode : function() {
+			if ((this.currentNode != null)
+					&& (!$('#' + this.scrollLockId).is(':checked'))) {
+				this.tree.selectNode(this.currentNode);
+			}
 		},
 		setMessage : function(message) {
 			$("#" + this.testMessageId).text(message);
@@ -165,149 +206,40 @@ var TestRun = (function($) {
 			if (this.tree == null) {
 				this.createTreeView();
 			}
-			var node = this.getNodeByTestId(event.testId);
-			node.testStatus = TestRun.TestStatus.RUNNING;
-			this.updateNode(node);
-			this.updateParentNode(node);
-			this.expandParent(node);
-			if (!$('#' + this.scrollLockId).is(':checked')) {
-				this.tree.selectNode(node);
-			}
-		},
-		updateNode : function(node) {
-			if (node.elapsedTime != null) {
-				var elapsedTimeInSeconds = numeral(node.elapsedTime / 1000)
-						.format('0,0.000');
-				node.name = node.testName + "<span class='testElapsedTime'> ("
-						+ elapsedTimeInSeconds + " s)</span";
-			} else {
-				node.name = node.testName;
-			}
-			if (node.suite) {
-				switch (node.testStatus) {
-				case TestRun.TestStatus.UNKNOWN:
-					node.iconSkin = TestRun.IconSkin.TESTSUITE;
-					break;
-				case TestRun.TestStatus.RUNNING:
-					node.iconSkin = TestRun.IconSkin.TESTSUITE_RUN;
-					break;
-				case TestRun.TestStatus.PASSED:
-					node.iconSkin = TestRun.IconSkin.TESTSUITE_PASSED;
-					break;
-				case TestRun.TestStatus.FAILED:
-					node.iconSkin = TestRun.IconSkin.TESTSUITE_FAILED;
-					break;
-				}
-			} else {
-				switch (node.testStatus) {
-				case TestRun.TestStatus.UNKNOWN:
-					node.iconSkin = TestRun.IconSkin.TEST;
-					break;
-				case TestRun.TestStatus.IGNORED:
-					node.iconSkin = TestRun.IconSkin.TEST_IGNORED;
-					break;
-				case TestRun.TestStatus.RUNNING:
-					node.iconSkin = TestRun.IconSkin.TEST_RUN;
-					break;
-				case TestRun.TestStatus.PASSED:
-					node.iconSkin = TestRun.IconSkin.TEST_PASSED;
-					break;
-				case TestRun.TestStatus.FAILED:
-					node.iconSkin = TestRun.IconSkin.TEST_FAILED;
-					break;
-				case TestRun.TestStatus.ERROR:
-					node.iconSkin = TestRun.IconSkin.TEST_ERROR;
-					break;
-				}
-			}
-			if (this.treeWillBeRefreshed == false) {
-				this.tree.updateNode(node);
-			}
-		},
-		expandParent : function(node) {
-			var parent = node.getParentNode();
-			while (parent != null && parent.open == false) {
-				if (this.treeWillBeRefreshed == true) {
-					parent.open = true;
-				} else {
-					this.tree.expandNode(parent, true, false, false, false);
-				}
-				parent = parent.getParentNode();
-			}
-		},
-		collapseParentIfPassed : function(node) {
-			var parent = node.getParentNode();
-			while (parent != null) {
-				if (parent.testStatus == TestRun.TestStatus.PASSED) {
-					if (this.treeWillBeRefreshed == true) {
-						parent.open = false;
-					} else {
-						this.tree
-								.expandNode(parent, false, false, false, false);
-					}
-				} else {
-					break;
-				}
-				parent = parent.getParentNode();
-			}
+			this.currentNode = this.getNodeByTestId(event.testId);
+			this.currentNode.testStatus = TestRun.TestStatus.RUNNING;
+			this.updateNode(this.currentNode);
+			this.updateParentNode(this.currentNode);
+			this.expandParent(this.currentNode);
 		},
 		handleTestFailedEvent : function(event) {
 			this.failures++;
-			var node = this.getNodeByTestId(event.testId);
-			node.testStatus = TestRun.TestStatus.FAILED;
-			this.updateNode(node);
-			node.trace = event.trace;
-			$("#" + this.progressId + " > div").css({
-				'background' : 'darkred'
-			});
-		},
-		updateSuiteIcon : function() {
-			var legendClass = "";
-			if (this.errors > 0 | this.failures > 0) {
-				if (this.testEnded == this.testCount) {
-					legendClass = "runFailureIcon";
-				} else {
-					legendClass = "runProgressIcon runProgressFailure"
-							+ (Math.floor(1 + this.testEnded * 9
-									/ this.testCount)) + "Icon";
-				}
-			} else {
-				if (this.testEnded == this.testCount) {
-					legendClass = "runSuccessIcon";
-				} else {
-					legendClass = "runProgressIcon runProgressSuccess"
-							+ (Math.floor(1 + this.testEnded * 9
-									/ this.testCount)) + "Icon";
-				}
-			}
-			$('#' + this.elementId + "> .testpanel > fieldset legend span").attr(
-					"class", legendClass);
+			this.currentNode = this.getNodeByTestId(event.testId);
+			this.currentNode.testStatus = TestRun.TestStatus.FAILED;
+			this.updateNode(this.currentNode);
+			this.currentNode.trace = event.trace;
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
-			var node = this.getNodeByTestId(event.testId);
-			node.testStatus = TestRun.TestStatus.ERROR;
-			this.updateNode(node);
-			node.trace = event.trace;
-			$("#" + this.progressId + " > div").css({
-				'background' : 'darkred'
-			});
+			this.currentNode = this.getNodeByTestId(event.testId);
+			this.currentNode.testStatus = TestRun.TestStatus.ERROR;
+			this.updateNode(this.currentNode);
+			this.currentNode.trace = event.trace;
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;
-			var node = this.getNodeByTestId(event.testId);
-			node.elapsedTime = event.elapsedTime;
-			if (node.testStatus == TestRun.TestStatus.RUNNING) {
+			this.currentNode = this.getNodeByTestId(event.testId);
+			this.currentNode.elapsedTime = event.elapsedTime;
+			if (this.currentNode.testStatus == TestRun.TestStatus.RUNNING) {
 				if (event.ignored) {
-					node.testStatus = TestRun.TestStatus.IGNORED;
+					this.currentNode.testStatus = TestRun.TestStatus.IGNORED;
 				} else {
-					node.testStatus = TestRun.TestStatus.PASSED;
+					this.currentNode.testStatus = TestRun.TestStatus.PASSED;
 				}
 			}
-			this.updateNode(node);
-			$("#" + this.progressId).progressbar("value", this.testEnded);
-			this.updateParentNode(node);
-			this.collapseParentIfPassed(node);
+			this.updateNode(this.currentNode);
+			this.updateParentNode(this.currentNode);
+			this.collapseParentIfPassed(this.currentNode);
 		},
 		updateParentNode : function(childNode) {
 			var parentNode = childNode.getParentNode();
@@ -410,7 +342,84 @@ var TestRun = (function($) {
 				return;
 			}
 			return event.testName.slice(0, index);
-		}
+		},
+		updateNode : function(node) {
+			if (node.elapsedTime != null) {
+				var elapsedTimeInSeconds = numeral(node.elapsedTime / 1000)
+						.format('0,0.000');
+				node.name = node.testName + "<span class='testElapsedTime'> ("
+						+ elapsedTimeInSeconds + " s)</span";
+			} else {
+				node.name = node.testName;
+			}
+			if (node.suite) {
+				switch (node.testStatus) {
+				case TestRun.TestStatus.UNKNOWN:
+					node.iconSkin = TestRun.IconSkin.TESTSUITE;
+					break;
+				case TestRun.TestStatus.RUNNING:
+					node.iconSkin = TestRun.IconSkin.TESTSUITE_RUN;
+					break;
+				case TestRun.TestStatus.PASSED:
+					node.iconSkin = TestRun.IconSkin.TESTSUITE_PASSED;
+					break;
+				case TestRun.TestStatus.FAILED:
+					node.iconSkin = TestRun.IconSkin.TESTSUITE_FAILED;
+					break;
+				}
+			} else {
+				switch (node.testStatus) {
+				case TestRun.TestStatus.UNKNOWN:
+					node.iconSkin = TestRun.IconSkin.TEST;
+					break;
+				case TestRun.TestStatus.IGNORED:
+					node.iconSkin = TestRun.IconSkin.TEST_IGNORED;
+					break;
+				case TestRun.TestStatus.RUNNING:
+					node.iconSkin = TestRun.IconSkin.TEST_RUN;
+					break;
+				case TestRun.TestStatus.PASSED:
+					node.iconSkin = TestRun.IconSkin.TEST_PASSED;
+					break;
+				case TestRun.TestStatus.FAILED:
+					node.iconSkin = TestRun.IconSkin.TEST_FAILED;
+					break;
+				case TestRun.TestStatus.ERROR:
+					node.iconSkin = TestRun.IconSkin.TEST_ERROR;
+					break;
+				}
+			}
+			if (this.treeWillBeRefreshed == false) {
+				this.tree.updateNode(node);
+			}
+		},
+		expandParent : function(node) {
+			var parent = node.getParentNode();
+			while (parent != null && parent.open == false) {
+				if (this.treeWillBeRefreshed == true) {
+					parent.open = true;
+				} else {
+					this.tree.expandNode(parent, true, false, false, false);
+				}
+				parent = parent.getParentNode();
+			}
+		},
+		collapseParentIfPassed : function(node) {
+			var parent = node.getParentNode();
+			while (parent != null) {
+				if (parent.testStatus == TestRun.TestStatus.PASSED) {
+					if (this.treeWillBeRefreshed == true) {
+						parent.open = false;
+					} else {
+						this.tree
+								.expandNode(parent, false, false, false, false);
+					}
+				} else {
+					break;
+				}
+				parent = parent.getParentNode();
+			}
+		}		
 	};
 
 	return TestRun;

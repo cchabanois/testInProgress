@@ -57,10 +57,10 @@ var TestRun = (function($) {
 						+ runId + "</legend>" + "<fieldset>" + "<div id='"
 						+ this.testMessageId + "'></div>"
 						+ "Runs : <span class='stat' id='" + this.runsId
-						+ "'></span>" + "Errors: <span class='stat' id='"
-						+ this.errorsId + "'></span>"
+						+ "'>0/0</span>" + "Errors: <span class='stat' id='"
+						+ this.errorsId + "'>0</span>"
 						+ "Failures : <span class='stat' id='"
-						+ this.failuresId + "'></span><div id='"
+						+ this.failuresId + "'>0</span><div id='"
 						+ this.progressId + "'></div></fieldset>"
 						+ "<div><div id='" + this.treeId
 						+ "' class='ztree'></div>"
@@ -91,16 +91,13 @@ var TestRun = (function($) {
 			if (events.length == 0) {
 				return;
 			}
-			if (this.tree == null) {
-				this.treeWillBeRefreshed = true;
+			if (events.length > 200) {
+				this.expandNodes = false;
 			} else {
-				this.treeWillBeRefreshed = false;
+				this.expandNodes = true;
 			}
 			for ( var i = 0; i < events.length; i++) {
 				this.handleTestEvent(events[i]);
-			}
-			if (this.tree != null && this.treeWillBeRefreshed == true) {
-				this.tree.refresh();
 			}
 			if (this.tree != null) {
 				this.updateStats();
@@ -210,7 +207,9 @@ var TestRun = (function($) {
 			this.currentNode.testStatus = TestRun.TestStatus.RUNNING;
 			this.updateNode(this.currentNode);
 			this.updateParentNode(this.currentNode);
-			this.expandParent(this.currentNode);
+			if (this.expandNodes) {
+				this.expandParent(this.currentNode);
+			}
 		},
 		handleTestFailedEvent : function(event) {
 			this.failures++;
@@ -239,7 +238,9 @@ var TestRun = (function($) {
 			}
 			this.updateNode(this.currentNode);
 			this.updateParentNode(this.currentNode);
-			this.collapseParentIfPassed(this.currentNode);
+			if (this.expandNodes) {
+				this.collapseParentIfPassed(this.currentNode);
+			}
 		},
 		updateParentNode : function(childNode) {
 			var parentNode = childNode.getParentNode();
@@ -389,18 +390,12 @@ var TestRun = (function($) {
 					break;
 				}
 			}
-			if (this.treeWillBeRefreshed == false) {
-				this.tree.updateNode(node);
-			}
+			this.tree.updateNode(node);
 		},
 		expandParent : function(node) {
 			var parent = node.getParentNode();
 			while (parent != null && parent.open == false) {
-				if (this.treeWillBeRefreshed == true) {
-					parent.open = true;
-				} else {
-					this.tree.expandNode(parent, true, false, false, false);
-				}
+				this.tree.expandNode(parent, true, false, false, false);
 				parent = parent.getParentNode();
 			}
 		},
@@ -408,18 +403,13 @@ var TestRun = (function($) {
 			var parent = node.getParentNode();
 			while (parent != null) {
 				if (parent.testStatus == TestRun.TestStatus.PASSED) {
-					if (this.treeWillBeRefreshed == true) {
-						parent.open = false;
-					} else {
-						this.tree
-								.expandNode(parent, false, false, false, false);
-					}
+					this.tree.expandNode(parent, false, false, false, false);
 				} else {
 					break;
 				}
 				parent = parent.getParentNode();
 			}
-		}		
+		}
 	};
 
 	return TestRun;
@@ -445,10 +435,15 @@ var TestRuns = (function($) {
 		},
 		handleNextTestEvents : function() {
 			var $this = this;
+			var time1 = (new Date()).getTime();
 			remoteAction.getTestEvents(this.eventsCount, function(t) {
+				var time2 = (new Date()).getTime();
+				console.log("Time to get events : " + (time2 - time1));
 				var testEvents = t.responseObject();
 				$this.handleTestEvents(testEvents);
 				$this.eventsCount += testEvents.length;
+				var time3 = (new Date()).getTime();
+				console.log("Time to handle events : " + (time3 - time2));
 			});
 		},
 		handleTestEvents : function(buildEvents) {

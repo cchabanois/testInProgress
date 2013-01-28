@@ -34,24 +34,27 @@ public class TestInProgressRunAction implements Action {
 	}
 
 	@JavaScriptMethod
-	public List<BuildTestEvent> getTestEvents(int fromIndex) {
+	public BuildTestEventList getTestEvents(int fromIndex) {
 		List<BuildTestEvent> events = buildTestResults.getEvents();
-		return events.subList(fromIndex, events.size());
+		return new BuildTestEventList(events.subList(fromIndex, events.size()),
+				build.isBuilding());
 	}
 
 	@JavaScriptMethod
-	public List<BuildTestEvent> getPreviousTestEvents() {
+	public BuildTestEventList getPreviousTestEvents() {
 		Run previousCompletedBuild = build.getPreviousCompletedBuild();
+		List<BuildTestEvent> buildTestEvents = Collections.emptyList();
 		if (previousCompletedBuild == null) {
-			return Collections.emptyList();
+			return new BuildTestEventList(buildTestEvents, false);
 		}
-		TestInProgressRunAction action = previousCompletedBuild.getAction(TestInProgressRunAction.class);
+		TestInProgressRunAction action = previousCompletedBuild
+				.getAction(TestInProgressRunAction.class);
 		if (action == null) {
-			return Collections.emptyList();
+			return new BuildTestEventList(buildTestEvents, false);
 		}
 		return action.getTestEvents(0);
 	}
-	
+
 	public String getUrlName() {
 		return "testinprogress";
 	}

@@ -422,6 +422,7 @@ var TestRuns = (function($) {
 		this.eventsCount = 0;
 		this.testRuns = [];
 		this.index = 0;
+		this.building = true;
 	}
 
 	TestRuns.prototype = {
@@ -430,21 +431,30 @@ var TestRuns = (function($) {
 			(function() {
 				$this.handleNextTestEvents();
 				// call the function again in 2 seconds
-				setTimeout(arguments.callee, 2000);
+				if ($this.building) {
+					setTimeout(arguments.callee, 2000);
+				}
 			})();
 		},
 		handleNextTestEvents : function() {
 			var $this = this;
 			var time1 = (new Date()).getTime();
-			remoteAction.getTestEvents(this.eventsCount, function(t) {
-				var time2 = (new Date()).getTime();
-				console.log("Time to get events : " + (time2 - time1));
-				var testEvents = t.responseObject();
-				$this.handleTestEvents(testEvents);
-				$this.eventsCount += testEvents.length;
-				var time3 = (new Date()).getTime();
-				console.log("Time to handle events : " + (time3 - time2));
-			});
+			remoteAction
+					.getTestEvents(
+							this.eventsCount,
+							function(t) {
+								var time2 = (new Date()).getTime();
+								console.log("Time to get events : "
+										+ (time2 - time1));
+								var buildTestEventsList = t.responseObject();
+								$this.building = buildTestEventsList.building;
+								$this
+										.handleTestEvents(buildTestEventsList.buildTestEvents);
+								$this.eventsCount += buildTestEventsList.buildTestEvents.length;
+								var time3 = (new Date()).getTime();
+								console.log("Time to handle events : "
+										+ (time3 - time2));
+							});
 		},
 		handleTestEvents : function(buildEvents) {
 			var runIdToRunEvents = {};

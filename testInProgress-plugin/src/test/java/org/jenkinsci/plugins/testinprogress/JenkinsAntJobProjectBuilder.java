@@ -24,7 +24,8 @@ public class JenkinsAntJobProjectBuilder {
 	private Ant.AntInstallation antInstallation;
 	private String targets = "";
 	private Node node;
-
+	private String properties = null;
+	
 	private JenkinsAntJobProjectBuilder(Jenkins jenkins, String name) {
 		this.jenkins = jenkins;
 		this.name = name;
@@ -56,6 +57,11 @@ public class JenkinsAntJobProjectBuilder {
 		return this;
 	}
 
+	public JenkinsAntJobProjectBuilder withProperties(String properties) {
+		this.properties = properties;
+		return this;
+	}
+	
 	public JenkinsJob create() throws Exception {
 		TopLevelItem item = jenkins.getItem(name);
 		if (item != null) {
@@ -64,7 +70,7 @@ public class JenkinsAntJobProjectBuilder {
 		FreeStyleProject job = jenkins.createProject(FreeStyleProject.class,
 				name);
 		Ant ant = new Ant(targets, antInstallation.getName(), null, "build.xml",
-				null);
+				properties);
 		job.setScm(new ExtractResourceSCM(resource.toURI().toURL()));
 		if (node != null) {
 			job.setAssignedNode(node);

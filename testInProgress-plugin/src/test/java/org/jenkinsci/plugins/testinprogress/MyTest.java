@@ -26,7 +26,7 @@ public class MyTest {
 		JenkinsJob jenkinsJob = aJenkinsAntJobProject(j.jenkins,
 				"antTestProject").withAntInstallation(antInstallation)
 				.withProjectZipFile(new File("resources/antTestProject.zip"))
-				.withAssignedNode(slave).withTargets("test-parallelSuite").create();
+				.withAssignedNode(slave).withTargets("test-sequence-parameterized").withProperties("numTests=100").create();
 		Run build = jenkinsJob.run();
 		String s = FileUtils.readFileToString(build.getLogFile());
 		System.out.println(s);

@@ -1,4 +1,4 @@
 testInProgress
 ==============
 
-![Screenshot](http://github.com/cchabanois/progressInJenkins/raw/gh-pages/images/progressInJenkins.png)
+![Screenshot](https://raw.github.com/cchabanois/testInProgress/gh-pages/images/progressInJenkins.png)

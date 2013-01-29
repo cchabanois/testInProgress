@@ -7,23 +7,23 @@ import java.util.concurrent.Future;
 
 import org.junit.Test;
 
-import tests.ProgressCalcTestsSuite;
+import de.oschoen.junit.runner.ProgressAllTests;
 
-public class ProgressSuiteTest extends AbstractProgressSuiteTest {
+
+public class ProgressBatchSuiteTest extends AbstractProgressSuiteTest {
 
 	@Test
-	public void testProgressSuite() throws Exception {
+	public void testProgressBatchSuite() throws Exception {
 		// Given
 
 		// When
-		Future<String[]> result = runProgressSuite(ProgressCalcTestsSuite.class);
+		Future<String[]> result = runProgressSuite(ProgressAllTests.class);
 
 		// Then
 		String[] messages = result.get();
-		assertThat(messages[0], containsString("%TESTC  6 v2"));
+		printTestMessages(messages);
+		assertThat(messages[0], containsString("%TESTC  5 v2"));
 		assertThat(messages[messages.length-1], containsString("%RUNTIME"));
-	}
-
-
-
+	}	
+	
 }

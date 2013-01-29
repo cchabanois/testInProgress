@@ -20,7 +20,7 @@
 	<repositories>
 		<repository>
 			<id>local-repo</id>
-			<url>file://${basedir}/local-repo</url>
+			<url>${project.baseUri}local-repo</url>
 		</repository>
 	</repositories>
 	<dependencies>

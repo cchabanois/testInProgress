@@ -208,6 +208,7 @@ var TestRun = (function($) {
 			if (this.tree == null) {
 				this.createTreeView();
 			}
+			this.setMessage(event.testName);
 			this.currentNode = this.getNodeByTestId(event.testId);
 			this.currentNode.testStatus = TestRun.TestStatus.RUNNING;
 			this.updateNode(this.currentNode);

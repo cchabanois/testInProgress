@@ -17,9 +17,9 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
  * 
  */
 public class TestInProgressRunAction implements Action {
-	private static final String ICON_JUNIT_FILENAME = "/plugin/testInProgress-plugin/images/junit.gif";
-	private static final String ICON_JUNIT_SUCCESS_FILENAME = "/plugin/testInProgress-plugin/images/junitsucc.gif";
-	private static final String ICON_JUNIT_ERR_FILENAME = "/plugin/testInProgress-plugin/images/juniterr.gif";
+	private static final String ICON_JUNIT_FILENAME = "/plugin/testInProgress/images/junit.gif";
+	private static final String ICON_JUNIT_SUCCESS_FILENAME = "/plugin/testInProgress/images/junitsucc.gif";
+	private static final String ICON_JUNIT_ERR_FILENAME = "/plugin/testInProgress/images/juniterr.gif";
 	private final BuildTestResults buildTestResults;
 	private final AbstractBuild build;
 

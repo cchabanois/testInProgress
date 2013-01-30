@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.testinprogress;
 
 import static org.jenkinsci.plugins.testinprogress.JenkinsAntJobProjectBuilder.aJenkinsAntJobProject;
-import static org.junit.Assert.assertTrue;
 import hudson.model.Run;
 import hudson.slaves.DumbSlave;
 import hudson.tasks.Ant;
@@ -9,6 +8,7 @@ import hudson.tasks.Ant;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;

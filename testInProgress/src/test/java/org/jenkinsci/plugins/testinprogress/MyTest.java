@@ -19,6 +19,7 @@ public class MyTest {
 	public JenkinsRule j = new JenkinsRule();
 
 	@Test
+	@Ignore
 	public void test1() throws Exception {
 		j.jenkins.setCrumbIssuer(null);
 		Ant.AntInstallation antInstallation = j.configureDefaultAnt();

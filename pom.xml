@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   
   <modules>
-    <module>testInProgress-plugin</module>
+    <module>testInProgress</module>
     <module>testInProgress-client</module>
   </modules>  
 </project>

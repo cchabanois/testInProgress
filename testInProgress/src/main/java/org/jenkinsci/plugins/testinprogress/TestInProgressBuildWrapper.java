@@ -5,7 +5,6 @@ import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.remoting.Channel;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.forward.Forwarder;
@@ -80,20 +79,15 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	}
 
 	@Override
-	public Descriptor<BuildWrapper> getDescriptor() {
-		return DESCRIPTOR;
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl)super.getDescriptor();
 	}
 
 	@Extension
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-	public static final class DescriptorImpl extends BuildWrapperDescriptor
-			implements Serializable {
-
-		private static final long serialVersionUID = -9114594938706005233L;
+	public static final class DescriptorImpl extends BuildWrapperDescriptor {
 
 		public DescriptorImpl() {
-			super(TestInProgressBuildWrapper.class);
+			super();
 			load();
 		}
 

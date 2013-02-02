@@ -178,9 +178,17 @@ var TestRun = (function($) {
 					.attr("class", legendClass);
 		},
 		updateSelectedNode : function() {
-			if ((this.currentNode != null)
-					&& (!$('#' + this.scrollLockId).is(':checked'))) {
-				this.tree.selectNode(this.currentNode);
+			if ((this.currentNode == null)
+					|| ($('#' + this.scrollLockId).is(':checked'))) {
+				return;
+			}
+			var node = this.currentNode;
+			// don't select a node that is not open ...
+			while (node != null && node.open == false) {
+				node = node.getParentNode();
+			}
+			if (node != null) {
+				this.tree.selectNode(node);
 			}
 		},
 		setMessage : function(message) {

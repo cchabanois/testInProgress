@@ -6,7 +6,7 @@
         href="${rootURL}/plugin/testInProgress/jquery/css/ui-lightness/jquery-ui-1.10.0.custom.css" />        
 <link rel="stylesheet" type="text/css"
         href="${rootURL}/plugin/testInProgress/ztree/css/zTreeStyle/zTreeStyle.css" />        
-<l:layout>
+<l:layout norefresh="true">
     <st:include it="${it.build}" page="sidepanel.jelly" /> 
     <l:main-panel>
 		<script type="text/javascript" src="${rootURL}/plugin/testInProgress/jquery/js/jquery-1.6.4.min.js"></script>

@@ -21,7 +21,6 @@ public class ProgressBatchSuiteTest extends AbstractProgressSuiteTest {
 
 		// Then
 		String[] messages = result.get();
-		printTestMessages(messages);
 		assertThat(messages[0], containsString("%TESTC  5 v2"));
 		assertThat(messages[messages.length-1], containsString("%RUNTIME"));
 	}	

@@ -5,8 +5,10 @@ import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.remoting.Callable;
 import hudson.remoting.Channel;
 import hudson.remoting.RemoteOutputStream;
+import hudson.remoting.VirtualChannel;
 import hudson.remoting.forward.Forwarder;
 import hudson.remoting.forward.ListeningPort;
 import hudson.remoting.forward.PortForwarder;
@@ -18,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.Serializable;
 import java.util.Map;
 
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEventsGenerator;
@@ -51,11 +52,14 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(
 				new File(build.getRootDir(), UNIT_EVENTS_DIR));
 		BuildTestStats buildTestStats = new BuildTestStats();
-		final ListeningPort listeningPort = PortForwarder.create(launcher
-				.getChannel(), 0, new ForwarderImpl(testRunIds, saveTestEventsListener,
-				runningBuildTestEvents, buildTestStats));
-		final BuildTestResults testEvents = new BuildTestResults(build, testRunIds, runningBuildTestEvents, buildTestStats);
-		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(build, testEvents);
+		final ListeningPort listeningPort = createPortForwarder(
+				launcher.getChannel(), 0, new ForwarderImpl(testRunIds,
+						saveTestEventsListener, runningBuildTestEvents,
+						buildTestStats));
+		final BuildTestResults testEvents = new BuildTestResults(build,
+				testRunIds, runningBuildTestEvents, buildTestStats);
+		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(
+				build, testEvents);
 		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();
 		return new Environment() {
@@ -78,9 +82,36 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		};
 	}
 
+	/**
+	 * Same than PortForwarder.create but also works when build is running on
+	 * master
+	 * 
+	 * @see PortForwarder#create(VirtualChannel, int, Forwarder)
+	 */
+	public static ListeningPort createPortForwarder(VirtualChannel ch,
+			final int acceptingPort, Forwarder forwarder) throws IOException,
+			InterruptedException {
+		// need a remotable reference
+		final Forwarder proxy = ch.export(Forwarder.class, forwarder);
+
+		return ch.call(new Callable<ListeningPort, IOException>() {
+			public ListeningPort call() throws IOException {
+				PortForwarder t = new PortForwarder(acceptingPort, proxy);
+				t.start();
+				if (Channel.current() != null) {
+					// running on slave
+					return Channel.current().export(ListeningPort.class, t);
+				} else {
+					// running on master
+					return t;
+				}
+			}
+		});
+	}
+
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl)super.getDescriptor();
+		return (DescriptorImpl) super.getDescriptor();
 	}
 
 	@Extension
@@ -110,7 +141,7 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	private static class ForwarderImpl implements Forwarder {
 		private final IBuildTestEventListener[] listeners;
 		private final TestRunIds testRunIds;
-		
+
 		public ForwarderImpl(TestRunIds testRunIds,
 				IBuildTestEventListener... listeners) {
 			this.testRunIds = testRunIds;

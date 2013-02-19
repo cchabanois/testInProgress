@@ -300,6 +300,7 @@ var TestRun = (function($) {
 					var newNode = {
 						name : testName,
 						iconSkin : TestRun.IconSkin.TEST,
+						title : testName,
 						// our properties :
 						id : event.testId,
 						suite : false,
@@ -311,6 +312,7 @@ var TestRun = (function($) {
 				} else {
 					var newNode = {
 						name : event.testName,
+						title : event.testName,
 						iconSkin : TestRun.IconSkin.TESTSUITE,
 						children : [],
 						// our properties :
@@ -332,7 +334,13 @@ var TestRun = (function($) {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
 			$.fn.zTree.init($("#" + this.treeId), {
 				view : {
-					nameIsHTML : true
+					nameIsHTML : true,
+					showTitle : true
+				},
+				data : {
+					key : {
+						title : "title"
+					}
 				},
 				callback : {
 					onClick : $.proxy(function(event, treeId, treeNode,

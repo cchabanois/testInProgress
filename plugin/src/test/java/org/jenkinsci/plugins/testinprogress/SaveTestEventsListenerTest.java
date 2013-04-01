@@ -10,17 +10,21 @@ import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 import org.jenkinsci.plugins.testinprogress.events.run.RunEndEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.RunStartEvent;
-import org.jenkinsci.plugins.testinprogress.utils.TestAreaUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class SaveTestEventsListenerTest {
 	private SaveTestEventsListener saveTestEventsListener;
 	private File directory;
 	
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
+	
 	@Before
 	public void setUp() throws IOException {
-		directory = TestAreaUtils.getNonExistingFileInTestArea("unitTests");
+		directory = tempFolder.newFolder();
 	}
 	
 	@Test

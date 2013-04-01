@@ -12,9 +12,10 @@ import java.util.List;
 import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
 import org.jenkinsci.plugins.testinprogress.events.run.RunStartEvent;
-import org.jenkinsci.plugins.testinprogress.utils.TestAreaUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class BuildTestResultsTest {
 	private PersistenceRoot persistenceRoot = mock(PersistenceRoot.class);
@@ -23,10 +24,12 @@ public class BuildTestResultsTest {
 	private RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
 	private BuildTestStats buildTestStats = new BuildTestStats();
 
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
+	
 	@Before
 	public void setUp() throws IOException {
-		File persistenceRootFile = TestAreaUtils
-				.getNonExistingFileInTestArea("persistenceRoot");
+		File persistenceRootFile = tempFolder.newFolder();
 		when(persistenceRoot.getRootDir()).thenReturn(persistenceRootFile);
 		saveTestEventsListener = new SaveTestEventsListener(new File(
 				persistenceRootFile, "unitevents"));

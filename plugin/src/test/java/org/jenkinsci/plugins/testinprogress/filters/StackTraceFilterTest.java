@@ -45,8 +45,9 @@ public class StackTraceFilterTest {
 		String newTrace = stackTraceFilter.filter(originalTrace);
 
 		// Then
-		assertEquals("java.lang.AssertionError: expected:<6> but was:<5>\n"
-				+ "at testproject.CalcTest.testAddWillFail(CalcTest.java:20)\n",
+		String lineSeparator = System.getProperty("line.separator");
+		assertEquals("java.lang.AssertionError: expected:<6> but was:<5>"+lineSeparator
+				+ "at testproject.CalcTest.testAddWillFail(CalcTest.java:20)"+lineSeparator,
 				newTrace);
 	}
 

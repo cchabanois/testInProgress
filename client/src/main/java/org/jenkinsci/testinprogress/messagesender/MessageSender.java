@@ -1,7 +1,7 @@
 package org.jenkinsci.testinprogress.messagesender;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Abstract class used to send test messages
@@ -10,35 +10,35 @@ import java.io.PrintWriter;
  * 
  */
 public abstract class MessageSender {
-	protected PrintWriter writer;
+	protected Writer writer;
 
 	public void testRunStarted(int testCount) {
-		writer.println(MessageIds.TEST_RUN_START + testCount + " " + "v2");
-		writer.flush();
+		println(MessageIds.TEST_RUN_START + testCount + " " + "v2");
+		flush();
 	}
 
 	public void testRunEnded(long elapsedTime) {
-		writer.println(MessageIds.TEST_RUN_END + elapsedTime);
-		writer.flush();
+		println(MessageIds.TEST_RUN_END + elapsedTime);
+		flush();
 	}
 
 	public void testTree(String testId, String testName, boolean isSuite,
 			int testCount) {
-		writer.println(MessageIds.TEST_TREE + testId + "," + testName + ","
+		println(MessageIds.TEST_TREE + testId + "," + testName + ","
 				+ Boolean.toString(isSuite) + "," + Integer.toString(testCount));
-		writer.flush();
+		flush();
 	}
 
 	public void testStarted(String testId, String testName, boolean ignored) {
-		writer.println(MessageIds.TEST_START + testId + ","
+		println(MessageIds.TEST_START + testId + ","
 				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName);
-		writer.flush();
+		flush();
 	}
 
 	public void testEnded(String testId, String testName, boolean ignored) {
-		writer.println(MessageIds.TEST_END + testId + ","
+		println(MessageIds.TEST_END + testId + ","
 				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName);
-		writer.flush();
+		flush();
 	}
 
 	public void testFailed(String testId, String testName, String expected,
@@ -59,8 +59,8 @@ public abstract class MessageSender {
 		sb.append(trace);
 		sb.append('\n');
 		sb.append(MessageIds.TRACE_END);
-		writer.println(sb.toString());
-		writer.flush();
+		println(sb.toString());
+		flush();
 	}
 
 	public void testError(String testId, String testName, String trace) {
@@ -72,10 +72,27 @@ public abstract class MessageSender {
 		sb.append(trace);
 		sb.append('\n');
 		sb.append(MessageIds.TRACE_END);
-		writer.println(sb.toString());
-		writer.flush();
+		println(sb.toString());
+		flush();
 	}
 
+	protected void println(String str) {
+		try {
+			writer.write(str);
+			writer.write('\n');
+		} catch (IOException e) {
+			throw new RuntimeException("Could not send message", e);
+		}
+	}
+
+	protected void flush() { 
+		try {
+			writer.flush();
+		} catch (IOException e) {
+			throw new RuntimeException("Could not send message", e);
+		}
+	}
+	
 	public void init() throws IOException {
 
 	}

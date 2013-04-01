@@ -1,6 +1,7 @@
 package org.jenkinsci.testinprogress.messagesender;
 
 import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Creates {@link MessageSender} that send test message to a {@link PrintWriter}
@@ -9,9 +10,9 @@ import java.io.PrintWriter;
  * 
  */
 public class SimpleMessageSenderFactory implements IMessageSenderFactory {
-	private PrintWriter writer;
+	private Writer writer;
 
-	public SimpleMessageSenderFactory(PrintWriter writer) {
+	public SimpleMessageSenderFactory(Writer writer) {
 		this.writer = writer;
 	}
 
@@ -21,7 +22,7 @@ public class SimpleMessageSenderFactory implements IMessageSenderFactory {
 
 	private static class SimpleMessageSender extends MessageSender {
 
-		public SimpleMessageSender(PrintWriter pw) {
+		public SimpleMessageSender(Writer pw) {
 			this.writer = pw;
 		}
 

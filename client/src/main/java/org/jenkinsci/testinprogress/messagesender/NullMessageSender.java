@@ -1,6 +1,5 @@
 package org.jenkinsci.testinprogress.messagesender;
 
-import java.io.PrintWriter;
 
 /**
  * {@link MessageSender} that do not send messages
@@ -11,7 +10,7 @@ import java.io.PrintWriter;
 public class NullMessageSender extends MessageSender {
 
 	public NullMessageSender() {
-		this.writer = new PrintWriter(new NullWriter());
+		this.writer = new NullWriter();
 	}
 	
 }

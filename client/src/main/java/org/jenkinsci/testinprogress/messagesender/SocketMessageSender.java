@@ -3,7 +3,6 @@ package org.jenkinsci.testinprogress.messagesender;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
@@ -26,8 +25,8 @@ public class SocketMessageSender extends MessageSender {
 	public void init() throws IOException {
 		socket = new Socket(host, port);
 		try {
-			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream(), "UTF-8")), false);
+			writer = new BufferedWriter(new OutputStreamWriter(
+					socket.getOutputStream(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}

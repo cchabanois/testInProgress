@@ -15,8 +15,10 @@ import org.jenkinsci.testinprogress.messagesender.SimpleMessageSenderFactory;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
+import tests.AssumptionNotVerifiedTest;
 import tests.CalcTestsSuite;
 import tests.EmptyTest;
+import tests.IgnoredTest;
 import tests.InitializationErrorTest;
 import tests.ParallelSuiteTest;
 import tests.RuleErrorTest;
@@ -73,6 +75,19 @@ public class JUnit4ProgressRunListenerTest {
 	public void testParallelTests() {
 		String[] messages = runTests(ParallelSuiteTest.class);
 		printTestMessages(messages);
+	}
+	
+	@Test
+	public void testIgnoredTest() {
+		String[] messages = runTests(IgnoredTest.class);
+		assertNotNull(getTestMessageMatching(messages, "%TESTS  3,@Ignore: testIgnore(tests.IgnoredTest)"));
+		assertNotNull(getTestMessageMatching(messages, "%TESTE  3,@Ignore: testIgnore(tests.IgnoredTest)"));		
+	}
+	
+	@Test
+	public void testAssumptionTest() {
+		String[] messages = runTests(AssumptionNotVerifiedTest.class);
+		assertNotNull(getTestMessageMatching(messages, "%FAILED 3,@AssumptionFailure: testAssumptionNotVerified(tests.AssumptionNotVerifiedTest)"));	
 	}
 	
 	private String getTestMessageMatching(String[] messages, String regex) {

@@ -73,9 +73,15 @@ public class RunTestEventsGenerator implements ITestRunListener {
 
 	public void testFailed(long timestamp,int status, String testId, String testName,
 			String trace, String expected, String actual) {
+		boolean assumptionFailed = false;
+		if (testName.startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX)) {
+			assumptionFailed = true;
+			testName = testName.substring(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX
+					.length());
+		}
 		if (status == ITestRunListener.STATUS_FAILURE) {
 			fireEvent(new TestFailedEvent(timestamp,testId, testName, expected,
-					actual, trace));
+					actual, trace, assumptionFailed));
 		} else {
 			fireEvent(new TestErrorEvent(timestamp,testId, testName, trace));
 		}

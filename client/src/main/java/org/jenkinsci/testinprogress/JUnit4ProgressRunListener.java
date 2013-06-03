@@ -114,4 +114,11 @@ public class JUnit4ProgressRunListener extends RunListener {
 		messageSender.testEnded(id, description.getDisplayName(), true);
 	}
 	
+	@Override
+	public void testAssumptionFailure(Failure failure) {
+		Description description = failure.getDescription();
+		String id = getTestId(description);
+		messageSender.testAssumptionFailed(id, description.getDisplayName(), failure.getTrace());
+	}
+	
 }

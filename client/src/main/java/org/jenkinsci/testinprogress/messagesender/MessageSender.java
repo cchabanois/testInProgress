@@ -63,6 +63,21 @@ public abstract class MessageSender {
 		flush();
 	}
 
+	public void testAssumptionFailed(String testId, String testName,
+			String trace) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(MessageIds.TEST_FAILED).append(testId).append(",")
+				.append(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX)
+				.append(testName);
+		sb.append("\n");
+		sb.append(MessageIds.TRACE_START).append("\n");
+		sb.append(trace);
+		sb.append('\n');
+		sb.append(MessageIds.TRACE_END);
+		println(sb.toString());
+		flush();
+	}
+
 	public void testError(String testId, String testName, String trace) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(MessageIds.TEST_ERROR).append(testId).append(",")
@@ -85,14 +100,14 @@ public abstract class MessageSender {
 		}
 	}
 
-	protected void flush() { 
+	protected void flush() {
 		try {
 			writer.flush();
 		} catch (IOException e) {
 			throw new RuntimeException("Could not send message", e);
 		}
 	}
-	
+
 	public void init() throws IOException {
 
 	}

@@ -6,7 +6,7 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
  * Notification that a failure occurred during a test
  * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
- *
+ * 
  */
 public class TestFailedEvent extends AbstractRunTestEvent {
 	private final String testId;
@@ -14,15 +14,18 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 	private final String expected;
 	private final String actual;
 	private final String trace;
+	private final boolean assumptionFailed;
 
 	public TestFailedEvent(long timestamp, String testId, String testName,
-			String expected, String actual, String trace) {
+			String expected, String actual, String trace,
+			boolean assumptionFailed) {
 		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.expected = expected;
 		this.actual = actual;
 		this.trace = trace;
+		this.assumptionFailed = assumptionFailed;
 	}
 
 	public String getTestId() {
@@ -49,20 +52,29 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 		return "FAILED";
 	}
 
+	public boolean isAssumptionFailed() {
+		return assumptionFailed;
+	}
+	
 	public String toString(boolean includeTimeStamp) {
 		StringBuilder sb = new StringBuilder();
 		if (includeTimeStamp) {
 			sb.append(Long.toString(getTimestamp())).append(' ');
 		}
-		sb.append(MessageIds.TEST_FAILED).append(testId).append(",").append(testName);
+		sb.append(MessageIds.TEST_FAILED)
+				.append(testId)
+				.append(",")
+				.append((assumptionFailed ? MessageIds.ASSUMPTION_FAILED_TEST_PREFIX
+						: "")
+						+ testName);
 		sb.append("\n");
 		if (expected != null) {
-			sb.append(MessageIds.EXPECTED_START).append('\n').append(expected).append('\n')
-					.append(MessageIds.EXPECTED_END).append('\n');
+			sb.append(MessageIds.EXPECTED_START).append('\n').append(expected)
+					.append('\n').append(MessageIds.EXPECTED_END).append('\n');
 		}
 		if (actual != null) {
-			sb.append(MessageIds.ACTUAL_START).append('\n').append(actual).append('\n')
-					.append(MessageIds.ACTUAL_END).append('\n');
+			sb.append(MessageIds.ACTUAL_START).append('\n').append(actual)
+					.append('\n').append(MessageIds.ACTUAL_END).append('\n');
 		}
 		sb.append(MessageIds.TRACE_START).append("\n");
 		sb.append(trace);
@@ -70,7 +82,7 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 		sb.append(MessageIds.TRACE_END);
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return toString(true);
@@ -81,6 +93,7 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((actual == null) ? 0 : actual.hashCode());
+		result = prime * result + (assumptionFailed ? 1231 : 1237);
 		result = prime * result
 				+ ((expected == null) ? 0 : expected.hashCode());
 		result = prime * result + ((testId == null) ? 0 : testId.hashCode());
@@ -104,6 +117,8 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 				return false;
 		} else if (!actual.equals(other.actual))
 			return false;
+		if (assumptionFailed != other.assumptionFailed)
+			return false;
 		if (expected == null) {
 			if (other.expected != null)
 				return false;
@@ -126,5 +141,6 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 			return false;
 		return true;
 	}
+
 
 }

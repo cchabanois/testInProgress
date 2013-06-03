@@ -226,9 +226,14 @@ var TestRun = (function($) {
 			}
 		},
 		handleTestFailedEvent : function(event) {
-			this.failures++;
 			this.currentNode = this.getNodeByTestId(event.testId);
-			this.currentNode.testStatus = TestRun.TestStatus.FAILED;
+			if (event.assumptionFailed) {
+				this.testIgnored++;
+				this.currentNode.testStatus = TestRun.TestStatus.IGNORED;
+			} else {
+				this.failures++;
+				this.currentNode.testStatus = TestRun.TestStatus.FAILED;				
+			}
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
 		},

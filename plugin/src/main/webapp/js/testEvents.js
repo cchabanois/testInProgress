@@ -62,12 +62,12 @@ var TestRun = (function($) {
 						+ "Failures : <span class='stat' id='"
 						+ this.failuresId + "'>0</span><div id='"
 						+ this.progressId + "'></div></fieldset>"
-						+ "<div><div id='" + this.treeId
+						+ "<div class='noWrapContainer'><div id='" + this.treeId
 						+ "' class='ztree'></div>"
-						+ "<fieldset class='stacktrace' id='"
+						+ "<div class='stacktrace' id='"
 						+ this.panelStackTraceId + "'><div id='"
 						+ this.stackTraceId + "'></div></div></fieldset>"
-						+ "</fieldset></div>");
+						+ "</div></div>");
 		this.createScrollLockButton();
 	}
 	TestRun.prototype = {

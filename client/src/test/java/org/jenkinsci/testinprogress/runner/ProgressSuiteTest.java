@@ -14,9 +14,10 @@ public class ProgressSuiteTest extends AbstractProgressSuiteTest {
 	@Test
 	public void testProgressSuite() throws Exception {
 		// Given
-
+		Class<?> classUsingProgressSuiteRunner = ProgressCalcTestsSuite.class;
+		
 		// When
-		Future<String[]> result = runProgressSuite(ProgressCalcTestsSuite.class);
+		Future<String[]> result = runProgressSuite(classUsingProgressSuiteRunner);
 
 		// Then
 		String[] messages = result.get();

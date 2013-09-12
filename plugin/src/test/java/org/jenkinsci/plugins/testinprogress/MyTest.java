@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress;
 
 import static org.jenkinsci.plugins.testinprogress.JenkinsAntJobProjectBuilder.aJenkinsAntJobProject;
+import static org.junit.Assert.assertTrue;
 import hudson.model.Run;
 import hudson.slaves.DumbSlave;
 import hudson.tasks.Ant;
@@ -16,7 +17,14 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class MyTest {
 
 	@Rule
-	public JenkinsRule j = new JenkinsRule();
+	public JenkinsRule j = new JenkinsRule() {
+		protected void before() throws Throwable {
+			contextPath = "/context";
+			super.before();
+		};
+	};
+
+	
 
 	@Test
 	@Ignore
@@ -27,11 +35,11 @@ public class MyTest {
 		JenkinsJob jenkinsJob = aJenkinsAntJobProject(j.jenkins,
 				"antTestProject").withAntInstallation(antInstallation)
 				.withProjectZipFile(new File("resources/antTestProject.zip"))
-				.withAssignedNode(slave).withTargets("test-sequence-parameterized").withProperties("numTests=100").create();
+				.withAssignedNode(slave).withTargets("test-all").withProperties("numTests=100").create();
 		Run build = jenkinsJob.run();
 		String s = FileUtils.readFileToString(build.getLogFile());
 		System.out.println(s);
-//		assertTrue(s.contains("Test testproject.CalcTest FAILED"));
+		assertTrue(s.contains("Test testproject.CalcTest FAILED"));
 	}
 
 }

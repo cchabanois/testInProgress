@@ -21,7 +21,8 @@ public class ProgressSuiteTest extends AbstractProgressSuiteTest {
 
 		// Then
 		String[] messages = result.get();
-		assertThat(messages[0], containsString("%TESTC  6 v2"));
+		
+		assertThat(messages[0], containsString("{\"testCount\":6,\"messageId\":\"%TESTC\",\"fVersion\":\"v2\"}"));
 		assertThat(messages[messages.length-1], containsString("%RUNTIME"));
 	}
 

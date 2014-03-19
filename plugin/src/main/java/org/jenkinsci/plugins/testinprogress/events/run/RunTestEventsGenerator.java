@@ -31,25 +31,13 @@ public class RunTestEventsGenerator implements ITestRunListener {
 		fireEvent(new RunEndEvent(timestamp,elapsedTime));
 	}
 
-	public void testStarted(long timestamp,String testId, String testName) {
-		boolean ignored = false;
-		if (testName.startsWith(MessageIds.IGNORED_TEST_PREFIX)) {
-			ignored = true;
-			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
-					.length());
-		}
+	public void testStarted(long timestamp,String testId, String testName, boolean ignored ) {
 		TestStartEvent testStartEvent = new TestStartEvent(timestamp,testId, testName, ignored);
 		runningTests.put(testId, testStartEvent);
 		fireEvent(testStartEvent);
 	}
 
-	public void testEnded(long timestamp,String testId, String testName) {
-		boolean ignored = false;
-		if (testName.startsWith(MessageIds.IGNORED_TEST_PREFIX)) {
-			ignored = true;
-			testName = testName.substring(MessageIds.IGNORED_TEST_PREFIX
-					.length());
-		}
+	public void testEnded(long timestamp,String testId, String testName, boolean ignored) {
 		TestStartEvent testStartEvent = runningTests.remove(testId);
 		long timeElapsed = 0;
 		if (testStartEvent != null) {
@@ -62,23 +50,17 @@ public class RunTestEventsGenerator implements ITestRunListener {
 
 	}
 
-	public void testTreeEntry(long timestamp,String description) {
-		Iterator<String> it = Splitter.on(',').split(description).iterator();
-		String testId = it.next();
-		String testName = it.next();
-		boolean isSuite = Boolean.parseBoolean(it.next());
-		int testCount = Integer.parseInt(it.next());
-		fireEvent(new TestTreeEvent(timestamp,testId, testName, isSuite, testCount));
+	public void testTreeEntry(long timestamp, String testId, String testName,
+			String parentId, String parentName, boolean isSuite, int testCount) {
+		fireEvent(new TestTreeEvent(timestamp,testId, testName, parentId, parentName, isSuite, testCount));
 	}
 
 	public void testFailed(long timestamp,int status, String testId, String testName,
 			String trace, String expected, String actual) {
 		boolean assumptionFailed = false;
-		if (testName.startsWith(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX)) {
+		if(expected!="" && actual!="")
 			assumptionFailed = true;
-			testName = testName.substring(MessageIds.ASSUMPTION_FAILED_TEST_PREFIX
-					.length());
-		}
+		
 		if (status == ITestRunListener.STATUS_FAILURE) {
 			fireEvent(new TestFailedEvent(timestamp,testId, testName, expected,
 					actual, trace, assumptionFailed));

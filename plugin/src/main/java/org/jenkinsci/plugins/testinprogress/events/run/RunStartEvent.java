@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Notification that a test run has started.
@@ -25,9 +26,17 @@ public class RunStartEvent extends AbstractRunTestEvent {
 	}
 
 	public String toString(boolean includeTimeStamp) {
-		return (includeTimeStamp ? Long.toString(getTimestamp())+" " : "")
-				+ MessageIds.TEST_RUN_START + Integer.toString(testCount) + " "
-				+ "v2";
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
+		}
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
+		jsonMsg.put("testCount", testCount);
+		jsonMsg.put("fVersion", "v2");
+		
+		return jsonMsg.toString();		
 	}
 
 	@Override

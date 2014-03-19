@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Notification that a test has ended
@@ -49,9 +50,18 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	}
 
 	public String toString(boolean includeTimeStamp) {
-		return (includeTimeStamp ? Long.toString(getTimestamp())+" " : "")
-				+ MessageIds.TEST_END + testId + ","
-				+ (ignored ? MessageIds.IGNORED_TEST_PREFIX : "") + testName;
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
+		}
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_END);
+		jsonMsg.put("testId", testId);
+		jsonMsg.put("testName", testName);
+		jsonMsg.put("ignored", ignored);
+	
+		return jsonMsg.toString();		
 	}
 
 	@Override

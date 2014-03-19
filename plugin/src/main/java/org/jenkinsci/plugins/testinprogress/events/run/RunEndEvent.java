@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Event used when a test run ends
@@ -25,8 +26,15 @@ public class RunEndEvent extends AbstractRunTestEvent {
 	}
 
 	public String toString(boolean includeTimeStamp) {
-		return (includeTimeStamp ? Long.toString(getTimestamp())+ " " : "")
-				+ MessageIds.TEST_RUN_END + elapsedTime;
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
+		}
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
+		jsonMsg.put("elapsedTime", elapsedTime);
+		return jsonMsg.toString();
 	}
 
 	@Override

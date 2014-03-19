@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Notification that a failure occurred during a test
@@ -57,30 +58,21 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 	}
 	
 	public String toString(boolean includeTimeStamp) {
-		StringBuilder sb = new StringBuilder();
-		if (includeTimeStamp) {
-			sb.append(Long.toString(getTimestamp())).append(' ');
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
 		}
-		sb.append(MessageIds.TEST_FAILED)
-				.append(testId)
-				.append(",")
-				.append((assumptionFailed ? MessageIds.ASSUMPTION_FAILED_TEST_PREFIX
-						: "")
-						+ testName);
-		sb.append("\n");
-		if (expected != null) {
-			sb.append(MessageIds.EXPECTED_START).append('\n').append(expected)
-					.append('\n').append(MessageIds.EXPECTED_END).append('\n');
-		}
-		if (actual != null) {
-			sb.append(MessageIds.ACTUAL_START).append('\n').append(actual)
-					.append('\n').append(MessageIds.ACTUAL_END).append('\n');
-		}
-		sb.append(MessageIds.TRACE_START).append("\n");
-		sb.append(trace);
-		sb.append('\n');
-		sb.append(MessageIds.TRACE_END);
-		return sb.toString();
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
+		jsonMsg.put("testId", testId);
+		jsonMsg.put("testName", testName);
+
+		jsonMsg.put("errorTrace",trace.concat("\n"));
+		jsonMsg.put("expectedMsg", expected.concat("\n"));
+		jsonMsg.put("actualMsg", actual.concat("\n"));
+		
+		return jsonMsg.toString();
 	}
 
 	@Override

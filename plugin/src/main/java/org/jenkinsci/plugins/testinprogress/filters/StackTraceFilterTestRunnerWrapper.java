@@ -27,20 +27,21 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 		testRunListener.testRunEnded(timestamp, elapsedTime);
 	}
 
-	public void testStarted(long timestamp, String testId, String testName) {
-		testRunListener.testStarted(timestamp, testId, testName);
+	public void testStarted(long timestamp, String testId, String testName, boolean ignored) {
+		testRunListener.testStarted(timestamp, testId, testName, ignored);
 	}
 
-	public void testEnded(long timestamp, String testId, String testName) {
-		testRunListener.testEnded(timestamp, testId, testName);
+	public void testEnded(long timestamp, String testId, String testName, boolean ignored) {
+		testRunListener.testEnded(timestamp, testId, testName, ignored);
 	}
 
 	public void testRunTerminated() {
 		testRunListener.testRunTerminated();
 	}
 
-	public void testTreeEntry(long timestamp, String description) {
-		testRunListener.testTreeEntry(timestamp, description);
+	public void testTreeEntry(long timestamp, String testId, String testName,
+			String parentId, String parentName, boolean isSuite, int testCount) {
+		testRunListener.testTreeEntry(timestamp, testId, testName, parentId, parentName, isSuite, testCount);
 	}
 
 	public void testFailed(long timestamp, int status, String testId,

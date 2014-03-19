@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Test tree notification
@@ -11,16 +12,25 @@ import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
 public class TestTreeEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
+	private final String parentId;
+	private final String parentName;
 	private final boolean isSuite;
 	private final int testCount;
 
-	public TestTreeEvent(long timestamp, String testId, String testName,
+	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, String parentName,
 			boolean isSuite, int testCount) {
 		super(timestamp);
 		this.testCount = testCount;
 		this.testId = testId;
 		this.isSuite = isSuite;
 		this.testName = testName;
+		this.parentId = parentId;
+		this.parentName = parentName;
+	}
+	
+	public TestTreeEvent(long timestamp, String testId, String testName,
+			boolean isSuite, int testCount) {
+		this(timestamp,testId,testName,"","",isSuite,testCount);
 	}
 
 	public int getTestCount() {
@@ -38,15 +48,36 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 	public String getTestName() {
 		return testName;
 	}
+	
+	public String getParentId(){
+		return parentId;
+	}
+	
+	public String getParentName(){
+		return parentName;
+	}
 
 	public String getType() {
 		return "TSTTREE";
 	}
 
 	public String toString(boolean includeTimeStamp) {
-		return (includeTimeStamp ? Long.toString(getTimestamp()) + " " : "")
-				+ MessageIds.TEST_TREE + testId + "," + testName + ","
-				+ Boolean.toString(isSuite) + "," + Integer.toString(testCount);
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
+		}
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_TREE);
+		jsonMsg.put("testId", testId);
+		jsonMsg.put("testName", testName);
+		jsonMsg.put("parentId", parentId);
+		jsonMsg.put("parentName", parentName);
+		jsonMsg.put("isSuite", isSuite);
+		jsonMsg.put("testCount", testCount);
+		
+		
+		return jsonMsg.toString();
 	}
 
 	@Override
@@ -60,9 +91,12 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		int result = super.hashCode();
 		result = prime * result + (isSuite ? 1231 : 1237);
 		result = prime * result + testCount;
-		result = prime * result + ((testId == null) ? 0 : testId.hashCode());
+		result = prime * result + ((testId == null) ? 0 : testId.hashCode());		
 		result = prime * result
 				+ ((testName == null) ? 0 : testName.hashCode());
+		result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
+		result = prime * result
+				+ ((parentName == null) ? 0 : parentName.hashCode());
 		return result;
 	}
 
@@ -88,6 +122,16 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 			if (other.testName != null)
 				return false;
 		} else if (!testName.equals(other.testName))
+			return false;
+		if (parentId == null) {
+			if (other.parentId!= null)
+				return false;
+		} else if (!parentId.equals(other.parentId))
+			return false;
+		if (parentName == null) {
+			if (other.parentName != null)
+				return false;
+		} else if (!parentName.equals(other.parentName))
 			return false;
 		return true;
 	}

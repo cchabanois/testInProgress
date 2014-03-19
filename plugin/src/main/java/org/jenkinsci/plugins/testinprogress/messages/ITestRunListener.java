@@ -55,7 +55,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that started
 	 */
-	public void testStarted(long timestamp, String testId, String testName);
+	public void testStarted(long timestamp, String testId, String testName, boolean ignored);
 
 	/**
 	 * An individual test has ended.
@@ -65,7 +65,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that ended
 	 */
-	public void testEnded(long timestamp, String testId, String testName);
+	public void testEnded(long timestamp, String testId, String testName, boolean ignored);
 
 	/**
 	 * The VM instance performing the tests has terminated.
@@ -81,6 +81,8 @@ public interface ITestRunListener {
 	 * 
 	 *  testId: a unique id for the test
 	 *  testName: the name of the test
+	 *  parentId: Id of the parent to which this test belong. In case it does not belong just send empty string.
+	 *  parentName: Name of the parent to which this test belong. In case it does not belong just send empty string.
 	 *  isSuite: true or false depending on whether the test is a suite
 	 *  testCount: an integer indicating the number of tests
 	 * 
@@ -92,7 +94,8 @@ public interface ITestRunListener {
 	 * 
 	 * @see MessageIds#TEST_TREE
 	 */
-	public void testTreeEntry(long timestamp, String description);
+	public void testTreeEntry(long timestamp, String testId, String testName,
+			String parentId, String parentName, boolean isSuite, int testCount);
 
 	/**
 	 * An individual test has failed with a stack trace.

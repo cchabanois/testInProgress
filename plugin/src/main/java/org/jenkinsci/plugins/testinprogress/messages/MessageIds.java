@@ -56,29 +56,29 @@ public class MessageIds {
 	 * Notification that a test run has started.
 	 * MessageIds.TEST_RUN_START + testCount.toString + " " + version
 	 */
-	public static final String TEST_RUN_START=  "%TESTC  "; //$NON-NLS-1$
+	public static final String TEST_RUN_START=  "%TESTC"; //$NON-NLS-1$
 	/**
 	 * Notification that a test has started.
 	 * MessageIds.TEST_START + testID + "," + testName
 	 */
-	public static final String TEST_START=  "%TESTS  ";		 //$NON-NLS-1$
+	public static final String TEST_START=  "%TESTS";		 //$NON-NLS-1$
 	/**
 	 * Notification that a test has started.
 	 * TEST_END + testID + "," + testName
 	 */
-	public static final String TEST_END=    "%TESTE  ";		 //$NON-NLS-1$
+	public static final String TEST_END=    "%TESTE";		 //$NON-NLS-1$
 	/**
 	 * Notification that a test had a error.
 	 * TEST_ERROR + testID + "," + testName.
 	 * After the notification follows the stack trace.
 	 */
-	public static final String TEST_ERROR=  "%ERROR  ";		 //$NON-NLS-1$
+	public static final String TEST_ERROR=  "%ERROR";		 //$NON-NLS-1$
 	/**
 	 * Notification that a test had a failure.
 	 * TEST_FAILED + testID + "," + testName.
 	 * After the notification follows the stack trace.
 	 */
-	public static final String TEST_FAILED= "%FAILED ";	 //$NON-NLS-1$
+	public static final String TEST_FAILED= "%FAILED";	 //$NON-NLS-1$
 	/**
 	 * Notification that a test run has ended.
 	 * TEST_RUN_END + elapsedTime.toString().

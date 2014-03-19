@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
 import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
+import org.json.JSONObject;
 
 /**
  * Notification that an error occured during a test
@@ -38,17 +39,19 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 	}
 
 	public String toString(boolean includeTimeStamp) {
-		StringBuilder sb = new StringBuilder();
-		if (includeTimeStamp) {
-			sb.append(Long.toString(getTimestamp())).append(' ');
+		JSONObject jsonMsg = new JSONObject();
+		String timeStamp ="";
+		if(includeTimeStamp){
+			timeStamp = Long.toString(getTimestamp());			
 		}
-		sb.append(MessageIds.TEST_ERROR).append(testId).append(",").append(testName);
-		sb.append("\n");
-		sb.append(MessageIds.TRACE_START).append("\n");
-		sb.append(trace);
-		sb.append('\n');
-		sb.append(MessageIds.TRACE_END);
-		return sb.toString();
+		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("messageId", MessageIds.TEST_ERROR);
+		jsonMsg.put("testId", testId);
+		jsonMsg.put("testName", testName);
+
+		jsonMsg.put("errorTrace",trace.concat("\n"));
+		
+		return jsonMsg.toString();		
 	}
 	
 	@Override

@@ -141,8 +141,7 @@ public class TestMessagesParser {
 		return buf.toString();
 	}
 
-	private void receiveMessage(String message) throws JSONException {
-		System.out.println("Testin progress plugin: Received message is: "+message);
+	private void receiveMessage(String message) throws JSONException {		
 		JSONObject jsonMessage = new JSONObject(message);
 		fCurrentState = fCurrentState.readMessage(jsonMessage);
 	}

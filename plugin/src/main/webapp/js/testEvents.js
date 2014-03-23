@@ -120,8 +120,6 @@ var TestRun = (function($) {
 				this.treeEvents.push(event);
 				if(this.tree!=null){
 					this.addNode(event);				
-				}else{
-					this.createTree(event);
 				}
 				break;
 			case "FAILED":
@@ -305,6 +303,8 @@ var TestRun = (function($) {
 			var testRun = this;
 			function createTreeNode() {
 				var event = treeEvents[eventIndex];
+				if( event == undefined)
+					return null;
 				if (event.suite == false) {
 					var testName = testRun.getShortTestName(event);
 					var newNode = {
@@ -333,7 +333,10 @@ var TestRun = (function($) {
 					};
 					eventIndex++;
 					for ( var i = 0; i < event.testCount; i++) {
-						newNode.children.push(createTreeNode());
+						var node = createTreeNode();
+						if(node == null)
+							break;
+						newNode.children.push(node);
 					}
 					return newNode;
 				}
@@ -374,33 +377,6 @@ var TestRun = (function($) {
 		},
 		createTreeView : function() {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
-			$.fn.zTree.init($("#" + this.treeId), {
-				view : {
-					nameIsHTML : true,
-					showTitle : true
-				},
-				data : {
-					key : {
-						title : "title"
-					}
-				},
-				callback : {
-					onClick : $.proxy(function(event, treeId, treeNode,
-							clickFlag) {
-						var trace = treeNode.trace;
-						if (trace == null) {
-							trace = "";
-						}
-						$('#' + this.stackTraceId).html(trace);
-					}, this)
-				}
-			}, treeNodes);
-			this.tree = $.fn.zTree.getZTreeObj(this.treeId);
-		},
-		
-		createTree : function(event) {
-			var testRun = this;
-			var treeNodes = [this.createNode(event)];
 			$.fn.zTree.init($("#" + this.treeId), {
 				view : {
 					nameIsHTML : true,
@@ -495,7 +471,6 @@ var TestRun = (function($) {
 					parentNode.suite = true;
 				}
 				this.tree.addNodes(parentNode,childNode,false);
-				this.expandParent(this.getNodeByTestId(event.testId));
 			}			
 		},
 		expandParent : function(node) {

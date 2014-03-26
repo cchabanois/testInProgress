@@ -22,7 +22,7 @@ public class ProgressBatchSuiteTest extends AbstractProgressSuiteTest {
 
 		// Then
 		String[] messages = result.get();
-		assertThat(messages[0], containsString("%TESTC  5 v2"));
+		assertThat(messages[0], containsString("{\"testCount\":5,\"messageId\":\"%TESTC\",\"fVersion\":\"v2\"}"));
 		assertThat(messages[messages.length-1], containsString("%RUNTIME"));
 	}	
 	

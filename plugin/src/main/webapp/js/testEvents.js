@@ -118,6 +118,9 @@ var TestRun = (function($) {
 				break;
 			case "TSTTREE":
 				this.treeEvents.push(event);
+				if(this.tree!=null){
+					this.addNode(event);				
+				}
 				break;
 			case "FAILED":
 				this.handleTestFailedEvent(event);
@@ -300,6 +303,8 @@ var TestRun = (function($) {
 			var testRun = this;
 			function createTreeNode() {
 				var event = treeEvents[eventIndex];
+				if( event == undefined)
+					return null;
 				if (event.suite == false) {
 					var testName = testRun.getShortTestName(event);
 					var newNode = {
@@ -328,12 +333,47 @@ var TestRun = (function($) {
 					};
 					eventIndex++;
 					for ( var i = 0; i < event.testCount; i++) {
-						newNode.children.push(createTreeNode());
+						var node = createTreeNode();
+						if(node == null)
+							break;
+						newNode.children.push(node);
 					}
 					return newNode;
 				}
 			}
 			return [ createTreeNode() ];
+		},		
+		createNode : function(event) {
+			var newNode;
+			var testRun = this;
+			if (event.suite == false) {
+				var testName = testRun.getShortTestName(event);
+				newNode = {
+					name : testName,
+					iconSkin : TestRun.IconSkin.TEST,
+					title : testName,
+					// our properties :
+					id : event.testId,
+					suite : false,
+					testName : testName,
+					testStatus : TestRun.TestStatus.UNKNOWN
+				};
+				
+			} else {
+				newNode = {
+					name : event.testName,
+					title : event.testName,
+					iconSkin : TestRun.IconSkin.TESTSUITE,
+					children : [],
+					// our properties :
+					id : event.testId,
+					suite : true,
+					testName : event.testName,
+					testStatus : TestRun.TestStatus.UNKNOWN
+				};
+			}
+
+			return newNode;
 		},
 		createTreeView : function() {
 			var treeNodes = this.createTreeNodes(this.treeEvents);
@@ -418,6 +458,20 @@ var TestRun = (function($) {
 				}
 			}
 			this.tree.updateNode(node);
+		},
+		addNode : function(event) {
+			var testId = event.testId;
+			var childNode = this.getNodeByTestId(testId);
+			if(childNode == undefined){
+				childNode = this.createNode(event);
+				var parentId = event.parentId;
+				var parentNode = this.getNodeByTestId(parentId);
+				if(!parentNode.suite){
+					parentNode.iconSkin = TestRun.IconSkin.TESTSUITE
+					parentNode.suite = true;
+				}
+				this.tree.addNodes(parentNode,childNode,false);
+			}			
 		},
 		expandParent : function(node) {
 			var parent = node.getParentNode();

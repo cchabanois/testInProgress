@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 /**
  * Handles the marshaling of the different messages.
  * 
@@ -37,6 +41,7 @@ public class TestMessagesParser {
 					&& (message = readMessage(fPushbackReader)) != null)
 				receiveMessage(message);
 		} catch (IOException e) {
+			System.out.println("Testin progress plugin: Got IO Exception:" +e.getMessage());
 			notifyTestRunTerminated();
 		}
 		shutDown();
@@ -56,155 +61,47 @@ public class TestMessagesParser {
 	 * A simple state machine to process requests from the RemoteTestRunner
 	 */
 	abstract class ProcessingState {
-		abstract ProcessingState readMessage(String message);
+		abstract ProcessingState readMessage(JSONObject jsonMsg);
 	}
 
 	class DefaultProcessingState extends ProcessingState {
-		ProcessingState readMessage(String message) {
-			int index = message.indexOf('%');
-			if (index != 0) {
-				String timeAsString = message.substring(0, index).trim();
-				timestamp = Long.parseLong(timeAsString);
-				message = message.substring(index);
-			} else {
-				timestamp = System.currentTimeMillis();
-			}
-			if (message.startsWith(MessageIds.TRACE_START)) {
-				fFailedTrace.setLength(0);
-				return fTraceState;
-			}
-			if (message.startsWith(MessageIds.EXPECTED_START)) {
-				fExpectedResult.setLength(0);
-				return fExpectedState;
-			}
-			if (message.startsWith(MessageIds.ACTUAL_START)) {
-				fActualResult.setLength(0);
-				return fActualState;
-			}
-			String arg = message.substring(MessageIds.MSG_HEADER_LENGTH);
-			if (message.startsWith(MessageIds.TEST_RUN_START)) {
-				// version < 2 format: count
-				// version >= 2 format: count+" "+version
+		ProcessingState readMessage(JSONObject jsonMsg) {
+			String msgId = getValue(jsonMsg, "messageId", "").toString().trim();
+		
+			if (msgId.contentEquals(MessageIds.TEST_RUN_START.trim())) {
 				int count = 0;
-				int v = arg.indexOf(' ');
-				if (v == -1) {
-					fVersion = "v1"; //$NON-NLS-1$
-					count = Integer.parseInt(arg);
-				} else {
-					fVersion = arg.substring(v + 1);
-					String sc = arg.substring(0, v);
-					count = Integer.parseInt(sc);
-				}
-				notifyTestRunStarted(count);
-				return this;
+				fVersion = getValue(jsonMsg, "fVersion", "v1").toString();
+				count = jsonMsg.getInt("testCount");
+				notifyTestRunStarted(jsonMsg, count);
+			} else if (msgId.contentEquals(MessageIds.TEST_START.trim())) {
+				notifyTestStarted(jsonMsg);
+
+			} else if (msgId.contentEquals(MessageIds.TEST_END.trim())) {
+				notifyTestEnded(jsonMsg);
+
+			} else if (msgId.contentEquals(MessageIds.TEST_ERROR.trim())) {
+				notifyTestFailed(jsonMsg, ITestRunListener.STATUS_ERROR);
+
+			} else if (msgId.contentEquals(MessageIds.TEST_FAILED.trim())) {
+				notifyTestFailed(jsonMsg, ITestRunListener.STATUS_FAILURE);
+
+			} else if (msgId.contentEquals(MessageIds.TEST_RUN_END.trim())) {
+				String elTime = getValue(jsonMsg, "elapsedTime", "").toString();
+				
+				long elapsedTime = Long.parseLong(elTime);
+				testRunEnded(jsonMsg, elapsedTime);
+
+			} else if (msgId.contentEquals(MessageIds.TEST_TREE.trim())) {
+				notifyTestTreeEntry(jsonMsg);
 			}
-			if (message.startsWith(MessageIds.TEST_START)) {
-				notifyTestStarted(arg);
-				return this;
-			}
-			if (message.startsWith(MessageIds.TEST_END)) {
-				notifyTestEnded(arg);
-				return this;
-			}
-			if (message.startsWith(MessageIds.TEST_ERROR)) {
-				extractFailure(arg, ITestRunListener.STATUS_ERROR);
-				return this;
-			}
-			if (message.startsWith(MessageIds.TEST_FAILED)) {
-				extractFailure(arg, ITestRunListener.STATUS_FAILURE);
-				return this;
-			}
-			if (message.startsWith(MessageIds.TEST_RUN_END)) {
-				long elapsedTime = Long.parseLong(arg);
-				testRunEnded(elapsedTime);
-				return this;
-			}
-			if (message.startsWith(MessageIds.TEST_TREE)) {
-				notifyTestTreeEntry(arg);
-				return this;
-			}
+			
 			return this;
 		}
 	}
 
-	/**
-	 * Base class for states in which messages are appended to an internal
-	 * string buffer until an end message is read.
-	 */
-	class AppendingProcessingState extends ProcessingState {
-		private final StringBuffer fBuffer;
-		private String fEndString;
-
-		AppendingProcessingState(StringBuffer buffer, String endString) {
-			this.fBuffer = buffer;
-			this.fEndString = endString;
-		}
-
-		ProcessingState readMessage(String message) {
-			if (message.startsWith(fEndString)) {
-				entireStringRead();
-				return fDefaultState;
-			}
-			fBuffer.append(message);
-			if (fLastLineDelimiter != null)
-				fBuffer.append(fLastLineDelimiter);
-			return this;
-		}
-
-		/**
-		 * subclasses can override to do special things when end message is read
-		 */
-		void entireStringRead() {
-		}
-	}
-
-	class TraceProcessingState extends AppendingProcessingState {
-		TraceProcessingState() {
-			super(fFailedTrace, MessageIds.TRACE_END);
-		}
-
-		void entireStringRead() {
-			notifyTestFailed();
-			fExpectedResult.setLength(0);
-			fActualResult.setLength(0);
-		}
-
-		ProcessingState readMessage(String message) {
-			if (message.startsWith(MessageIds.TRACE_END)) {
-				notifyTestFailed();
-				fFailedTrace.setLength(0);
-				fActualResult.setLength(0);
-				fExpectedResult.setLength(0);
-				return fDefaultState;
-			}
-			fFailedTrace.append(message);
-			if (fLastLineDelimiter != null)
-				fFailedTrace.append(fLastLineDelimiter);
-			return this;
-		}
-	}
-
-	/**
-	 * The failed trace that is currently reported from the RemoteTestRunner
-	 */
-	private final StringBuffer fFailedTrace = new StringBuffer();
-	/**
-	 * The expected test result
-	 */
-	private final StringBuffer fExpectedResult = new StringBuffer();
-	/**
-	 * The actual test result
-	 */
-	private final StringBuffer fActualResult = new StringBuffer();
-
-	private long timestamp;
+	//private long timestamp;
 	
 	ProcessingState fDefaultState = new DefaultProcessingState();
-	ProcessingState fTraceState = new TraceProcessingState();
-	ProcessingState fExpectedState = new AppendingProcessingState(
-			fExpectedResult, MessageIds.EXPECTED_END);
-	ProcessingState fActualState = new AppendingProcessingState(fActualResult,
-			MessageIds.ACTUAL_END);
 	ProcessingState fCurrentState = fDefaultState;
 
 	/**
@@ -213,172 +110,144 @@ public class TestMessagesParser {
 	private ITestRunListener[] fListeners;
 
 	private PushbackReader fPushbackReader;
-	private String fLastLineDelimiter;
+	
+	private long startTime;
+	
 	/**
 	 * The protocol version
 	 */
 	private String fVersion;
-	/**
-	 * The failed test that is currently reported from the RemoteTestRunner
-	 */
-	private String fFailedTest;
-	/**
-	 * The Id of the failed test
-	 */
-	private String fFailedTestId;
-	/**
-	 * The kind of failure of the test that is currently reported as failed
-	 */
-	private int fFailureKind;
-
+	
 	private String readMessage(PushbackReader in) throws IOException {
 		StringBuffer buf = new StringBuffer(128);
 		int ch;
 		while ((ch = in.read()) != -1) {
-			if (ch == '\n') {
-				fLastLineDelimiter = "\n"; //$NON-NLS-1$
-				return buf.toString();
-			} else if (ch == '\r') {
+			if(ch == '}'){
+				buf.append((char)ch);
 				ch = in.read();
-				if (ch == '\n') {
-					fLastLineDelimiter = "\r\n"; //$NON-NLS-1$
+				if (ch == '\n' || ch == '\r') {
+					return buf.toString();
 				} else {
+					buf.append((char)ch);
 					in.unread(ch);
-					fLastLineDelimiter = "\r"; //$NON-NLS-1$
 				}
-				return buf.toString();
 			} else {
 				buf.append((char) ch);
 			}
 		}
-		fLastLineDelimiter = null;
+		
 		if (buf.length() == 0)
 			return null;
 		return buf.toString();
 	}
 
-	private void receiveMessage(String message) {
-		fCurrentState = fCurrentState.readMessage(message);
+	private void receiveMessage(String message) throws JSONException {		
+		JSONObject jsonMessage = new JSONObject(message);
+		fCurrentState = fCurrentState.readMessage(jsonMessage);
 	}
 
-	private void extractFailure(String arg, int status) {
-		String s[] = extractTestId(arg);
-		fFailedTestId = s[0];
-		fFailedTest = s[1];
-		fFailureKind = status;
-	}
-
-	/**
-	 * @param arg
-	 *            test name
-	 * @return an array with two elements. The first one is the testId, the
-	 *         second one the testName.
-	 */
-	String[] extractTestId(String arg) {
-		String[] result = new String[2];
-		if (!hasTestId()) {
-			result[0] = arg; // use the test name as the test Id
-			result[1] = arg;
-			return result;
-		}
-		int i = arg.indexOf(',');
-		result[0] = arg.substring(0, i);
-		result[1] = arg.substring(i + 1, arg.length());
-		return result;
-	}
-
-	private boolean hasTestId() {
-		if (fVersion == null) // TODO fix me
-			return true;
-		return fVersion.equals("v2"); //$NON-NLS-1$
-	}
-
-	private void notifyTestTreeEntry(final String treeEntry) {
+	private void notifyTestTreeEntry(final JSONObject jsonMsg) {
+		String testName = jsonMsg.getString("testName");
+		String testId = getStringValue(jsonMsg, "testId", testName);
+		String parentId = getStringValue(jsonMsg, "parentId", "");
+		String parentName = getStringValue(jsonMsg, "parentName", "");
+		boolean isSuite = (Boolean)getValue(jsonMsg, "isSuite", false);
+		int count = (Integer) getValue(jsonMsg, "testCount", 1);
+		
+		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			if (!hasTestId())
-				listener.testTreeEntry(timestamp, fakeTestId(treeEntry));
-			else
-				listener.testTreeEntry(timestamp, treeEntry);
+			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count);
 		}
 	}
 
-	private String fakeTestId(String treeEntry) {
-		// extract the test name and add it as the testId
-		int index0 = treeEntry.indexOf(',');
-		String testName = treeEntry.substring(0, index0).trim();
-		return testName + "," + treeEntry; //$NON-NLS-1$
-	}
-
-	private void testRunEnded(final long elapsedTime) {
+	private void testRunEnded(JSONObject jsonMsg, final long elapsedTime) {
+		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunEnded(timestamp, elapsedTime);
+			listener.testRunEnded(timeStamp, elapsedTime);
 		}
 	}
 
-	private void notifyTestEnded(final String test) {
+	private void notifyTestEnded(final JSONObject jsonMsg) {
+		String testName = jsonMsg.getString("testName");
+		String testId = getStringValue(jsonMsg, "testId", testName);
+		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
+		long timeStamp = getTimeStamp(jsonMsg);
+		for (int i = 0; i < fListeners.length; i++) {
+			ITestRunListener listener = fListeners[i];			
+			listener.testEnded(timeStamp, testId, testName, ignored);
+		}
+	}
+
+	private void notifyTestStarted(final JSONObject jsonMsg) {
+		String testName = jsonMsg.getString("testName");
+		String testId = getStringValue(jsonMsg, "testId", testName);
+		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
+		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			String s[] = extractTestId(test);
-			listener.testEnded(timestamp, s[0], s[1]);
+			
+			listener.testStarted(timeStamp,  testId, testName, ignored);
 		}
 	}
 
-	private void notifyTestStarted(final String test) {
+	private void notifyTestRunStarted(JSONObject jsonMsg, final int count) {
+		long timeStamp = getTimeStamp(jsonMsg);
+		startTime = timeStamp;
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			String s[] = extractTestId(test);
-			listener.testStarted(timestamp, s[0], s[1]);
+			listener.testRunStarted(timeStamp, count);
 		}
 	}
 
-	private void notifyTestRunStarted(final int count) {
+	private void notifyTestFailed(JSONObject jsonMsg, int failureKind) {
+		String testName = jsonMsg.getString("testName");
+		String testId = getStringValue(jsonMsg, "testId", testName);
+		String errorTrace = getStringValue(jsonMsg, "errorTrace", "");
+		String expectedMsg = getStringValue(jsonMsg, "expectedMsg", "");
+		String actualMsg = getStringValue(jsonMsg, "actualMsg", "");
+		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunStarted(timestamp, count);
+			listener.testFailed(timeStamp, failureKind, testId, testName,
+					errorTrace, expectedMsg,
+					actualMsg);
 		}
 	}
 
-	private void notifyTestFailed() {
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
-			listener.testFailed(timestamp, fFailureKind, fFailedTestId, fFailedTest,
-					fFailedTrace.toString(), nullifyEmpty(fExpectedResult),
-					nullifyEmpty(fActualResult));
-		}
-	}
-
-	/**
-	 * Returns a comparison result from the given buffer. Removes the
-	 * terminating line delimiter.
-	 * 
-	 * @param buf
-	 *            the comparison result
-	 * @return the result or <code>null</code> if empty
-	 * @since 3.7
-	 */
-	private static String nullifyEmpty(StringBuffer buf) {
-		int length = buf.length();
-		if (length == 0)
-			return null;
-
-		char last = buf.charAt(length - 1);
-		if (last == '\n') {
-			if (length > 1 && buf.charAt(length - 2) == '\r')
-				return buf.substring(0, length - 2);
-			else
-				return buf.substring(0, length - 1);
-		} else if (last == '\r') {
-			return buf.substring(0, length - 1);
-		}
-		return buf.toString();
-	}
 
 	private void notifyTestRunTerminated() {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			listener.testRunTerminated();
 		}
+	}
+	
+	public Object getValue(JSONObject jsonData,String key, Object defaultValue){
+		try{
+			Object data = jsonData.get(key);
+			return data;
+		}catch(JSONException e){
+			return defaultValue;			
+		}
+	}
+	
+	public String getStringValue(JSONObject jsonData,String key, Object defaultValue){
+		return this.getValue(jsonData, key, defaultValue).toString();
+	}
+	
+	
+	private long getTimeStamp(JSONObject jsonMsg){
+		long timeStamp;
+		String timeAsString = getStringValue(jsonMsg, "timeStamp", "");
+		
+		if (!timeAsString.contentEquals("")) {
+			timeStamp = Long.parseLong(timeAsString);				
+		} else {
+			timeStamp = System.currentTimeMillis();
+		}
+		
+		return timeStamp;
 	}
 }

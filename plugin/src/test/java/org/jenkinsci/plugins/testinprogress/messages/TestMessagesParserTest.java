@@ -13,10 +13,11 @@ import java.io.StringReader;
 import org.junit.Test;
 
 public class TestMessagesParserTest {
-	private ITestRunListener testRunListener = mock(ITestRunListener.class);
+	
 
 	@Test
 	public void testTestMessagesParser() {
+		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
 		TestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
@@ -27,16 +28,16 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener).testRunStarted(anyLong(), eq(6));
-		verify(testRunListener).testTreeEntry(anyLong(),
-				eq("1,testproject.AllTests,true,2"));
+		verify(testRunListener).testTreeEntry(anyLong(),eq("1"),eq("testproject.AllTests"),eq(""),eq(""),eq(true),eq(2));
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
-				eq("testAddWillFail(testproject.CalcTest)"));
+				eq("testAddWillFail(testproject.CalcTest)"),eq(false));
 		verify(testRunListener).testStarted(anyLong(), eq("4"),
-				eq("@Ignore: testIgnored(testproject.CalcTest)"));
+				eq("testIgnored(testproject.CalcTest)"),eq(true));
 	}
 
 	@Test
 	public void testTestMessagesParserWithTimestampField() {
+		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
 		TestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
@@ -47,16 +48,15 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener).testRunStarted(0, 6);
-		verify(testRunListener).testTreeEntry(0,
-				"1,testproject.AllTests,true,2");
-		verify(testRunListener).testStarted(500, "3",
-				"testAddWillFail(testproject.CalcTest)");
+		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests","","",true,2);
+		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false);
 		verify(testRunListener).testStarted(4500, "4",
-				"@Ignore: testIgnored(testproject.CalcTest)");
+				"testIgnored(testproject.CalcTest)",true);
 	}
 
 	@Test
 	public void testMessageParserFromFile() {
+		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
 		TestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
@@ -73,18 +73,17 @@ public class TestMessagesParserTest {
 
 	private String getAllMessages(boolean timeStamp) {
 		StringBuilder sb = new StringBuilder();
+		String timeSt="";
 		if (timeStamp)
-			sb.append("0 ");
-		sb.append("%TESTC  6 v2\n");
+			timeSt="timeStamp:0,";
+		sb.append("{"+timeSt+"messageId:%TESTC,testCount:6,fVersion:v2}\n");
+		sb.append("{"+timeSt+"messageId:%TSTTREE,testId:1,testName:testproject.AllTests,isSuite:true,testCount:2}\n");
 		if (timeStamp)
-			sb.append("0 ");
-		sb.append("%TSTTREE1,testproject.AllTests,true,2\n");
+			timeSt="timeStamp:500,";
+		sb.append("{"+timeSt+"messageId:%TESTS,testId:3,testName:testAddWillFail(testproject.CalcTest)}\n");
 		if (timeStamp)
-			sb.append("500 ");
-		sb.append("%TESTS  3,testAddWillFail(testproject.CalcTest)\n");
-		if (timeStamp)
-			sb.append("4500 ");
-		sb.append("%TESTS  4,@Ignore: testIgnored(testproject.CalcTest)\n");
+			timeSt="timeStamp:4500,";
+		sb.append("{"+timeSt+"messageId:%TESTS,testId:4,testName:testIgnored(testproject.CalcTest),ignored:true}\n");
 
 		return sb.toString();
 	}

@@ -33,6 +33,9 @@ public class BuildTestEventsGenerator implements IRunTestEventListener {
 		if (testEvent instanceof RunStartEvent) {
 			runStartEvent = (RunStartEvent) testEvent;
 		} else if (testEvent instanceof TestTreeEvent) {
+			if(runId!=null){
+				fireEvent(testEvent);
+			}
 			testTreeEvents.add((TestTreeEvent) testEvent);
 		} else {
 			if (runId == null) {

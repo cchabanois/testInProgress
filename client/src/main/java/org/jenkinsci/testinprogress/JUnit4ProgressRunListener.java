@@ -81,8 +81,8 @@ public class JUnit4ProgressRunListener extends RunListener {
 		String id = getTestId(failure.getDescription());
 		Throwable exception = failure.getException();
 		if (exception instanceof AssertionError) {
-			String expected = null;
-			String actual = null;
+			String expected = "";
+			String actual = "";
 			if (exception instanceof junit.framework.ComparisonFailure) {
 				junit.framework.ComparisonFailure comparisonFailure = (junit.framework.ComparisonFailure) exception;
 				expected = comparisonFailure.getExpected();

@@ -76,14 +76,14 @@ public class TestMessagesParserTest {
 		String timeSt="";
 		if (timeStamp)
 			timeSt="timeStamp:0,";
-		sb.append("{"+timeSt+"messageId:%TESTC,testCount:6,fVersion:v2}\n");
-		sb.append("{"+timeSt+"messageId:%TSTTREE,testId:1,testName:testproject.AllTests,isSuite:true,testCount:2}\n");
+		sb.append("{"+timeSt+"messageId:TESTC,testCount:6,fVersion:v2}\n");
+		sb.append("{"+timeSt+"messageId:TSTTREE,testId:1,testName:testproject.AllTests,isSuite:true,testCount:2}\n");
 		if (timeStamp)
 			timeSt="timeStamp:500,";
-		sb.append("{"+timeSt+"messageId:%TESTS,testId:3,testName:testAddWillFail(testproject.CalcTest)}\n");
+		sb.append("{"+timeSt+"messageId:TESTS,testId:3,testName:testAddWillFail(testproject.CalcTest)}\n");
 		if (timeStamp)
 			timeSt="timeStamp:4500,";
-		sb.append("{"+timeSt+"messageId:%TESTS,testId:4,testName:testIgnored(testproject.CalcTest),ignored:true}\n");
+		sb.append("{"+timeSt+"messageId:TESTS,testId:4,testName:testIgnored(testproject.CalcTest),ignored:true}\n");
 
 		return sb.toString();
 	}

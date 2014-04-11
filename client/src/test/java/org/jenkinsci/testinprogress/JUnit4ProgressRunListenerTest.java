@@ -39,13 +39,13 @@ public class JUnit4ProgressRunListenerTest {
 	public void testFirstMessageIsTestRunStart() {
 		String[] messages = runTests(CalcTestsSuite.class);
 		
-		assertThat(messages[0], containsString("{\"testCount\":6,\"messageId\":\"%TESTC\",\"fVersion\":\"v2\"}"));
+		assertThat(messages[0], containsString("{\"testCount\":6,\"messageId\":\"TESTC\",\"fVersion\":\"v2\"}"));
 	}
 	
 	@Test
 	public void testLatestMessageIsTestRunEnd() {
 		String[] messages = runTests(CalcTestsSuite.class);
-		assertThat(messages[messages.length-1], containsString("%RUNTIME"));
+		assertThat(messages[messages.length-1], containsString("RUNTIME"));
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class JUnit4ProgressRunListenerTest {
 	@Test
 	public void testSameTestMultipleTimes() {
 		String[] messages = runTests(SameTestsSuite.class);
-		List<String> matchingMessages = getTestMessagesMatching(messages, "{\"parentId\":\"\",\"testName\":\"tests.CalcTestsSuite\",\"testId\":\"3\",\"testCount\":2,\"messageId\":\"%TSTTREE\",\"isSuite\":true,\"parentName\":\"\"}");
+		List<String> matchingMessages = getTestMessagesMatching(messages, "{\"parentId\":\"\",\"testName\":\"tests.CalcTestsSuite\",\"testId\":\"3\",\"testCount\":2,\"messageId\":\"TSTTREE\",\"isSuite\":true,\"parentName\":\"\"}");
 		assertEquals(2,matchingMessages.size());
 	}
 	
@@ -62,16 +62,16 @@ public class JUnit4ProgressRunListenerTest {
 	public void testInitializationErrorTest() {
 		String[] messages = runTests(InitializationErrorTest.class);
 		
-		assertDataPresent(messages, "{\"parentId\":\"\",\"testName\":\"initializationError(tests.InitializationErrorTest)\",\"testId\":\"3\",\"testCount\":1,\"messageId\":\"%TSTTREE\",\"isSuite\":false,\"parentName\":\"\"}");
-		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"initializationError(tests.InitializationErrorTest)\",\"testId\":\"3\",\"messageId\":\"%ERROR\"}"));
+		assertDataPresent(messages, "{\"parentId\":\"\",\"testName\":\"initializationError(tests.InitializationErrorTest)\",\"testId\":\"3\",\"testCount\":1,\"messageId\":\"TSTTREE\",\"isSuite\":false,\"parentName\":\"\"}");
+		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"initializationError(tests.InitializationErrorTest)\",\"testId\":\"3\",\"messageId\":\"ERROR\"}"));
 	}
 	
 	@Test
 	public void testRuleErrorTest() {
 		String[] messages = runTests(RuleErrorTest.class);
 		// error is associated with a suite, not a test
-		assertDataPresent(messages, "{\"parentId\":\"\",\"testName\":\"tests.RuleErrorTest\",\"testId\":\"2\",\"testCount\":1,\"messageId\":\"%TSTTREE\",\"isSuite\":true,\"parentName\":\"\"}");
-		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"tests.RuleErrorTest\",\"testId\":\"2\",\"messageId\":\"%ERROR\"}"));
+		assertDataPresent(messages, "{\"parentId\":\"\",\"testName\":\"tests.RuleErrorTest\",\"testId\":\"2\",\"testCount\":1,\"messageId\":\"TSTTREE\",\"isSuite\":true,\"parentName\":\"\"}");
+		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"tests.RuleErrorTest\",\"testId\":\"2\",\"messageId\":\"ERROR\"}"));
 	}
 	
 	@Test
@@ -80,10 +80,10 @@ public class JUnit4ProgressRunListenerTest {
 		
 		assertDataPresent(
 				messages,
-				"{\"parentId\":\"\",\"testName\":\"initializationError(tests.EmptyTest)\",\"testId\":\"3\",\"testCount\":1,\"messageId\":\"%TSTTREE\",\"isSuite\":false,\"parentName\":\"\"}");
+				"{\"parentId\":\"\",\"testName\":\"initializationError(tests.EmptyTest)\",\"testId\":\"3\",\"testCount\":1,\"messageId\":\"TSTTREE\",\"isSuite\":false,\"parentName\":\"\"}");
 		Assert.assertTrue(verifyValuesPresentInAnyJson(
 				messages,
-				"{\"testName\":\"initializationError(tests.EmptyTest)\",\"testId\":\"3\",\"messageId\":\"%ERROR\"}"));
+				"{\"testName\":\"initializationError(tests.EmptyTest)\",\"testId\":\"3\",\"messageId\":\"ERROR\"}"));
 	}
 	
 	@Test
@@ -95,15 +95,15 @@ public class JUnit4ProgressRunListenerTest {
 	@Test
 	public void testIgnoredTest() {
 		String[] messages = runTests(IgnoredTest.class);
-		assertDataPresent(messages, "{\"ignored\":true,\"testName\":\"testIgnore(tests.IgnoredTest)\",\"testId\":\"3\",\"messageId\":\"%TESTS\"}");
-		assertDataPresent(messages, "{\"ignored\":true,\"testName\":\"testIgnore(tests.IgnoredTest)\",\"testId\":\"3\",\"messageId\":\"%TESTE\"}");		
+		assertDataPresent(messages, "{\"ignored\":true,\"testName\":\"testIgnore(tests.IgnoredTest)\",\"testId\":\"3\",\"messageId\":\"TESTS\"}");
+		assertDataPresent(messages, "{\"ignored\":true,\"testName\":\"testIgnore(tests.IgnoredTest)\",\"testId\":\"3\",\"messageId\":\"TESTE\"}");		
 	}
 	
 	@Test
 	public void testAssumptionTest() {
 		String[] messages = runTests(AssumptionNotVerifiedTest.class);
 		
-		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"testAssumptionNotVerified(tests.AssumptionNotVerifiedTest)\",\"testId\":\"3\",\"assumptionFailed\":true,\"messageId\":\"%FAILED\"}"));	
+		Assert.assertTrue(verifyValuesPresentInAnyJson(messages, "{\"testName\":\"testAssumptionNotVerified(tests.AssumptionNotVerifiedTest)\",\"testId\":\"3\",\"assumptionFailed\":true,\"messageId\":\"FAILED\"}"));	
 	}
 	
 	private String getTestMessageMatching(String[] messages, String regex) {

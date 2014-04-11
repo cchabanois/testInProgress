@@ -28,6 +28,11 @@
 			<name>Cedric Chabanois</name>
 			<email>cchabanois@gmail.com</email>
 		</developer>
+		<developer>
+			<id>menonvarun</id>
+			<name>Varun Menon</name>
+			<email>mr.varun.menon@gmail.com</email>
+		</developer>
 	</developers>
 	<licenses>
 		<license>

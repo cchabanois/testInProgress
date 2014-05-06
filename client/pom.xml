@@ -3,11 +3,11 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>testInProgress-parent</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>	
 	<artifactId>testInProgress-client</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<developers>
 		<developer>
 			<id>cchabanois</id>

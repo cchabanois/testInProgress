@@ -40,8 +40,10 @@ public class SocketMessageSenderFactory implements IMessageSenderFactory {
 
 	public MessageSender getMessageSender() {
 		if (port == -1) {
+			System.out.println("Returning null message sender");
 			return new NullMessageSender();
 		} else {
+			System.out.println("port is: "+port);
 			return new SocketMessageSender(host, port);
 		}
 	}

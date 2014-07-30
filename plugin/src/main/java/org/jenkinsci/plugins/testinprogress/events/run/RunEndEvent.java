@@ -12,9 +12,14 @@ import org.json.JSONObject;
 public class RunEndEvent extends AbstractRunTestEvent {
 	private final long elapsedTime;
 
-	public RunEndEvent(long timestamp, long elapsedTime) {
+	public RunEndEvent(long timestamp, long elapsedTime, String runId) {
 		super(timestamp);
 		this.elapsedTime = elapsedTime;
+		setRunId(runId);
+	}
+	
+	public RunEndEvent(long timestamp, long elapsedTime) {
+		this(timestamp, elapsedTime, "");		
 	}
 
 	public String getType() {
@@ -33,6 +38,7 @@ public class RunEndEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
+		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("elapsedTime", elapsedTime);
 		return jsonMsg.toString();
 	}

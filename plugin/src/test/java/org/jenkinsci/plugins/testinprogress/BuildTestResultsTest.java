@@ -55,7 +55,8 @@ public class BuildTestResultsTest {
 	}
 
 	private void event(BuildTestEvent buildTestEvent) {
-		if (!testRunIds.getRunIds().contains(buildTestEvent.getRunId())) {
+		List<String> runIds = testRunIds.getRunIds();
+		if (!runIds.contains(buildTestEvent.getRunId())) {
 			testRunIds.addRunId(buildTestEvent.getRunId());
 		}
 		runningBuildTestEvents.event(buildTestEvent);

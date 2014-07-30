@@ -15,11 +15,17 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 	private final String trace;
 
 	public TestErrorEvent(long timestamp, String testId, String testName,
-			String trace) {
+			String trace, String runId) {
 		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.trace = trace;
+		setRunId(runId);
+	}
+	
+	public TestErrorEvent(long timestamp, String testId, String testName,
+			String trace) {
+		this(timestamp, testId, testName, trace, "");
 	}
 
 	public String getTestId() {
@@ -46,6 +52,7 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_ERROR);
+		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 

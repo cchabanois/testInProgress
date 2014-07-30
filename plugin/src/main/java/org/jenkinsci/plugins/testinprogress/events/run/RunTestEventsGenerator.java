@@ -1,13 +1,10 @@
 package org.jenkinsci.plugins.testinprogress.events.run;
 
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jenkinsci.plugins.testinprogress.messages.ITestRunListener;
-import org.jenkinsci.plugins.testinprogress.messages.MessageIds;
 
-import com.google.common.base.Splitter;
 
 /**
  * Generates events from calls to {@link ITestRunListener}
@@ -23,27 +20,27 @@ public class RunTestEventsGenerator implements ITestRunListener {
 		this.listeners = listeners;
 	}
 
-	public void testRunStarted(long timestamp, int testCount) {
-		fireEvent(new RunStartEvent(timestamp,testCount));
+	public void testRunStarted(long timestamp, int testCount, String runId) {
+		fireEvent(new RunStartEvent(timestamp,testCount,runId));
 	}
 
-	public void testRunEnded(long timestamp, long elapsedTime) {
-		fireEvent(new RunEndEvent(timestamp,elapsedTime));
+	public void testRunEnded(long timestamp, long elapsedTime, String runId) {
+		fireEvent(new RunEndEvent(timestamp,elapsedTime, runId));
 	}
 
-	public void testStarted(long timestamp,String testId, String testName, boolean ignored ) {
-		TestStartEvent testStartEvent = new TestStartEvent(timestamp,testId, testName, ignored);
+	public void testStarted(long timestamp,String testId, String testName, boolean ignored, String runId ) {
+		TestStartEvent testStartEvent = new TestStartEvent(timestamp,testId, testName, ignored, runId);
 		runningTests.put(testId, testStartEvent);
 		fireEvent(testStartEvent);
 	}
 
-	public void testEnded(long timestamp,String testId, String testName, boolean ignored) {
+	public void testEnded(long timestamp,String testId, String testName, boolean ignored, String runId) {
 		TestStartEvent testStartEvent = runningTests.remove(testId);
 		long timeElapsed = 0;
 		if (testStartEvent != null) {
 			timeElapsed = timestamp-testStartEvent.getTimestamp();
 		}
-		fireEvent(new TestEndEvent(timestamp,testId, testName, ignored, timeElapsed));
+		fireEvent(new TestEndEvent(timestamp,testId, testName, ignored, timeElapsed, runId));
 	}
 
 	public void testRunTerminated() {
@@ -51,21 +48,21 @@ public class RunTestEventsGenerator implements ITestRunListener {
 	}
 
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount) {
-		fireEvent(new TestTreeEvent(timestamp,testId, testName, parentId, parentName, isSuite, testCount));
+			String parentId, String parentName, boolean isSuite, int testCount, String runId) {
+		fireEvent(new TestTreeEvent(timestamp,testId, testName, parentId, parentName, isSuite, testCount, runId));
 	}
 
 	public void testFailed(long timestamp,int status, String testId, String testName,
-			String trace, String expected, String actual) {
+			String trace, String expected, String actual, String runId) {
 		boolean assumptionFailed = false;
 		if(expected!="" && actual!="")
 			assumptionFailed = true;
 		
 		if (status == ITestRunListener.STATUS_FAILURE) {
 			fireEvent(new TestFailedEvent(timestamp,testId, testName, expected,
-					actual, trace, assumptionFailed));
+					actual, trace, assumptionFailed, runId));
 		} else {
-			fireEvent(new TestErrorEvent(timestamp,testId, testName, trace));
+			fireEvent(new TestErrorEvent(timestamp,testId, testName, trace, runId));
 		}
 	}
 

@@ -12,9 +12,14 @@ import org.json.JSONObject;
 public class RunStartEvent extends AbstractRunTestEvent {
 	private final int testCount;
 
-	public RunStartEvent(long timestamp, int testCount) {
+	public RunStartEvent(long timestamp, int testCount, String runId) {
 		super(timestamp);
 		this.testCount = testCount;
+		setRunId(runId);
+	}
+	
+	public RunStartEvent(long timestamp, int testCount) {
+		this(timestamp,testCount,"");
 	}
 
 	public int getTestCount() {
@@ -33,6 +38,7 @@ public class RunStartEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
+		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testCount", testCount);
 		jsonMsg.put("fVersion", "v2");
 		

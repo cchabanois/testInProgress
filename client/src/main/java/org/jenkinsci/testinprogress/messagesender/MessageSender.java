@@ -164,7 +164,6 @@ public abstract class MessageSender {
 	}
 
 	protected void println(String str) {
-		System.out.println(str);
 		try {
 			writer.write(str);
 			writer.write('\n');

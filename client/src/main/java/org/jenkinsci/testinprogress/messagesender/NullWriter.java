@@ -10,7 +10,6 @@ public class NullWriter extends Writer {
 
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
-		System.out.println("unable to write: "+ cbuf.toString());
 		
 	}
 

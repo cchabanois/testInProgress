@@ -156,7 +156,7 @@ var TestRun = (function($) {
 					'background' : 'darkred'
 				});
 			}
-			$("#" + this.progressId).progressbar("value", this.testEnded);
+			$("#" + this.progressId).progressbar("value", this.testEnded + this.errors +  this.failures);
 		},
 		updateSuiteIcon : function() {
 			var legendClass = "";
@@ -250,15 +250,25 @@ var TestRun = (function($) {
 				this.failures++;
 				this.currentNode.testStatus = TestRun.TestStatus.FAILED;				
 			}
+			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
+			this.updateParentNode(this.currentNode);
+			if (this.expandNodes) {
+				this.collapseParentIfPassed(this.currentNode);
+			}
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
 			this.currentNode = this.getNodeByTestId(event.testId);
 			this.currentNode.testStatus = TestRun.TestStatus.ERROR;
+			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
+			this.updateParentNode(this.currentNode);
+			if (this.expandNodes) {
+				this.collapseParentIfPassed(this.currentNode);
+			}
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;

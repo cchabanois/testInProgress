@@ -197,6 +197,18 @@ var TestRun = (function($) {
 		setMessage : function(message) {
 			$("#" + this.testMessageId).text(message);
 		},
+		updateTestCount : function(){
+			if(this.testStarted > this.testCount){
+				this.testCount = this.testStarted;
+				var cvalue = $("#" + this.progressId).progressbar("value");
+				$("#" + this.progressId).progressbar({
+					value : cvalue,
+					max : this.testCount
+				});
+				
+			}
+			
+		},
 		handleRunStartEvent : function(event) {
 			this.testCount = event.testCount;
 			$("#" + this.progressId).progressbar({
@@ -213,6 +225,7 @@ var TestRun = (function($) {
 		},
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
+			this.updateTestCount();
 			if (event.ignored) {
 				this.testIgnored++;
 			}

@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.testinprogress.events.build;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 import org.jenkinsci.plugins.testinprogress.events.run.RunEndEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.RunStartEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.TestEndEvent;
@@ -39,7 +41,8 @@ public class BuildTestEventsGeneratorTest {
 		buildTestEventsGenerator.event(new RunEndEvent(0, 5000));
 
 		// Then
-		assertTrue(testRunIds.getRunIds().contains("suite"));
+		List<String> runIds = testRunIds.getRunIds();
+		assertTrue(runIds.contains("suite"));
 		verify(listener).event(
 				new BuildTestEvent("suite", new RunStartEvent(0, 2)));
 	}

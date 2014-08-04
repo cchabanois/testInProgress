@@ -14,7 +14,6 @@ package org.jenkinsci.plugins.testinprogress.messages;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PushbackReader;
 import java.io.Reader;
 
 import org.json.JSONException;
@@ -34,12 +33,12 @@ public class TestMessagesParser {
 	}
 
 	public void processTestMessages(Reader reader) {
-		fPushbackReader = new PushbackReader(new BufferedReader(reader));
+		fPushbackReader = new BufferedReader(reader);
 		try {
-			String message;
+			JSONObject message;
 			while (fPushbackReader != null
 					&& (message = readMessage(fPushbackReader)) != null)
-				receiveMessage(message);
+				fCurrentState = fCurrentState.readMessage(message);
 		} catch (IOException e) {
 			System.out.println("Testin progress plugin: Got IO Exception:" +e.getMessage());
 			notifyTestRunTerminated();
@@ -109,7 +108,7 @@ public class TestMessagesParser {
 	 */
 	private ITestRunListener[] fListeners;
 
-	private PushbackReader fPushbackReader;
+	private BufferedReader fPushbackReader;
 	
 	private long startTime;
 	
@@ -118,10 +117,24 @@ public class TestMessagesParser {
 	 */
 	private String fVersion;
 	
-	private String readMessage(PushbackReader in) throws IOException {
-		StringBuffer buf = new StringBuffer(128);
-		int ch;
-		while ((ch = in.read()) != -1) {
+	private JSONObject readMessage(BufferedReader in) throws IOException {
+		String bck="";
+		String inpStrm;
+		while((inpStrm=in.readLine())!=null){
+			try {
+				if("".equalsIgnoreCase(bck))
+					return new JSONObject(inpStrm);
+				else {
+					bck += inpStrm;
+					return new JSONObject(bck);
+					
+				}
+			} catch(Exception e){
+				bck = "";			
+			}
+		}
+		/*while ((ch = in.read()) != -1) {
+			System.out.print(ch);
 			if(ch == '}'){
 				buf.append((char)ch);
 				ch = in.read();
@@ -137,11 +150,13 @@ public class TestMessagesParser {
 		}
 		
 		if (buf.length() == 0)
-			return null;
-		return buf.toString();
+			return null;*/
+		
+		return null;
 	}
 
-	private void receiveMessage(String message) throws JSONException {		
+	private void receiveMessage(String message) throws JSONException {	
+		System.out.println("message is: " + message);
 		JSONObject jsonMessage = new JSONObject(message);
 		fCurrentState = fCurrentState.readMessage(jsonMessage);
 	}
@@ -151,53 +166,58 @@ public class TestMessagesParser {
 		String testId = getStringValue(jsonMsg, "testId", testName);
 		String parentId = getStringValue(jsonMsg, "parentId", "");
 		String parentName = getStringValue(jsonMsg, "parentName", "");
+		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean isSuite = (Boolean)getValue(jsonMsg, "isSuite", false);
 		int count = (Integer) getValue(jsonMsg, "testCount", 1);
 		
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count);
+			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count, runId);
 		}
 	}
 
 	private void testRunEnded(JSONObject jsonMsg, final long elapsedTime) {
 		long timeStamp = getTimeStamp(jsonMsg);
+		String runId = getStringValue(jsonMsg, "runId", "");
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunEnded(timeStamp, elapsedTime);
+			listener.testRunEnded(timeStamp, elapsedTime, runId);
 		}
 	}
 
 	private void notifyTestEnded(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
+		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];			
-			listener.testEnded(timeStamp, testId, testName, ignored);
+			listener.testEnded(timeStamp, testId, testName, ignored, runId);
 		}
 	}
 
 	private void notifyTestStarted(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
+		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			
-			listener.testStarted(timeStamp,  testId, testName, ignored);
+			listener.testStarted(timeStamp,  testId, testName, ignored, runId);
 		}
 	}
 
 	private void notifyTestRunStarted(JSONObject jsonMsg, final int count) {
 		long timeStamp = getTimeStamp(jsonMsg);
+		String runId = getStringValue(jsonMsg, "runId", "");
 		startTime = timeStamp;
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunStarted(timeStamp, count);
+			listener.testRunStarted(timeStamp, count, runId);
 		}
 	}
 
@@ -207,12 +227,13 @@ public class TestMessagesParser {
 		String errorTrace = getStringValue(jsonMsg, "errorTrace", "");
 		String expectedMsg = getStringValue(jsonMsg, "expectedMsg", "");
 		String actualMsg = getStringValue(jsonMsg, "actualMsg", "");
+		String runId = getStringValue(jsonMsg, "runId", "");
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			listener.testFailed(timeStamp, failureKind, testId, testName,
 					errorTrace, expectedMsg,
-					actualMsg);
+					actualMsg, runId);
 		}
 	}
 

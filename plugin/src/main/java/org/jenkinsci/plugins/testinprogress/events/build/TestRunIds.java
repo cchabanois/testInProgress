@@ -1,7 +1,9 @@
 package org.jenkinsci.plugins.testinprogress.events.build;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jenkinsci.plugins.testinprogress.ITestRunIds;
 
@@ -12,7 +14,7 @@ import org.jenkinsci.plugins.testinprogress.ITestRunIds;
  * 
  */
 public class TestRunIds implements ITestRunIds {
-	private final List<String> runIds = new ArrayList<String>();
+	private final Set<String> runIds = new HashSet<String>();
 
 	public synchronized List<String> getRunIds() {
 		return new ArrayList<String>(runIds);
@@ -27,12 +29,13 @@ public class TestRunIds implements ITestRunIds {
 	 */
 	public synchronized String addRunId(String proposedRunId) {
 		String runId = proposedRunId;
-		int num = 0;
-		while (runIds.contains(proposedRunId)) {
+		/*int num = 0;
+		while (runIds.contains(runId)) {
 			num++;
 			runId = proposedRunId + "-" + Integer.toString(num);
-		}
-		runIds.add(runId);
+		}*/
+		if(!runIds.contains(runId))
+			runIds.add(runId);
 		return runId;
 	}
 

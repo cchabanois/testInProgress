@@ -37,7 +37,7 @@ public interface ITestRunListener {
 	 * @param testCount
 	 *            the number of individual tests that will be run
 	 */
-	public void testRunStarted(long timestamp, int testCount);
+	public void testRunStarted(long timestamp, int testCount, String runId);
 
 	/**
 	 * A test run has ended.
@@ -45,7 +45,7 @@ public interface ITestRunListener {
 	 * @param elapsedTime
 	 *            the total elapsed time of the test run
 	 */
-	public void testRunEnded(long timestamp, long elapsedTime);
+	public void testRunEnded(long timestamp, long elapsedTime, String runId);
 
 	/**
 	 * An individual test has started.
@@ -55,7 +55,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that started
 	 */
-	public void testStarted(long timestamp, String testId, String testName, boolean ignored);
+	public void testStarted(long timestamp, String testId, String testName, boolean ignored, String runId);
 
 	/**
 	 * An individual test has ended.
@@ -65,7 +65,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that ended
 	 */
-	public void testEnded(long timestamp, String testId, String testName, boolean ignored);
+	public void testEnded(long timestamp, String testId, String testName, boolean ignored, String runId);
 
 	/**
 	 * The VM instance performing the tests has terminated.
@@ -95,7 +95,7 @@ public interface ITestRunListener {
 	 * @see MessageIds#TEST_TREE
 	 */
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount);
+			String parentId, String parentName, boolean isSuite, int testCount, String runId);
 
 	/**
 	 * An individual test has failed with a stack trace.
@@ -115,6 +115,6 @@ public interface ITestRunListener {
 	 *            the actual value
 	 */
 	public void testFailed(long timestamp, int status, String testId, String testName,
-			String trace, String expected, String actual);
+			String trace, String expected, String actual, String runId);
 
 }

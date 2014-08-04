@@ -15,12 +15,19 @@ public class TestStartEvent extends AbstractRunTestEvent {
 	private final boolean ignored;
 
 	public TestStartEvent(long timestamp, String testId, String testName,
-			boolean ignored) {
+			boolean ignored, String runId) {
 		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
+		setRunId(runId);
 	}
+	
+	public TestStartEvent(long timestamp, String testId, String testName,
+			boolean ignored){
+		this(timestamp, testId, testName, ignored, "");
+	}
+	
 
 	public String getType() {
 		return "TESTS";
@@ -46,6 +53,7 @@ public class TestStartEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_START);
+		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		jsonMsg.put("ignored", ignored);

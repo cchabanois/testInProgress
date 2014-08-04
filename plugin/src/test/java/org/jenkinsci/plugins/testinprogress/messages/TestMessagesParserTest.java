@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.testinprogress.messages;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
@@ -27,12 +28,12 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new StringReader(allMessages));
 
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), eq(6));
-		verify(testRunListener).testTreeEntry(anyLong(),eq("1"),eq("testproject.AllTests"),eq(""),eq(""),eq(true),eq(2));
+		verify(testRunListener).testRunStarted(anyLong(), eq(6),anyString());
+		verify(testRunListener).testTreeEntry(anyLong(),eq("1"),eq("testproject.AllTests"),eq(""),eq(""),eq(true),eq(2),anyString());
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
-				eq("testAddWillFail(testproject.CalcTest)"),eq(false));
+				eq("testAddWillFail(testproject.CalcTest)"),eq(false),anyString());
 		verify(testRunListener).testStarted(anyLong(), eq("4"),
-				eq("testIgnored(testproject.CalcTest)"),eq(true));
+				eq("testIgnored(testproject.CalcTest)"),eq(true),anyString());
 	}
 
 	@Test
@@ -47,11 +48,11 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new StringReader(allMessages));
 
 		// Then
-		verify(testRunListener).testRunStarted(0, 6);
-		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests","","",true,2);
-		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false);
+		verify(testRunListener).testRunStarted(0, 6,"");
+		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests","","",true,2,"");
+		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false,"");
 		verify(testRunListener).testStarted(4500, "4",
-				"testIgnored(testproject.CalcTest)",true);
+				"testIgnored(testproject.CalcTest)",true,"");
 	}
 
 	@Test
@@ -67,8 +68,8 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new InputStreamReader(is));
 
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), anyInt());
-		verify(testRunListener).testRunEnded(anyLong(), anyLong());
+		verify(testRunListener).testRunStarted(anyLong(), anyInt(),anyString());
+		verify(testRunListener).testRunEnded(anyLong(), anyLong(),anyString());
 	}
 
 	private String getAllMessages(boolean timeStamp) {

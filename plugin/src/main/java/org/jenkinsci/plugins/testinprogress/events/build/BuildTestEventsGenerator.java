@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
  */
 public class BuildTestEventsGenerator implements IRunTestEventListener {
 	private RunStartEvent runStartEvent;
+	private boolean startEventFired = false;
 	private List<TestTreeEvent> testTreeEvents = new ArrayList<TestTreeEvent>();
 	private String runId = null;
 	private final IBuildTestEventListener[] listeners;
@@ -31,36 +32,55 @@ public class BuildTestEventsGenerator implements IRunTestEventListener {
 
 	public void event(IRunTestEvent testEvent) {
 		if (testEvent instanceof RunStartEvent) {
-			runStartEvent = (RunStartEvent) testEvent;
-		} else if (testEvent instanceof TestTreeEvent) {
-			if(runId!=null){
+			String eventRunId = getRunID(testEvent); 
+			if( eventRunId != null) {
+				startEventFired = true;
 				fireEvent(testEvent);
-			}
-			testTreeEvents.add((TestTreeEvent) testEvent);
-		} else {
-			if (runId == null) {
-				runId = guessRunID(testTreeEvents);
+			} else
+				runStartEvent = (RunStartEvent) testEvent;
+		} else if (testEvent instanceof TestTreeEvent) {
+			if(!startEventFired){
+				startEventFired = true;
+				runId = guessRunID(testEvent);
 				fireEvent(runStartEvent);
-				for (TestTreeEvent testTreeEvent : testTreeEvents) {
-					fireEvent(testTreeEvent);
-				}
 			}
+			fireEvent(testEvent);
+		} else {
 			fireEvent(testEvent);
 		}
 	}
 
 	private void fireEvent(IRunTestEvent testEvent) {
 		for (IBuildTestEventListener listener : listeners) {
-			listener.event(new BuildTestEvent(runId, testEvent));
+			listener.event(new BuildTestEvent(guessRunID(testEvent), testEvent));
 		}
 	}
 
-	private String guessRunID(List<TestTreeEvent> testTreeEvents) {
+	/*private String guessRunID(List<TestTreeEvent> testTreeEvents) {
 		// TODO : test name "null"
 		if (testTreeEvents.size() == 0) {
 			return testRunIds.addRunId("empty");
 		} else {
 			return testRunIds.addRunId(testTreeEvents.get(0).getTestName());
+		}
+	}*/
+	
+	private String guessRunID(IRunTestEvent testEvent) {
+		String rId = getRunID(testEvent);
+		if(runId!=null)
+			return runId;
+		return testRunIds.addRunId(rId);		
+	}
+	
+	private String getRunID(IRunTestEvent testEvent) {
+		String testRunId = 	testEvent.getRunId();	
+		if (testRunId == null || ("".equalsIgnoreCase(testRunId))) {
+			if(testEvent instanceof TestTreeEvent)
+				return ((TestTreeEvent)testEvent).getTestName();
+			else 
+				return runId;
+		} else {
+			return testRunId;
 		}
 	}
 

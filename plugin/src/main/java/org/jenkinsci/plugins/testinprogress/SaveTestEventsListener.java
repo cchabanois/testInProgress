@@ -31,12 +31,15 @@ public class SaveTestEventsListener implements IBuildTestEventListener {
 
 	private void saveEvent(BuildTestEvent runTestEvent) {
 		try {
-			if (runTestEvent.getRunTestEvent() instanceof RunStartEvent) {
-				FileWriter fileWriter = new FileWriter(new File(directory,
+			FileWriter fileWriter;
+			if(fileWriters.containsKey(runTestEvent.getRunId()))
+				fileWriter = fileWriters.get(runTestEvent.getRunId());
+			else
+				fileWriter = new FileWriter(new File(directory,
 						runTestEvent.getRunId() + ".events"));
-				fileWriters.put(runTestEvent.getRunId(), fileWriter);
-			}
-			FileWriter fileWriter = fileWriters.get(runTestEvent.getRunId());
+			fileWriters.put(runTestEvent.getRunId(), fileWriter);
+			
+			
 			if (fileWriter == null) {
 				// should never happen
 				return;

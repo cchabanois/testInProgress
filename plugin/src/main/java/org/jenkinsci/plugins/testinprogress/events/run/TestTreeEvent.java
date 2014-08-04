@@ -18,7 +18,7 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 	private final int testCount;
 
 	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, String parentName,
-			boolean isSuite, int testCount) {
+			boolean isSuite, int testCount, String runId) {
 		super(timestamp);
 		this.testCount = testCount;
 		this.testId = testId;
@@ -26,11 +26,22 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		this.testName = testName;
 		this.parentId = parentId;
 		this.parentName = parentName;
+		setRunId(runId);
 	}
 	
 	public TestTreeEvent(long timestamp, String testId, String testName,
-			boolean isSuite, int testCount) {
-		this(timestamp,testId,testName,"","",isSuite,testCount);
+			boolean isSuite, int testCount, String runId) {
+		this(timestamp,testId,testName,"","",isSuite,testCount, runId);
+	}
+	
+	public TestTreeEvent(long timestamp, String testId, String testName,
+			boolean isSuite, int testCount){
+		this(timestamp, testId, testName, isSuite, testCount, "");
+	}
+	
+	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, String parentName,
+			boolean isSuite, int testCount){
+		this(timestamp, testId, testName, parentId, parentName, isSuite, testCount, "");
 	}
 
 	public int getTestCount() {
@@ -69,6 +80,7 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_TREE);
+		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		jsonMsg.put("parentId", parentId);

@@ -11,12 +11,10 @@
 {timeStamp:1358801215347,messageId:TESTS,testId:3,ignored:true,testName:testIgnored(testproject.CalcTest)}
 {timeStamp:1358801215349,messageId:TESTE,testId:3,ignored:true,testName:testIgnored(testproject.CalcTest)}
 {timeStamp:1358801228928,messageId:TESTS,testId:4,testName:testFail(testproject.CalcTest)}
-{"timeStamp":1358801228928,"messageId":"FAILED","testId":4,"testName":"testFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: this test failed\n at testproject.CalcTest.testFail(CalcTest.java:30) \n at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"
-}
+{"timeStamp":1358801228928,"messageId":"FAILED","testId":4,"testName":"testFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: this test failed\n at testproject.CalcTest.testFail(CalcTest.java:30) \n at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
 {timeStamp:1358801228932,messageId:TESTE,testId:4,testName:testFail(testproject.CalcTest)}
 {timeStamp:1358801228932,messageId:TESTS,testId:5,testName:testAddWillFail(testproject.CalcTest)}
-{"timeStamp":1358801228932,"messageId":"FAILED","testId":5,"testName":"testAddWillFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: expected:<6> but was:<5>\n at testproject.CalcTest.testAddWillFail(CalcTest.java:20) \n	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"
-}
+{"timeStamp":1358801228932,"messageId":"FAILED","testId":5,"testName":"testAddWillFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: expected:<6> but was:<5>\n at testproject.CalcTest.testAddWillFail(CalcTest.java:20) \n	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
 {timeStamp:1358801228935,messageId:TESTE,testId:5,testName:testAddWillFail(testproject.CalcTest)}
 {timeStamp:1358801228935,messageId:TESTS,testId:6,testName:testAddWillSucceed(testproject.CalcTest)}
 {timeStamp:1358801228935,messageId:TESTE,testId:6,testName:testAddWillSucceed(testproject.CalcTest)}

@@ -13,9 +13,8 @@ public class RunStartEvent extends AbstractRunTestEvent {
 	private final int testCount;
 
 	public RunStartEvent(long timestamp, int testCount, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testCount = testCount;
-		setRunId(runId);
 	}
 	
 	public RunStartEvent(long timestamp, int testCount) {

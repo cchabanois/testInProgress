@@ -16,11 +16,10 @@ public class TestStartEvent extends AbstractRunTestEvent {
 
 	public TestStartEvent(long timestamp, String testId, String testName,
 			boolean ignored, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
-		setRunId(runId);
 	}
 	
 	public TestStartEvent(long timestamp, String testId, String testName,

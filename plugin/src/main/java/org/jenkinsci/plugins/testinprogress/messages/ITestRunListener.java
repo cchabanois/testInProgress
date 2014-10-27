@@ -73,24 +73,16 @@ public interface ITestRunListener {
 	public void testRunTerminated();
 	
 	/**
-	 * Information about a member of the test suite that is about to be run. The
-	 * format of the string is:
+	 * Information about a member of the test suite that is about to be run.
 	 * 
-	 * <pre>
-	 *  testId,testName,isSuite,testcount
-	 * 
-	 *  testId: a unique id for the test
-	 *  testName: the name of the test
-	 *  parentId: Id of the parent to which this test belong. In case it does not belong just send empty string.
-	 *  parentName: Name of the parent to which this test belong. In case it does not belong just send empty string.
-	 *  isSuite: true or false depending on whether the test is a suite
-	 *  testCount: an integer indicating the number of tests
-	 * 
-	 *  Example: &quot;324968,testPass(junit.tests.MyTest),false,1&quot;
-	 * </pre>
-	 * 
-	 * @param description
-	 *            a string describing a tree entry
+	 * @param timestamp
+	 * @param testId a unique id for the test
+	 * @param testName the name of the test
+	 * @param parentId Id of the parent to which this test belong. In case it does not belong just send empty string.
+	 * @param parentName Name of the parent to which this test belong. In case it does not belong just send empty string.
+	 * @param isSuite true or false depending on whether the test is a suite
+	 * @param testCount: an integer indicating the number of tests
+	 * @param runId
 	 * 
 	 * @see MessageIds#TEST_TREE
 	 */
@@ -100,6 +92,7 @@ public interface ITestRunListener {
 	/**
 	 * An individual test has failed with a stack trace.
 	 * 
+	 * @param timestamp
 	 * @param status
 	 *            the outcome of the test; one of {@link #STATUS_ERROR
 	 *            STATUS_ERROR} or {@link #STATUS_FAILURE STATUS_FAILURE}
@@ -113,6 +106,7 @@ public interface ITestRunListener {
 	 *            the expected value
 	 * @param actual
 	 *            the actual value
+	 * @param runId          
 	 */
 	public void testFailed(long timestamp, int status, String testId, String testName,
 			String trace, String expected, String actual, String runId);

@@ -20,14 +20,13 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 	public TestFailedEvent(long timestamp, String testId, String testName,
 			String expected, String actual, String trace,
 			boolean assumptionFailed, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.expected = expected;
 		this.actual = actual;
 		this.trace = trace;
 		this.assumptionFailed = assumptionFailed;
-		setRunId(runId);
 	}
 	
 	public TestFailedEvent(long timestamp, String testId, String testName,

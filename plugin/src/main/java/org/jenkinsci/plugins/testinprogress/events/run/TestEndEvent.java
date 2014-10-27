@@ -17,12 +17,11 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	
 	public TestEndEvent(long timestamp, String testId, String testName,
 			boolean ignored, long elapsedTime, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
 		this.elapsedTime = elapsedTime;
-		setRunId(runId);
 	}
 	
 	public TestEndEvent(long timestamp, String testId, String testName,

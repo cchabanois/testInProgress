@@ -13,9 +13,8 @@ public class RunEndEvent extends AbstractRunTestEvent {
 	private final long elapsedTime;
 
 	public RunEndEvent(long timestamp, long elapsedTime, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.elapsedTime = elapsedTime;
-		setRunId(runId);
 	}
 	
 	public RunEndEvent(long timestamp, long elapsedTime) {

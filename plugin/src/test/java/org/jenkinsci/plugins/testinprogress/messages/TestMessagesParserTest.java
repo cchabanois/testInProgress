@@ -1,11 +1,13 @@
 package org.jenkinsci.plugins.testinprogress.messages;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,13 +65,22 @@ public class TestMessagesParserTest {
 				new ITestRunListener[] { testRunListener });
 		InputStream is = getClass().getResourceAsStream(
 				"ProgressCalcTestSuite.events");
+		int numTests = 6;
 
 		// When
 		handler.processTestMessages(new InputStreamReader(is));
 
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), anyInt(),anyString());
-		verify(testRunListener).testRunEnded(anyLong(), anyLong(),anyString());
+		verify(testRunListener)
+				.testRunStarted(anyLong(), anyInt(), anyString());
+		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(), anyString(),
+				anyString(), anyString(), anyString(), eq(false), anyInt(),
+				anyString());
+		verify(testRunListener, times(numTests)).testStarted(anyLong(),
+				anyString(), anyString(), anyBoolean(), anyString());
+		verify(testRunListener, times(numTests)).testEnded(anyLong(),
+				anyString(), anyString(), anyBoolean(), anyString());
+		verify(testRunListener).testRunEnded(anyLong(), anyLong(), anyString());
 	}
 
 	private String getAllMessages(boolean timeStamp) {

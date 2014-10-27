@@ -29,13 +29,12 @@ public class TestRunIds implements ITestRunIds {
 	 */
 	public synchronized String addRunId(String proposedRunId) {
 		String runId = proposedRunId;
-		/*int num = 0;
+		int num = 0;
 		while (runIds.contains(runId)) {
 			num++;
 			runId = proposedRunId + "-" + Integer.toString(num);
-		}*/
-		if(!runIds.contains(runId))
-			runIds.add(runId);
+		}
+		runIds.add(runId);
 		return runId;
 	}
 

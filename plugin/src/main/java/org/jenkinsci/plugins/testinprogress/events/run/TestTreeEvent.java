@@ -19,14 +19,13 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 
 	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, String parentName,
 			boolean isSuite, int testCount, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testCount = testCount;
 		this.testId = testId;
 		this.isSuite = isSuite;
 		this.testName = testName;
 		this.parentId = parentId;
 		this.parentName = parentName;
-		setRunId(runId);
 	}
 	
 	public TestTreeEvent(long timestamp, String testId, String testName,

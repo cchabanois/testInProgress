@@ -15,6 +15,8 @@ package org.jenkinsci.plugins.testinprogress.messages;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,88 +29,15 @@ import org.json.JSONObject;
  * modified
  */
 public class TestMessagesParser {
-	
-	public TestMessagesParser(ITestRunListener[] listeners) {
-		this.fListeners = listeners;
-	}
-
-	public void processTestMessages(Reader reader) {
-		fPushbackReader = new BufferedReader(reader);
-		try {
-			JSONObject message;
-			while (fPushbackReader != null
-					&& (message = readMessage(fPushbackReader)) != null)
-				fCurrentState = fCurrentState.readMessage(message);
-		} catch (IOException e) {
-			System.out.println("Testin progress plugin: Got IO Exception:" +e.getMessage());
-			notifyTestRunTerminated();
-		}
-		shutDown();
-	}
-
-	private void shutDown() {
-		try {
-			if (fPushbackReader != null) {
-				fPushbackReader.close();
-				fPushbackReader = null;
-			}
-		} catch (IOException e) {
-		}
-	}
-
-	/**
-	 * A simple state machine to process requests from the RemoteTestRunner
-	 */
-	abstract class ProcessingState {
-		abstract ProcessingState readMessage(JSONObject jsonMsg);
-	}
-
-	class DefaultProcessingState extends ProcessingState {
-		ProcessingState readMessage(JSONObject jsonMsg) {
-			String msgId = getValue(jsonMsg, "messageId", "").toString().trim();
-		
-			if (msgId.contentEquals(MessageIds.TEST_RUN_START.trim())) {
-				int count = 0;
-				fVersion = getValue(jsonMsg, "fVersion", "v1").toString();
-				count = jsonMsg.getInt("testCount");
-				notifyTestRunStarted(jsonMsg, count);
-			} else if (msgId.contentEquals(MessageIds.TEST_START.trim())) {
-				notifyTestStarted(jsonMsg);
-
-			} else if (msgId.contentEquals(MessageIds.TEST_END.trim())) {
-				notifyTestEnded(jsonMsg);
-
-			} else if (msgId.contentEquals(MessageIds.TEST_ERROR.trim())) {
-				notifyTestFailed(jsonMsg, ITestRunListener.STATUS_ERROR);
-
-			} else if (msgId.contentEquals(MessageIds.TEST_FAILED.trim())) {
-				notifyTestFailed(jsonMsg, ITestRunListener.STATUS_FAILURE);
-
-			} else if (msgId.contentEquals(MessageIds.TEST_RUN_END.trim())) {
-				String elTime = getValue(jsonMsg, "elapsedTime", "").toString();
-				
-				long elapsedTime = Long.parseLong(elTime);
-				testRunEnded(jsonMsg, elapsedTime);
-
-			} else if (msgId.contentEquals(MessageIds.TEST_TREE.trim())) {
-				notifyTestTreeEntry(jsonMsg);
-			}
-			
-			return this;
-		}
-	}
-
-	//private long timestamp;
-	
-	ProcessingState fDefaultState = new DefaultProcessingState();
-	ProcessingState fCurrentState = fDefaultState;
+	private final static Logger LOG = Logger
+			.getLogger(TestMessagesParser.class.getName());	
 
 	/**
 	 * An array of listeners that are informed about test events.
 	 */
-	private ITestRunListener[] fListeners;
+	private ITestRunListener[] listeners;
 
-	private BufferedReader fPushbackReader;
+	private BufferedReader reader;
 	
 	private long startTime;
 	
@@ -117,48 +46,79 @@ public class TestMessagesParser {
 	 */
 	private String fVersion;
 	
-	private JSONObject readMessage(BufferedReader in) throws IOException {
-		String bck="";
-		String inpStrm;
-		while((inpStrm=in.readLine())!=null){
-			try {
-				if("".equalsIgnoreCase(bck))
-					return new JSONObject(inpStrm);
-				else {
-					bck += inpStrm;
-					return new JSONObject(bck);
-					
-				}
-			} catch(Exception e){
-				bck = "";			
-			}
-		}
-		/*while ((ch = in.read()) != -1) {
-			System.out.print(ch);
-			if(ch == '}'){
-				buf.append((char)ch);
-				ch = in.read();
-				if (ch == '\n' || ch == '\r') {
-					return buf.toString();
-				} else {
-					buf.append((char)ch);
-					in.unread(ch);
-				}
-			} else {
-				buf.append((char) ch);
-			}
-		}
-		
-		if (buf.length() == 0)
-			return null;*/
-		
-		return null;
+	
+	public TestMessagesParser(ITestRunListener[] listeners) {
+		this.listeners = listeners;
 	}
 
-	private void receiveMessage(String message) throws JSONException {	
-		System.out.println("message is: " + message);
-		JSONObject jsonMessage = new JSONObject(message);
-		fCurrentState = fCurrentState.readMessage(jsonMessage);
+	public void processTestMessages(Reader reader) {
+		this.reader = new BufferedReader(reader);
+		try {
+			JSONObject message;
+			while ((message = readMessage(this.reader)) != null)
+				processMessage(message);
+		} catch (JSONException e) {
+			LOG.log(Level.WARNING, "Could not read message", e);
+			notifyTestRunTerminated();
+		} catch (IOException e) {
+			LOG.log(Level.WARNING, "Could not read message", e);
+			notifyTestRunTerminated();
+		}
+		shutDown();
+	}
+
+	private void shutDown() {
+		try {
+			if (reader != null) {
+				reader.close();
+				reader = null;
+			}
+		} catch (IOException e) {
+		}
+	}
+
+	private JSONObject readMessage(BufferedReader in) throws IOException, JSONException {
+		String line = in.readLine();
+		if (line == null) {
+			return null;
+		} else {
+			try {
+				return new JSONObject(line);
+			} catch (JSONException e) {
+				throw new IOException("Message is not a valid json object : '"+line+"'",e);
+			}
+		}
+	}
+
+	private void processMessage(JSONObject jsonMsg) {
+		String msgId = getValue(jsonMsg, "messageId", "").toString().trim();
+
+		if (msgId.contentEquals(MessageIds.TEST_RUN_START.trim())) {
+			int count = 0;
+			fVersion = getValue(jsonMsg, "fVersion", "v1").toString();
+			count = jsonMsg.getInt("testCount");
+			notifyTestRunStarted(jsonMsg, count);
+		} else if (msgId.contentEquals(MessageIds.TEST_START.trim())) {
+			notifyTestStarted(jsonMsg);
+
+		} else if (msgId.contentEquals(MessageIds.TEST_END.trim())) {
+			notifyTestEnded(jsonMsg);
+
+		} else if (msgId.contentEquals(MessageIds.TEST_ERROR.trim())) {
+			notifyTestFailed(jsonMsg, ITestRunListener.STATUS_ERROR);
+
+		} else if (msgId.contentEquals(MessageIds.TEST_FAILED.trim())) {
+			notifyTestFailed(jsonMsg, ITestRunListener.STATUS_FAILURE);
+
+		} else if (msgId.contentEquals(MessageIds.TEST_RUN_END.trim())) {
+			String elTime = getValue(jsonMsg, "elapsedTime", "").toString();
+
+			long elapsedTime = Long.parseLong(elTime);
+			testRunEnded(jsonMsg, elapsedTime);
+
+		} else if (msgId.contentEquals(MessageIds.TEST_TREE.trim())) {
+			notifyTestTreeEntry(jsonMsg);
+		}
 	}
 
 	private void notifyTestTreeEntry(final JSONObject jsonMsg) {
@@ -171,8 +131,8 @@ public class TestMessagesParser {
 		int count = (Integer) getValue(jsonMsg, "testCount", 1);
 		
 		long timeStamp = getTimeStamp(jsonMsg);
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count, runId);
 		}
 	}
@@ -180,8 +140,8 @@ public class TestMessagesParser {
 	private void testRunEnded(JSONObject jsonMsg, final long elapsedTime) {
 		long timeStamp = getTimeStamp(jsonMsg);
 		String runId = getStringValue(jsonMsg, "runId", "");
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			listener.testRunEnded(timeStamp, elapsedTime, runId);
 		}
 	}
@@ -192,8 +152,8 @@ public class TestMessagesParser {
 		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];			
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];			
 			listener.testEnded(timeStamp, testId, testName, ignored, runId);
 		}
 	}
@@ -204,8 +164,8 @@ public class TestMessagesParser {
 		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			
 			listener.testStarted(timeStamp,  testId, testName, ignored, runId);
 		}
@@ -215,8 +175,8 @@ public class TestMessagesParser {
 		long timeStamp = getTimeStamp(jsonMsg);
 		String runId = getStringValue(jsonMsg, "runId", "");
 		startTime = timeStamp;
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			listener.testRunStarted(timeStamp, count, runId);
 		}
 	}
@@ -229,8 +189,8 @@ public class TestMessagesParser {
 		String actualMsg = getStringValue(jsonMsg, "actualMsg", "");
 		String runId = getStringValue(jsonMsg, "runId", "");
 		long timeStamp = getTimeStamp(jsonMsg);
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			listener.testFailed(timeStamp, failureKind, testId, testName,
 					errorTrace, expectedMsg,
 					actualMsg, runId);
@@ -239,18 +199,18 @@ public class TestMessagesParser {
 
 
 	private void notifyTestRunTerminated() {
-		for (int i = 0; i < fListeners.length; i++) {
-			ITestRunListener listener = fListeners[i];
+		for (int i = 0; i < listeners.length; i++) {
+			ITestRunListener listener = listeners[i];
 			listener.testRunTerminated();
 		}
 	}
 	
-	public Object getValue(JSONObject jsonData,String key, Object defaultValue){
-		try{
+	public Object getValue(JSONObject jsonData, String key, Object defaultValue) {
+		try {
 			Object data = jsonData.get(key);
 			return data;
-		}catch(JSONException e){
-			return defaultValue;			
+		} catch (JSONException e) {
+			return defaultValue;
 		}
 	}
 	

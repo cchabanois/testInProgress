@@ -7,10 +7,11 @@ package org.jenkinsci.plugins.testinprogress.events.run;
  */
 public abstract class AbstractRunTestEvent implements IRunTestEvent {
 	private final long timestamp;
-	private String runId;
+	private final String runId;
 
-	public AbstractRunTestEvent(long timestamp) {
+	public AbstractRunTestEvent(long timestamp, String runId) {
 		this.timestamp = timestamp;
+		this.runId = runId;
 	}
 
 	public long getTimestamp() {
@@ -19,10 +20,6 @@ public abstract class AbstractRunTestEvent implements IRunTestEvent {
 	
 	public String getRunId(){
 		return this.runId;
-	}
-	
-	public void setRunId(String runId){
-		this.runId = runId;
 	}
 
 	@Override

@@ -1,8 +1,5 @@
 package org.jenkinsci.plugins.testinprogress.events.build;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEvent;
 import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
 import org.jenkinsci.plugins.testinprogress.events.run.RunStartEvent;
@@ -19,7 +16,6 @@ import org.jenkinsci.plugins.testinprogress.events.run.TestTreeEvent;
 public class BuildTestEventsGenerator implements IRunTestEventListener {
 	private RunStartEvent runStartEvent;
 	private boolean startEventFired = false;
-	private List<TestTreeEvent> testTreeEvents = new ArrayList<TestTreeEvent>();
 	private String runId = null;
 	private final IBuildTestEventListener[] listeners;
 	private final TestRunIds testRunIds;
@@ -32,16 +28,18 @@ public class BuildTestEventsGenerator implements IRunTestEventListener {
 
 	public void event(IRunTestEvent testEvent) {
 		if (testEvent instanceof RunStartEvent) {
-			String eventRunId = getRunID(testEvent); 
-			if( eventRunId != null) {
+			runId = getRunID((RunStartEvent)testEvent); 
+			if (runId != null) {
 				startEventFired = true;
 				fireEvent(testEvent);
-			} else
+			} else {
+				// wait until first TestTreeEvent so that we can guess a runId
 				runStartEvent = (RunStartEvent) testEvent;
+			}
 		} else if (testEvent instanceof TestTreeEvent) {
 			if(!startEventFired){
 				startEventFired = true;
-				runId = guessRunID(testEvent);
+				runId = guessRunID((TestTreeEvent)testEvent);
 				fireEvent(runStartEvent);
 			}
 			fireEvent(testEvent);
@@ -52,35 +50,26 @@ public class BuildTestEventsGenerator implements IRunTestEventListener {
 
 	private void fireEvent(IRunTestEvent testEvent) {
 		for (IBuildTestEventListener listener : listeners) {
-			listener.event(new BuildTestEvent(guessRunID(testEvent), testEvent));
+			listener.event(new BuildTestEvent(runId, testEvent));
 		}
 	}
 
-	/*private String guessRunID(List<TestTreeEvent> testTreeEvents) {
-		// TODO : test name "null"
-		if (testTreeEvents.size() == 0) {
-			return testRunIds.addRunId("empty");
+	private String guessRunID(TestTreeEvent testEvent) {
+		String proposedRunId;
+		if (testEvent.getRunId() == null || "".equals(testEvent.getRunId())) {
+			proposedRunId = ((TestTreeEvent)testEvent).getTestName();
 		} else {
-			return testRunIds.addRunId(testTreeEvents.get(0).getTestName());
+			proposedRunId = testEvent.getRunId();
 		}
-	}*/
-	
-	private String guessRunID(IRunTestEvent testEvent) {
-		String rId = getRunID(testEvent);
-		if(runId!=null)
-			return runId;
-		return testRunIds.addRunId(rId);		
+		return testRunIds.addRunId(proposedRunId);
 	}
 	
-	private String getRunID(IRunTestEvent testEvent) {
+	private String getRunID(RunStartEvent testEvent) {
 		String testRunId = 	testEvent.getRunId();	
 		if (testRunId == null || ("".equalsIgnoreCase(testRunId))) {
-			if(testEvent instanceof TestTreeEvent)
-				return ((TestTreeEvent)testEvent).getTestName();
-			else 
-				return runId;
+			return null;
 		} else {
-			return testRunId;
+			return testRunIds.addRunId(testRunId);
 		}
 	}
 

@@ -16,11 +16,10 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 
 	public TestErrorEvent(long timestamp, String testId, String testName,
 			String trace, String runId) {
-		super(timestamp);
+		super(timestamp, runId);
 		this.testId = testId;
 		this.testName = testName;
 		this.trace = trace;
-		setRunId(runId);
 	}
 	
 	public TestErrorEvent(long timestamp, String testId, String testName,

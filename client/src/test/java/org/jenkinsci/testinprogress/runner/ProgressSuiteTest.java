@@ -1,11 +1,12 @@
 package org.jenkinsci.testinprogress.runner;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.jenkinsci.testinprogress.utils.TestMessageUtils.assertTestMessageMatches;
 
 import java.util.concurrent.Future;
 
+import org.json.JSONObject;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import tests.ProgressCalcTestsSuite;
 
@@ -17,13 +18,14 @@ public class ProgressSuiteTest extends AbstractProgressSuiteTest {
 		Class<?> classUsingProgressSuiteRunner = ProgressCalcTestsSuite.class;
 		
 		// When
-		Future<String[]> result = runProgressSuite(classUsingProgressSuiteRunner);
+		Future<JSONObject[]> result = runProgressSuite(classUsingProgressSuiteRunner);
 
 		// Then
-		String[] messages = result.get();
-		
-		assertThat(messages[0], containsString("{\"testCount\":6,\"runId\":\"\",\"messageId\":\"TESTC\",\"fVersion\":\"v2\"}"));
-		assertThat(messages[messages.length-1], containsString("RUNTIME"));
+		JSONObject[] messages = result.get();
+		assertTestMessageMatches(messages, new JSONObject(
+				"{messageId:'TESTC', fVersion:'v2', testCount:6}"), JSONCompareMode.LENIENT);
+		assertTestMessageMatches(messages, new JSONObject(
+				"{messageId:'RUNTIME'}"), JSONCompareMode.LENIENT);
 	}
 
 

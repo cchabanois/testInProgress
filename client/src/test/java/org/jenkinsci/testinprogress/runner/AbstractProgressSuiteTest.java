@@ -5,14 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.JUnitCore;
+
+import com.google.common.collect.Lists;
 
 public class AbstractProgressSuiteTest {
 	private ExecutorService executorService;
@@ -31,31 +35,32 @@ public class AbstractProgressSuiteTest {
 		executorService.shutdown();
 	}
 
-	protected Future<String[]> runProgressSuite(Class<?> classes) throws IOException {
-		Future<String[]> futures = readAllMessagesFromServerSocket();
+	protected Future<JSONObject[]> runProgressSuite(Class<?> classes) throws IOException {
+		Future<JSONObject[]> futures = readAllMessagesFromServerSocket();
 		JUnitCore jUnitCore = new JUnitCore();
 		jUnitCore.run(classes);
 		return futures;
 	}
 
-	private Future<String[]> readAllMessagesFromServerSocket()
+	private Future<JSONObject[]> readAllMessagesFromServerSocket()
 			throws IOException {
-		return executorService.submit(new Callable<String[]>() {
+		return executorService.submit(new Callable<JSONObject[]>() {
 
-			public String[] call() throws Exception {
+			public JSONObject[] call() throws Exception {
 				ServerSocket serverSocket = new ServerSocket(port);
 				try {
 					Socket s = serverSocket.accept();
 					BufferedReader is = new BufferedReader(
 							new InputStreamReader(s.getInputStream()));
 
-					StringBuilder sb = new StringBuilder();
+					List<JSONObject> result = Lists.newArrayList();
 					String line = is.readLine();
 					while (line != null) {
-						sb.append(line + '\n');
+						JSONObject jsonObject = new JSONObject(line);
+						result.add(jsonObject);
 						line = is.readLine();
 					}
-					return sb.toString().split("\n");
+					return result.toArray(new JSONObject[0]);
 				} finally {
 					serverSocket.close();
 				}
@@ -80,11 +85,5 @@ public class AbstractProgressSuiteTest {
 		}
 		return -1;
 	}
-
-	protected void printTestMessages(String[] messages) {
-		for (String message : messages) {
-			System.out.println(message);
-		}
-	}	
 	
 }

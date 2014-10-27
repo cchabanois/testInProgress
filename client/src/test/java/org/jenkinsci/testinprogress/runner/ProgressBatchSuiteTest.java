@@ -1,29 +1,32 @@
 package org.jenkinsci.testinprogress.runner;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.jenkinsci.testinprogress.utils.TestMessageUtils.*;
 
 import java.util.concurrent.Future;
 
+import org.json.JSONObject;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import de.oschoen.junit.runner.ProgressAllTests;
-
 
 public class ProgressBatchSuiteTest extends AbstractProgressSuiteTest {
 
 	@Test
 	public void testProgressBatchSuite() throws Exception {
 		// Given
-		Class<?> suiteUsingProgressBatchSuiteRunner =  ProgressAllTests.class;
-		
+		Class<?> suiteUsingProgressBatchSuiteRunner = ProgressAllTests.class;
+
 		// When
-		Future<String[]> result = runProgressSuite(suiteUsingProgressBatchSuiteRunner);
+		Future<JSONObject[]> result = runProgressSuite(suiteUsingProgressBatchSuiteRunner);
 
 		// Then
-		String[] messages = result.get();
-		assertThat(messages[0], containsString("{\"testCount\":5,\"runId\":\"\",\"messageId\":\"TESTC\",\"fVersion\":\"v2\"}"));
-		assertThat(messages[messages.length-1], containsString("RUNTIME"));
-	}	
-	
+		JSONObject[] messages = result.get();
+		printTestMessages(messages);
+		assertTestMessageMatches(messages, new JSONObject(
+				"{messageId:'TESTC', fVersion:'v2', testCount:5}"), JSONCompareMode.LENIENT);
+		assertTestMessageMatches(messages, new JSONObject(
+				"{messageId:'RUNTIME'}"), JSONCompareMode.LENIENT);
+	}
+
 }

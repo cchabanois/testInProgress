@@ -1,0 +1,27 @@
+{timeStamp:1358801215332,messageId:TESTC,testCount:6,fVersion:v2}
+{timeStamp:1358801215333,messageId:TSTTREE,testId:1,testName:testproject.ProgressCalcTestSuite,isSuite:true,testCount:2}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:2,testName:testproject.CalcTest,isSuite:true,testCount:4}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:3,testName:testIgnored(testproject.CalcTest),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:4,testName:testFail(testproject.CalcTest),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:5,testName:testAddWillFail(testproject.CalcTest),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:6,testName:testAddWillSucceed(testproject.CalcTest),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:7,testName:testproject.CalcTest2,isSuite:true,testCount:2}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:8,testName:testStringCompare(testproject.CalcTest2),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TSTTREE,testId:9,testName:testDivideBy0(testproject.CalcTest2),isSuite:false,testCount:1}
+{timeStamp:1358801215347,messageId:TESTS,testId:3,ignored:true,testName:testIgnored(testproject.CalcTest)}
+{timeStamp:1358801215349,messageId:TESTE,testId:3,ignored:true,testName:testIgnored(testproject.CalcTest)}
+{timeStamp:1358801228928,messageId:TESTS,testId:4,testName:testFail(testproject.CalcTest)}
+{"timeStamp":1358801228928,"messageId":"FAILED","testId":4,"testName":"testFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: this test failed\n at testproject.CalcTest.testFail(CalcTest.java:30) \n at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
+{timeStamp:1358801228932,messageId:TESTE,testId:4,testName:testFail(testproject.CalcTest)}
+{timeStamp:1358801228932,messageId:TESTS,testId:5,testName:testAddWillFail(testproject.CalcTest)}
+{"timeStamp":1358801228932,"messageId":"FAILED","testId":5,"testName":"testAddWillFail(testproject.CalcTest)","errorTrace":"java.lang.AssertionError: expected:<6> but was:<5>\n at testproject.CalcTest.testAddWillFail(CalcTest.java:20) \n	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
+{timeStamp:1358801228935,messageId:TESTE,testId:5,testName:testAddWillFail(testproject.CalcTest)}
+{timeStamp:1358801228935,messageId:TESTS,testId:6,testName:testAddWillSucceed(testproject.CalcTest)}
+{timeStamp:1358801228935,messageId:TESTE,testId:6,testName:testAddWillSucceed(testproject.CalcTest)}
+{timeStamp:1358801228935,messageId:TESTS,testId:8,testName:testStringCompare(testproject.CalcTest2)}
+{"timeStamp":1358801228935,"messageId":"FAILED",testId:8,"testName":"testStringCompare(testproject.CalcTest2)","expectedMsg":5,"actualMsg":23,"errorTrace": "org.junit.ComparisonFailure: expected:<[5]> but was:<[23]>\n	at testproject.CalcTest2.testStringCompare(CalcTest2.java:11)\n	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
+{timeStamp:1358801228947,messageId:TESTE,testId:8,testName:testStringCompare(testproject.CalcTest2)}
+{timeStamp:1358801228949,messageId:TESTS,testId:9,testName:testDivideBy0(testproject.CalcTest2)}
+{timeStamp:1358801228949,messageId:ERROR,testId:9,testName:testDivideBy0(testproject.CalcTest2),errorTrace:"java.lang.ArithmeticException: / by zero \n at testproject.CalcTest2.testDivideBy0(CalcTest2.java:16)\n at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)"}
+{timeStamp:1358801228950,messageId:TESTE,testId:9,testName:testDivideBy0(testproject.CalcTest2)}
+{timeStamp:1358801228950,messageId:RUNTIME,elapsedTime:19}

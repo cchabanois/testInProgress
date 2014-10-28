@@ -7,7 +7,10 @@ import hudson.model.Run;
 import java.util.Collections;
 import java.util.List;
 
-import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEvent;
+import org.jenkinsci.testinprogress.server.build.BuildTestEventList;
+import org.jenkinsci.testinprogress.server.build.BuildTestResults;
+import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
+import org.jenkinsci.testinprogress.server.listeners.BuildTestStats;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 /**

@@ -22,11 +22,16 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Map;
 
-import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEventsGenerator;
-import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener;
-import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
-import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
-import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
+import org.jenkinsci.testinprogress.server.build.BuildTestResults;
+import org.jenkinsci.testinprogress.server.events.TestEventsReceiver;
+import org.jenkinsci.testinprogress.server.events.build.BuildTestEventsGenerator;
+import org.jenkinsci.testinprogress.server.events.build.IBuildTestEventListener;
+import org.jenkinsci.testinprogress.server.events.build.TestRunIds;
+import org.jenkinsci.testinprogress.server.events.run.IRunTestEventListener;
+import org.jenkinsci.testinprogress.server.filters.StackTraceFilter;
+import org.jenkinsci.testinprogress.server.listeners.BuildTestStats;
+import org.jenkinsci.testinprogress.server.listeners.RunningBuildTestEvents;
+import org.jenkinsci.testinprogress.server.listeners.SaveTestEventsListener;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -56,8 +61,9 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 				launcher.getChannel(), 0, new ForwarderImpl(testRunIds,
 						saveTestEventsListener, runningBuildTestEvents,
 						buildTestStats));
-		final BuildTestResults testEvents = new BuildTestResults(build,
-				testRunIds, runningBuildTestEvents, buildTestStats);
+		final BuildTestResults testEvents = new BuildTestResults(new File(
+				build.getRootDir(), UNIT_EVENTS_DIR), testRunIds,
+				runningBuildTestEvents, buildTestStats);
 		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(
 				build, testEvents);
 		build.addAction(testInProgressRunAction);
@@ -152,10 +158,13 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 			PipedOutputStream pipedOutputStream = new PipedOutputStream();
 			PipedInputStream pipedInputStream = new PipedInputStream();
 			pipedOutputStream.connect(pipedInputStream);
-			new TestEventsReceiverThread("Test events receiver",
+			Runnable runnable = new TestEventsReceiver(
 					pipedInputStream, new StackTraceFilter(),
 					new IRunTestEventListener[] { new BuildTestEventsGenerator(
-							testRunIds, listeners) }).start();
+							testRunIds, listeners) });
+			Thread thread = new Thread(runnable);
+			thread.setName("Test events receiver");
+			thread.start();
 			return new RemoteOutputStream(pipedOutputStream);
 		}
 

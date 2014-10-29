@@ -17,9 +17,10 @@ import hudson.tasks.BuildWrapperDescriptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
 import java.util.Map;
 
 import org.jenkinsci.testinprogress.server.build.BuildTestResults;
@@ -117,14 +118,16 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
+		return DESCRIPTOR;
 	}
 
 	@Extension
+	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+	
 	public static final class DescriptorImpl extends BuildWrapperDescriptor {
 
 		public DescriptorImpl() {
-			super();
+			super(TestInProgressBuildWrapper.class);
 			load();
 		}
 
@@ -155,13 +158,17 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		}
 
 		public OutputStream connect(OutputStream out) throws IOException {
-			PipedOutputStream pipedOutputStream = new PipedOutputStream();
-			PipedInputStream pipedInputStream = new PipedInputStream();
-			pipedOutputStream.connect(pipedInputStream);
+			Pipe pipe = Pipe.open();
+			Pipe.SinkChannel sinkChannel = pipe.sink();
+			Pipe.SourceChannel sourceChannel = pipe.source();
+			OutputStream pipedOutputStream = Channels.newOutputStream(sinkChannel);
+			InputStream pipedInputStream = Channels.newInputStream(sourceChannel);
+			
+			BuildTestEventsGenerator buildTestEventsGenerator = new BuildTestEventsGenerator(
+					testRunIds, listeners); 
 			Runnable runnable = new TestEventsReceiver(
 					pipedInputStream, new StackTraceFilter(),
-					new IRunTestEventListener[] { new BuildTestEventsGenerator(
-							testRunIds, listeners) });
+					new IRunTestEventListener[] { buildTestEventsGenerator });
 			Thread thread = new Thread(runnable);
 			thread.setName("Test events receiver");
 			thread.start();

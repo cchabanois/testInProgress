@@ -16,17 +16,12 @@ public class TestEndEvent extends AbstractRunTestEvent {
 	private final long elapsedTime;
 	
 	public TestEndEvent(long timestamp, String testId, String testName,
-			boolean ignored, long elapsedTime, String runId) {
-		super(timestamp, runId);
+			boolean ignored, long elapsedTime) {
+		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.ignored = ignored;
 		this.elapsedTime = elapsedTime;
-	}
-	
-	public TestEndEvent(long timestamp, String testId, String testName,
-			boolean ignored, long elapsedTime) {
-		this(timestamp, testId, testName, ignored, elapsedTime, "");
 	}
 
 	public String getType() {
@@ -62,7 +57,6 @@ public class TestEndEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_END);
-		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		jsonMsg.put("ignored", ignored);

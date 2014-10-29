@@ -23,16 +23,16 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 		testRunListener.testRunStarted(timestamp, testCount, runId);
 	}
 
-	public void testRunEnded(long timestamp, long elapsedTime, String runId) {
-		testRunListener.testRunEnded(timestamp, elapsedTime, runId);
+	public void testRunEnded(long timestamp, long elapsedTime) {
+		testRunListener.testRunEnded(timestamp, elapsedTime);
 	}
 
-	public void testStarted(long timestamp, String testId, String testName, boolean ignored, String runId) {
-		testRunListener.testStarted(timestamp, testId, testName, ignored, runId);
+	public void testStarted(long timestamp, String testId, String testName, boolean ignored) {
+		testRunListener.testStarted(timestamp, testId, testName, ignored);
 	}
 
-	public void testEnded(long timestamp, String testId, String testName, boolean ignored, String runId) {
-		testRunListener.testEnded(timestamp, testId, testName, ignored, runId);
+	public void testEnded(long timestamp, String testId, String testName, boolean ignored) {
+		testRunListener.testEnded(timestamp, testId, testName, ignored);
 	}
 
 	public void testRunTerminated() {
@@ -40,15 +40,15 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 	}
 
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount, String runId) {
-		testRunListener.testTreeEntry(timestamp, testId, testName, parentId, parentName, isSuite, testCount, runId);
+			String parentId, String parentName, boolean isSuite, int testCount) {
+		testRunListener.testTreeEntry(timestamp, testId, testName, parentId, parentName, isSuite, testCount);
 	}
 
 	public void testFailed(long timestamp, int status, String testId,
-			String testName, String trace, String expected, String actual, String runId) {
+			String testName, String trace, String expected, String actual) {
 		trace = stackTraceFilter.filter(trace);
 		testRunListener.testFailed(timestamp, status, testId, testName, trace,
-				expected, actual, runId);
+				expected, actual);
 	}
 
 }

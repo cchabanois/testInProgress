@@ -25,27 +25,21 @@ public abstract class MessageSender {
 	}
 	
 	public void testRunStarted(int testCount) {
-		testRunStarted(testCount,"");		
+		testRunStarted(testCount,null);		
 	}
 
-	public void testRunEnded(long elapsedTime, String runId) {
+	public void testRunEnded(long elapsedTime) {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
-		jsonMsg.put("runId", runId);
 		jsonMsg.put("elapsedTime", elapsedTime);
 		println(jsonMsg.toString());
 		flush();
 	}
 	
-	public void testRunEnded(long elapsedTime){
-		testRunEnded(elapsedTime, "");		
-	}
-
 	public void testTree(String testId, String testName, String parentId,String parentName, boolean isSuite,
-			int testCount, String runId) {
+			int testCount) {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_TREE);
-		jsonMsg.put("runId", runId);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		
@@ -58,58 +52,40 @@ public abstract class MessageSender {
 		flush();
 	}
 	
-	public void testTree(String testId, String testName, String parentId,String parentName, boolean isSuite,
-			int testCount) {
-		testTree(testId, testName, parentId, parentName, isSuite, testCount,"");		
-	}
-	
-	public void testTree(String testId, String testName, boolean isSuite,
-			int testCount, String runId) {
-		this.testTree(testId, testName, "", "", isSuite, testCount, runId);
-	}
-	
 	public void testTree(String testId, String testName, boolean isSuite,
 			int testCount) {
-		this.testTree(testId, testName, isSuite, testCount, "");		
+		this.testTree(testId, testName, null, null, isSuite, testCount);
 	}
 
-	public void testStarted(String testId, String testName, boolean ignored, String runId) {
+	public void testStarted(String testId, String testName, boolean ignored) {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_START);
-		jsonMsg.put("runId", runId);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
-		
-		jsonMsg.put("ignored", ignored);
+		if (ignored) {
+			jsonMsg.put("ignored", ignored);
+		}
 		println(jsonMsg.toString());
-		flush();
-	}
-	
-	public void testStarted(String testId, String testName, boolean ignored) {
-		testStarted(testId, testName, ignored,"");		
-	}
-
-	public void testEnded(String testId, String testName, boolean ignored, String runId) {
-		JSONObject jsonMsg = new JSONObject();
-		jsonMsg.put("messageId", MessageIds.TEST_END);
-		jsonMsg.put("runId", runId);
-		jsonMsg.put("testId", testId);
-		jsonMsg.put("testName", testName);
-		jsonMsg.put("ignored", ignored);
-		println(jsonMsg.toString());
-		
 		flush();
 	}
 	
 	public void testEnded(String testId, String testName, boolean ignored) {
-		testEnded(testId, testName, ignored, "");		
+		JSONObject jsonMsg = new JSONObject();
+		jsonMsg.put("messageId", MessageIds.TEST_END);
+		jsonMsg.put("testId", testId);
+		jsonMsg.put("testName", testName);
+		if (ignored) {
+			jsonMsg.put("ignored", ignored);
+		}
+		println(jsonMsg.toString());
+		
+		flush();
 	}
-
+	
 	public void testFailed(String testId, String testName, String expected,
-			String actual, String trace, String runId) {
+			String actual, String trace) {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
-		jsonMsg.put("runId", runId);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
@@ -121,11 +97,6 @@ public abstract class MessageSender {
 		flush();
 	}
 	
-	public void testFailed(String testId, String testName, String expected,
-			String actual, String trace){
-		testFailed(testId, testName, expected, actual, trace, "");
-	}
-
 	public void testAssumptionFailed(String testId, String testName,
 			String trace, String runId) {
 		JSONObject jsonMsg = new JSONObject();
@@ -143,13 +114,12 @@ public abstract class MessageSender {
 	
 	public void testAssumptionFailed(String testId, String testName,
 			String trace) {
-		testAssumptionFailed(testId, testName, trace, "");
+		testAssumptionFailed(testId, testName, trace, null);
 	}
 
-	public void testError(String testId, String testName, String trace, String runId) {
+	public void testError(String testId, String testName, String trace) {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_ERROR);
-		jsonMsg.put("runId", runId);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
@@ -159,10 +129,6 @@ public abstract class MessageSender {
 		flush();
 	}
 	
-	public void testError(String testId, String testName, String trace){
-		testError(testId, testName, trace, "");		
-	}
-
 	protected void println(String str) {
 		try {
 			writer.write(str);

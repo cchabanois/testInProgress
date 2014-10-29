@@ -19,20 +19,14 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 
 	public TestFailedEvent(long timestamp, String testId, String testName,
 			String expected, String actual, String trace,
-			boolean assumptionFailed, String runId) {
-		super(timestamp, runId);
+			boolean assumptionFailed) {
+		super(timestamp);
 		this.testId = testId;
 		this.testName = testName;
 		this.expected = expected;
 		this.actual = actual;
 		this.trace = trace;
 		this.assumptionFailed = assumptionFailed;
-	}
-	
-	public TestFailedEvent(long timestamp, String testId, String testName,
-			String expected, String actual, String trace,
-			boolean assumptionFailed) {
-		this(timestamp, testId, testName, expected, actual, trace, assumptionFailed, "");
 	}
 
 	public String getTestId() {
@@ -71,7 +65,6 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 		}
 		jsonMsg.put("timeStamp", timeStamp);
 		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
-		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 

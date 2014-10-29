@@ -10,7 +10,7 @@ import org.jenkinsci.testinprogress.server.events.run.TestTreeEvent;
  * 
  * A {@link BuildTestEventsGenerator} must be used for each run.
  * 
- * @author @author Cedric Chabanois (cchabanois at gmail.com)
+ * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
 public class BuildTestEventsGenerator implements IRunTestEventListener {
@@ -55,18 +55,13 @@ public class BuildTestEventsGenerator implements IRunTestEventListener {
 	}
 
 	private String guessRunID(TestTreeEvent testEvent) {
-		String proposedRunId;
-		if (testEvent.getRunId() == null || "".equals(testEvent.getRunId())) {
-			proposedRunId = ((TestTreeEvent)testEvent).getTestName();
-		} else {
-			proposedRunId = testEvent.getRunId();
-		}
+		String proposedRunId = testEvent.getTestName();
 		return testRunIds.addRunId(proposedRunId);
 	}
 	
 	private String getRunID(RunStartEvent testEvent) {
 		String testRunId = 	testEvent.getRunId();	
-		if (testRunId == null || ("".equalsIgnoreCase(testRunId))) {
+		if (testRunId == null) {
 			return null;
 		} else {
 			return testRunIds.addRunId(testRunId);

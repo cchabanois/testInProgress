@@ -9,8 +9,6 @@ public interface IRunTestEvent {
 
 	long getTimestamp();
 	
-	String getRunId();
-	
 	String getType();	
 	
 	@Override

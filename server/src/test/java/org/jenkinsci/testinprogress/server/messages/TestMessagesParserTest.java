@@ -4,7 +4,7 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -31,11 +31,13 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener).testRunStarted(anyLong(), eq(6),anyString());
-		verify(testRunListener).testTreeEntry(anyLong(),eq("1"),eq("testproject.AllTests"),eq(""),eq(""),eq(true),eq(2),anyString());
+		verify(testRunListener).testTreeEntry(anyLong(), eq("1"),
+				eq("testproject.AllTests"), isNull(String.class),
+				isNull(String.class), eq(true), eq(2));
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
-				eq("testAddWillFail(testproject.CalcTest)"),eq(false),anyString());
+				eq("testAddWillFail(testproject.CalcTest)"),eq(false));
 		verify(testRunListener).testStarted(anyLong(), eq("4"),
-				eq("testIgnored(testproject.CalcTest)"),eq(true),anyString());
+				eq("testIgnored(testproject.CalcTest)"),eq(true));
 	}
 
 	@Test
@@ -50,11 +52,11 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new StringReader(allMessages));
 
 		// Then
-		verify(testRunListener).testRunStarted(0, 6,"");
-		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests","","",true,2,"");
-		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false,"");
+		verify(testRunListener).testRunStarted(0, 6, null);
+		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests",null,null,true,2);
+		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false);
 		verify(testRunListener).testStarted(4500, "4",
-				"testIgnored(testproject.CalcTest)",true,"");
+				"testIgnored(testproject.CalcTest)",true);
 	}
 
 	@Test
@@ -74,13 +76,12 @@ public class TestMessagesParserTest {
 		verify(testRunListener)
 				.testRunStarted(anyLong(), anyInt(), anyString());
 		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(), anyString(),
-				anyString(), anyString(), anyString(), eq(false), anyInt(),
-				anyString());
+				anyString(), anyString(), anyString(), eq(false), anyInt());
 		verify(testRunListener, times(numTests)).testStarted(anyLong(),
-				anyString(), anyString(), anyBoolean(), anyString());
+				anyString(), anyString(), anyBoolean());
 		verify(testRunListener, times(numTests)).testEnded(anyLong(),
-				anyString(), anyString(), anyBoolean(), anyString());
-		verify(testRunListener).testRunEnded(anyLong(), anyLong(), anyString());
+				anyString(), anyString(), anyBoolean());
+		verify(testRunListener).testRunEnded(anyLong(), anyLong());
 	}
 
 	private String getAllMessages(boolean timeStamp) {

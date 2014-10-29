@@ -11,14 +11,16 @@ import org.json.JSONObject;
  */
 public class RunStartEvent extends AbstractRunTestEvent {
 	private final int testCount;
-
+	private final String runId;
+	
 	public RunStartEvent(long timestamp, int testCount, String runId) {
-		super(timestamp, runId);
+		super(timestamp);
 		this.testCount = testCount;
+		this.runId = runId;
 	}
 	
 	public RunStartEvent(long timestamp, int testCount) {
-		this(timestamp,testCount,"");
+		this(timestamp,testCount,null);
 	}
 
 	public int getTestCount() {
@@ -28,10 +30,14 @@ public class RunStartEvent extends AbstractRunTestEvent {
 	public String getType() {
 		return "TESTC";
 	}
+	
+	public String getRunId() {
+		return runId;
+	}
 
 	public String toString(boolean includeTimeStamp) {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
+		String timeStamp = "";
 		if(includeTimeStamp){
 			timeStamp = Long.toString(getTimestamp());			
 		}

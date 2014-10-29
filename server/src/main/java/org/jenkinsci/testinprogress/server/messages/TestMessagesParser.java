@@ -95,7 +95,7 @@ public class TestMessagesParser {
 
 		if (msgId.contentEquals(MessageIds.TEST_RUN_START.trim())) {
 			int count = 0;
-			fVersion = getValue(jsonMsg, "fVersion", "v1").toString();
+			fVersion = getValue(jsonMsg, "fVersion", "v2").toString();
 			count = jsonMsg.getInt("testCount");
 			notifyTestRunStarted(jsonMsg, count);
 		} else if (msgId.contentEquals(MessageIds.TEST_START.trim())) {
@@ -124,56 +124,51 @@ public class TestMessagesParser {
 	private void notifyTestTreeEntry(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
-		String parentId = getStringValue(jsonMsg, "parentId", "");
-		String parentName = getStringValue(jsonMsg, "parentName", "");
-		String runId = getStringValue(jsonMsg, "runId", "");
+		String parentId = getStringValue(jsonMsg, "parentId", null);
+		String parentName = getStringValue(jsonMsg, "parentName", null);
 		boolean isSuite = (Boolean)getValue(jsonMsg, "isSuite", false);
 		int count = (Integer) getValue(jsonMsg, "testCount", 1);
 		
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
-			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count, runId);
+			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count);
 		}
 	}
 
 	private void testRunEnded(JSONObject jsonMsg, final long elapsedTime) {
 		long timeStamp = getTimeStamp(jsonMsg);
-		String runId = getStringValue(jsonMsg, "runId", "");
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
-			listener.testRunEnded(timeStamp, elapsedTime, runId);
+			listener.testRunEnded(timeStamp, elapsedTime);
 		}
 	}
 
 	private void notifyTestEnded(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
-		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];			
-			listener.testEnded(timeStamp, testId, testName, ignored, runId);
+			listener.testEnded(timeStamp, testId, testName, ignored);
 		}
 	}
 
 	private void notifyTestStarted(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
-		String runId = getStringValue(jsonMsg, "runId", "");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
-			
-			listener.testStarted(timeStamp,  testId, testName, ignored, runId);
+			listener.testStarted(timeStamp,  testId, testName, ignored);
 		}
 	}
 
 	private void notifyTestRunStarted(JSONObject jsonMsg, final int count) {
 		long timeStamp = getTimeStamp(jsonMsg);
-		String runId = getStringValue(jsonMsg, "runId", "");
+		String runId = getStringValue(jsonMsg, "runId", null);
 		startTime = timeStamp;
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
@@ -187,13 +182,12 @@ public class TestMessagesParser {
 		String errorTrace = getStringValue(jsonMsg, "errorTrace", "");
 		String expectedMsg = getStringValue(jsonMsg, "expectedMsg", "");
 		String actualMsg = getStringValue(jsonMsg, "actualMsg", "");
-		String runId = getStringValue(jsonMsg, "runId", "");
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
 			listener.testFailed(timeStamp, failureKind, testId, testName,
 					errorTrace, expectedMsg,
-					actualMsg, runId);
+					actualMsg);
 		}
 	}
 
@@ -215,15 +209,20 @@ public class TestMessagesParser {
 	}
 	
 	public String getStringValue(JSONObject jsonData,String key, Object defaultValue){
-		return this.getValue(jsonData, key, defaultValue).toString();
+		Object value = this.getValue(jsonData, key, defaultValue);
+		if (value == null) {
+			return null;
+		} else {
+			return value.toString();
+		}
 	}
 	
 	
 	private long getTimeStamp(JSONObject jsonMsg){
 		long timeStamp;
-		String timeAsString = getStringValue(jsonMsg, "timeStamp", "");
+		String timeAsString = getStringValue(jsonMsg, "timeStamp", null);
 		
-		if (!timeAsString.contentEquals("")) {
+		if (timeAsString != null) {
 			timeStamp = Long.parseLong(timeAsString);				
 		} else {
 			timeStamp = System.currentTimeMillis();

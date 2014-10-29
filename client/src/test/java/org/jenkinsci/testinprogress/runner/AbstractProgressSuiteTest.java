@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,8 +16,6 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.JUnitCore;
-
-import com.google.common.collect.Lists;
 
 public class AbstractProgressSuiteTest {
 	private ExecutorService executorService;
@@ -53,7 +52,7 @@ public class AbstractProgressSuiteTest {
 					BufferedReader is = new BufferedReader(
 							new InputStreamReader(s.getInputStream()));
 
-					List<JSONObject> result = Lists.newArrayList();
+					List<JSONObject> result = new ArrayList<JSONObject>();
 					String line = is.readLine();
 					while (line != null) {
 						JSONObject jsonObject = new JSONObject(line);

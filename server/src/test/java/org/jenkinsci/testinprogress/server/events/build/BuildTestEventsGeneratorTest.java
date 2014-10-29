@@ -59,20 +59,20 @@ public class BuildTestEventsGeneratorTest {
 		// When
 		buildTestEventsGenerator.event(new RunStartEvent(0, 2, runId));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", true,
-				2,runId));
+				2));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "2", "firstTest",
-				false, 1,runId));
+				false, 1));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "3", "secondTest",
-				false, 1,runId));
+				false, 1));
 		buildTestEventsGenerator.event(new TestStartEvent(0, "2", "firstTest",
-				false,runId));
+				false));
 		buildTestEventsGenerator.event(new TestEndEvent(0, "2", "firstTest",
-				false, 0,runId));
+				false, 0));
 		buildTestEventsGenerator.event(new TestStartEvent(0, "3", "firstTest",
-				false,runId));
+				false));
 		buildTestEventsGenerator.event(new TestEndEvent(0, "3", "secondTest",
-				false, 0,runId));
-		buildTestEventsGenerator.event(new RunEndEvent(0, 5000,runId));
+				false, 0));
+		buildTestEventsGenerator.event(new RunEndEvent(0, 5000));
 
 		// Then
 		List<String> runIds = testRunIds.getRunIds();

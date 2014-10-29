@@ -36,6 +36,7 @@ public interface ITestRunListener {
 	 * 
 	 * @param testCount
 	 *            the number of individual tests that will be run
+	 * @param runId the runId or null to guess it
 	 */
 	public void testRunStarted(long timestamp, int testCount, String runId);
 
@@ -45,7 +46,7 @@ public interface ITestRunListener {
 	 * @param elapsedTime
 	 *            the total elapsed time of the test run
 	 */
-	public void testRunEnded(long timestamp, long elapsedTime, String runId);
+	public void testRunEnded(long timestamp, long elapsedTime);
 
 	/**
 	 * An individual test has started.
@@ -55,7 +56,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that started
 	 */
-	public void testStarted(long timestamp, String testId, String testName, boolean ignored, String runId);
+	public void testStarted(long timestamp, String testId, String testName, boolean ignored);
 
 	/**
 	 * An individual test has ended.
@@ -65,7 +66,7 @@ public interface ITestRunListener {
 	 * @param testName
 	 *            the name of the test that ended
 	 */
-	public void testEnded(long timestamp, String testId, String testName, boolean ignored, String runId);
+	public void testEnded(long timestamp, String testId, String testName, boolean ignored);
 
 	/**
 	 * The VM instance performing the tests has terminated.
@@ -87,7 +88,7 @@ public interface ITestRunListener {
 	 * @see MessageIds#TEST_TREE
 	 */
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount, String runId);
+			String parentId, String parentName, boolean isSuite, int testCount);
 
 	/**
 	 * An individual test has failed with a stack trace.
@@ -109,6 +110,6 @@ public interface ITestRunListener {
 	 * @param runId          
 	 */
 	public void testFailed(long timestamp, int status, String testId, String testName,
-			String trace, String expected, String actual, String runId);
+			String trace, String expected, String actual);
 
 }

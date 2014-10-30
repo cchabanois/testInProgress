@@ -1,0 +1,290 @@
+.ztree li span.button.test_ico_docu {
+	margin-right:2px; 
+	background: url(../images/test.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testSuite_ico_open, .ztree li span.button.testSuite_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuite.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testFailed_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testfail.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testError_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testerr.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testIgnored_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testignored.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testPassed_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testok.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testRun_ico_docu {
+	margin-right:2px; 
+	background: url(../images/testrun.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testSuiteRun_ico_open, .ztree li span.button.testSuiteRun_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuiterun.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testSuiteFailed_ico_open, .ztree li span.button.testSuiteFailed_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuitefail.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.testSuitePassed_ico_open, .ztree li span.button.testSuitePassed_ico_close{
+	margin-right:2px; 
+	background: url(../images/tsuiteok.gif) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+
+.testpanel .stat {
+	size: 10 px;
+	border: 1px solid;
+	padding: 2px;
+	margin-top:10px;
+	margin-right:30px;
+	margin-bottom:10px;
+	display:inline-block;
+	min-width:50px
+}
+
+.testpanel > fieldset {
+	border: thin solid silver;
+	background-color:#F0F0F0;
+	padding:1em;
+	margin:1em;
+}
+
+.testpanel > fieldset > fieldset {
+	border: thin solid silver;
+	background-color:#F0F0F0;
+	padding:1em;
+	margin:1em;
+}
+
+.testpanel > fieldset > fieldset p {
+	margin:0 1em;
+}
+
+.testpanel > fieldset > legend {
+  	font-size:90%;
+  	text-align:left;
+  	background-color:#F0F0F0;
+	border:1px solid silver;
+	border-radius:8px;
+	vertical-align: middle;
+}
+
+legend > span {
+	padding: 4px 4px 4px 4px;
+	display:inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+}
+
+.runIcon {
+	background:url(../images/junit.gif) no-repeat;
+	background-position: top left;
+}
+.runSuccessIcon {
+	background:url(../images/junitsucc.gif) no-repeat;
+	background-position: top left;
+}
+.runFailureIcon {
+	background:url(../images/juniterr.gif) no-repeat;
+	background-position: top left;
+}
+/* sprite generated using stitches (http://draeton.github.com/stitches/) */
+.runProgressIcon {
+    background: url(../images/progress/suiteProgress.png) no-repeat;
+	width: 16px;
+    height: 16px;    
+}
+.runProgressFailure1Icon {
+    background-position: -108px -27px;
+}
+.runProgressFailure2Icon {
+    background-position: -108px -0px;
+}
+.runProgressFailure3Icon {
+    background-position: -81px -81px;
+}
+.runProgressFailure4Icon {
+    background-position: -54px -81px;
+}
+.runProgressFailure5Icon {
+    background-position: -27px -81px;
+}
+.runProgressFailure6Icon {
+    background-position: -0px -81px;
+}
+.runProgressFailure7Icon {
+    background-position: -81px -54px;
+}
+.runProgressFailure8Icon {
+    background-position: -54px -54px;
+}
+.runProgressFailure9Icon {
+    background-position: -27px -54px;
+}
+.runProgressSuccess1Icon {
+    background-position: -0px -54px;
+}
+.runProgressSuccess2Icon {
+    background-position: -81px -27px;
+}
+.runProgressSuccess3Icon {
+    background-position: -54px -27px;
+}
+.runProgressSuccess4Icon {
+    background-position: -27px -27px;
+}
+.runProgressSuccess5Icon {
+    background-position: -0px -27px;
+}
+.runProgressSuccess6Icon {
+    background-position: -81px -0px;
+}
+.runProgressSuccess7Icon {
+    background-position: -54px -0px;
+}
+.runProgressSuccess8Icon {
+    background-position: -27px -0px;
+}
+.runProgressSuccess9Icon {
+    background-position: -0px -0px;
+}
+
+.testpanel legend.successSuite {
+	background-image:url(../images/junitsucc.gif);
+}
+.testpanel legend.successSuite1 {
+	background-image:url(../images/progress/ss1.gif);
+}
+.testpanel legend.successSuite2 {
+	background-image:url(../images/progress/ss2.gif);
+}
+.testpanel legend.successSuite3 {
+	background-image:url(../images/progress/ss3.gif);
+}
+.testpanel legend.successSuite4 {
+	background-image:url(../images/progress/ss4.gif);
+}
+.testpanel legend.successSuite5 {
+	background-image:url(../images/progress/ss5.gif);
+}
+.testpanel legend.successSuite6 {
+	background-image:url(../images/progress/ss6.gif);
+}
+.testpanel legend.successSuite7 {
+	background-image:url(../images/progress/ss7.gif);
+}
+.testpanel legend.successSuite8 {
+	background-image:url(../images/progress/ss8.gif);
+}
+.testpanel legend.successSuite9 {
+	background-image:url(../images/progress/ss9.gif);
+}
+.testpanel legend.errorSuite {
+	background-image:url(../images/juniterr.gif);
+}
+.testpanel legend.errorSuite1 {
+	background-image:url(../images/progress/ff1.gif);
+}
+.testpanel legend.errorSuite2 {
+	background-image:url(../images/progress/ff2.gif);
+}
+.testpanel legend.errorSuite3 {
+	background-image:url(../images/progress/ff3.gif);
+}
+.testpanel legend.errorSuite4 {
+	background-image:url(../images/progress/ff4.gif);
+}
+.testpanel legend.errorSuite5 {
+	background-image:url(../images/progress/ff5.gif);
+}
+.testpanel legend.errorSuite6 {
+	background-image:url(../images/progress/ff6.gif);
+}
+.testpanel legend.errorSuite7 {
+	background-image:url(../images/progress/ff7.gif);
+}
+.testpanel legend.errorSuite8 {
+	background-image:url(../images/progress/ff8.gif);
+}
+.testpanel legend.errorSuite9 {
+	background-image:url(../images/progress/ff9.gif);
+}
+.stacktrace div { 
+	white-space:pre;
+}
+
+.scrollLock {
+	font-size : 0.8em;
+}
+.scrollLock+label > span.ui-icon {
+	background-image: url(../images/lock.gif);
+	background-position: top left;
+}
+.scrollLock+label > span.ui-button-text {
+	margin-left:5px;
+	font-size : 0.8em;	
+}
+/* see http://stackoverflow.com/questions/266015/css-floats-how-do-i-keep-them-on-one-line */
+div.noWrapContainer {
+	min-width:100px; 
+	width: auto !important; 
+	width: 100px;
+}
+
+div.ztree {
+	float: left;
+}
+
+.stacktrace {
+	float:right;
+}
+
+div.ztree, .stacktrace {
+	margin : 10px 0px 10px 0px;
+	padding : 10px 10px 10px 10px;
+	border: 1px solid #617775;
+	width : 45%;
+	height:360px;
+	overflow-y:scroll;
+	overflow-x:scroll;
+}
+
+div.ztree {
+	background: #f0f6e4;
+}
+
+.stacktrace {
+	background: white;
+}
+.testElapsedTime {
+	color : #4682B4;
+}

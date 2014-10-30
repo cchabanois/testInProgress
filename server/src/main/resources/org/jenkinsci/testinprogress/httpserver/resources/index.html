@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+		<script type="text/javascript" src="jquery/js/jquery-1.6.4.min.js"></script>
+		<script type="text/javascript" src="jquery/js/jquery-ui-1.10.0.custom.js"></script>
+		<script type="text/javascript" src="ztree/js/jquery.ztree.core-3.5.min.js"></script>
+		<script type="text/javascript" src="ztree/js/jquery.ztree.exhide-3.5.min.js"></script>
+		<script type="text/javascript" src="numeral/numeral.min.js"></script>
+		<script type="text/javascript" src="js/testEvents.js"></script>
+		<link rel="stylesheet" type="text/css"
+		        href="css/testEvents.css" />
+		<link rel="stylesheet" type="text/css"
+		        href="jquery/css/ui-lightness/jquery-ui-1.10.0.custom.css" />        
+		<link rel="stylesheet" type="text/css"
+		        href="ztree/css/zTreeStyle/zTreeStyle.css" />   
+
+<body>
+
+		<div>
+			<div id="results"/>
+			<script type="text/javascript">
+				jQuery.noConflict();
+				jQuery(function() {
+					testRuns = new TestRuns("results");
+					testRuns.start();				
+				});
+			</script>
+		</div>
+
+</body>
+</html>
+

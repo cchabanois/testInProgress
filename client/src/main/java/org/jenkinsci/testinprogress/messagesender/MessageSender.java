@@ -12,6 +12,7 @@ import org.json.JSONObject;
  * 
  */
 public abstract class MessageSender {
+	// @GuardedBy("this")
 	protected Writer writer;
 
 	public void testRunStarted(int testCount, String runId) {
@@ -21,7 +22,6 @@ public abstract class MessageSender {
 		jsonMsg.put("testCount", testCount);
 		jsonMsg.put("fVersion", "v2");
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testRunStarted(int testCount) {
@@ -33,7 +33,6 @@ public abstract class MessageSender {
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
 		jsonMsg.put("elapsedTime", elapsedTime);
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testTree(String testId, String testName, String parentId,String parentName, boolean isSuite,
@@ -49,7 +48,6 @@ public abstract class MessageSender {
 		jsonMsg.put("testCount", testCount);
 		
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testTree(String testId, String testName, boolean isSuite,
@@ -66,7 +64,6 @@ public abstract class MessageSender {
 			jsonMsg.put("ignored", ignored);
 		}
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testEnded(String testId, String testName, boolean ignored) {
@@ -78,8 +75,6 @@ public abstract class MessageSender {
 			jsonMsg.put("ignored", ignored);
 		}
 		println(jsonMsg.toString());
-		
-		flush();
 	}
 	
 	public void testFailed(String testId, String testName, String expected,
@@ -94,7 +89,6 @@ public abstract class MessageSender {
 		jsonMsg.put("actualMsg", actual.concat("\n"));
 		
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testAssumptionFailed(String testId, String testName,
@@ -109,7 +103,6 @@ public abstract class MessageSender {
 		jsonMsg.put("assumptionFailed", true);
 		
 		println(jsonMsg.toString());
-		flush();
 	}
 	
 	public void testAssumptionFailed(String testId, String testName,
@@ -126,20 +119,12 @@ public abstract class MessageSender {
 		jsonMsg.put("errorTrace",trace.concat("\n"));
 		
 		println(jsonMsg.toString());
-		flush();
 	}
 	
-	protected void println(String str) {
+	synchronized protected void println(String str) {
 		try {
 			writer.write(str);
 			writer.write('\n');
-		} catch (IOException e) {
-			throw new RuntimeException("Could not send message", e);
-		}
-	}
-
-	protected void flush() {
-		try {
 			writer.flush();
 		} catch (IOException e) {
 			throw new RuntimeException("Could not send message", e);

@@ -78,32 +78,41 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 	}
 
 	private void sendTestTree(Description description) {
-		String id = getTestId(description.getDisplayName());
-		messageSender.testTree(id, description.getDisplayName(), description
-				.isSuite(), description.isSuite() ? description.getChildren()
-				.size() : 1);
-		for (Description childDescription : description.getChildren()) {
-			sendTestTree(childDescription);
+		try {
+			String id = getTestId(description.getDisplayName());
+			messageSender.testTree(id, description.getDisplayName(),
+					description.isSuite(), description.isSuite() ? description
+							.getChildren().size() : 1);
+			for (Description childDescription : description.getChildren()) {
+				sendTestTree(childDescription);
+			}
+		} catch (IOException e) {
+			throw new BuildException(e);
 		}
 	}
 
 	private void sendTestTree(TestSuite testSuite) {
-		String id = getTestId(testSuite.toString());
-		messageSender.testTree(id, testSuite.toString(), true,
-				testSuite.testCount());
-		for (Enumeration<Test> enumeration = testSuite.tests(); enumeration
-				.hasMoreElements();) {
-			Test childTest = enumeration.nextElement();
-			if (childTest instanceof TestSuite) {
-				sendTestTree((TestSuite) childTest);
-			} else {
-				if (childTest.countTestCases() != 1) {
-					throw new BuildException("Test not supported :"
-							+ childTest.toString());
+		try {
+			String id = getTestId(testSuite.toString());
+			messageSender.testTree(id, testSuite.toString(), true,
+					testSuite.testCount());
+			for (Enumeration<Test> enumeration = testSuite.tests(); enumeration
+					.hasMoreElements();) {
+				Test childTest = enumeration.nextElement();
+				if (childTest instanceof TestSuite) {
+					sendTestTree((TestSuite) childTest);
+				} else {
+					if (childTest.countTestCases() != 1) {
+						throw new BuildException("Test not supported :"
+								+ childTest.toString());
+					}
+					String childId = getTestId(childTest.toString());
+					messageSender.testTree(childId, childTest.toString(),
+							false, 1);
 				}
-				String childId = getTestId(childTest.toString());
-				messageSender.testTree(childId, childTest.toString(), false, 1);
 			}
+		} catch (IOException e) {
+			throw new BuildException(e);
 		}
 	}
 
@@ -131,25 +140,33 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 	}
 
 	public void startTest(Test test) {
-		if (classLoader == null) {
-			classLoader = test.getClass().getClassLoader();
-			startTestSuite(suite);
+		try {
+			if (classLoader == null) {
+				classLoader = test.getClass().getClassLoader();
+				startTestSuite(suite);
+			}
+			String id = getTestId(test.toString());
+			messageSender.testStarted(id, test.toString(), false);
+		} catch (IOException e) {
+			throw new BuildException(e);
 		}
-		String id = getTestId(test.toString());
-		messageSender.testStarted(id, test.toString(), false);
 	}
 
 	public void addFailure(Test test, AssertionFailedError t) {
-		String id = getTestId(test.toString());
-		String expected = null;
-		String actual = null;
-		if (t instanceof ComparisonFailure) {
-			ComparisonFailure comparisonFailure = (ComparisonFailure) t;
-			expected = comparisonFailure.getExpected();
-			actual = comparisonFailure.getActual();
+		try {
+			String id = getTestId(test.toString());
+			String expected = null;
+			String actual = null;
+			if (t instanceof ComparisonFailure) {
+				ComparisonFailure comparisonFailure = (ComparisonFailure) t;
+				expected = comparisonFailure.getExpected();
+				actual = comparisonFailure.getActual();
+			}
+			messageSender.testFailed(id, test.toString(), expected, actual,
+					getTrace(t));
+		} catch (IOException e) {
+			throw new BuildException(e);
 		}
-		messageSender.testFailed(id, test.toString(), expected, actual,
-				getTrace(t));
 	}
 
 	private String getTrace(Throwable e) {
@@ -159,13 +176,21 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 	}
 
 	public void addError(Test test, Throwable t) {
-		String id = getTestId(t.toString());
-		messageSender.testError(id, test.toString(), getTrace(t));
+		try {
+			String id = getTestId(t.toString());
+			messageSender.testError(id, test.toString(), getTrace(t));
+		} catch (IOException e) {
+			throw new BuildException(e);
+		}
 	}
 
 	public void endTest(Test test) {
-		String id = getTestId(test.toString());
-		messageSender.testEnded(id, test.toString(), false);
+		try {
+			String id = getTestId(test.toString());
+			messageSender.testEnded(id, test.toString(), false);
+		} catch (IOException e) {
+			throw new BuildException(e);
+		}
 	}
 
 	private Description getDescription(Test test) {

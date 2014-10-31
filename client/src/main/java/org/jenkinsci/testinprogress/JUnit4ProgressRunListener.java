@@ -1,5 +1,6 @@
 package org.jenkinsci.testinprogress;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,7 +45,7 @@ public class JUnit4ProgressRunListener extends RunListener {
 		startTime = System.currentTimeMillis();
 	}
 
-	private void sendTestTree(Description description) {
+	private void sendTestTree(Description description) throws IOException {
 		String id = getTestId(description);
 		messageSender.testTree(id, description.getDisplayName(), description
 				.isSuite(), description.isSuite() ? description.getChildren()
@@ -118,7 +119,12 @@ public class JUnit4ProgressRunListener extends RunListener {
 	public void testAssumptionFailure(Failure failure) {
 		Description description = failure.getDescription();
 		String id = getTestId(description);
-		messageSender.testAssumptionFailed(id, description.getDisplayName(), failure.getTrace());
+		try {
+			messageSender.testAssumptionFailed(id, description.getDisplayName(), failure.getTrace());
+		} catch (IOException e) {
+			// don't know why testAssumptionFailure does not throw Exception like other methods ... 
+			throw new RuntimeException(e);
+		}
 	}
 	
 }

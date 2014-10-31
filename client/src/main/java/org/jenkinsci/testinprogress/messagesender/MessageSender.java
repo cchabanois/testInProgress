@@ -15,7 +15,7 @@ public abstract class MessageSender {
 	// @GuardedBy("this")
 	protected Writer writer;
 
-	public void testRunStarted(int testCount, String runId) {
+	public void testRunStarted(int testCount, String runId) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
 		jsonMsg.put("runId", runId);
@@ -24,11 +24,11 @@ public abstract class MessageSender {
 		println(jsonMsg.toString());
 	}
 	
-	public void testRunStarted(int testCount) {
+	public void testRunStarted(int testCount) throws IOException {
 		testRunStarted(testCount,null);		
 	}
 
-	public void testRunEnded(long elapsedTime) {
+	public void testRunEnded(long elapsedTime) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
 		jsonMsg.put("elapsedTime", elapsedTime);
@@ -36,7 +36,7 @@ public abstract class MessageSender {
 	}
 	
 	public void testTree(String testId, String testName, String parentId,String parentName, boolean isSuite,
-			int testCount) {
+			int testCount) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_TREE);
 		jsonMsg.put("testId", testId);
@@ -51,11 +51,11 @@ public abstract class MessageSender {
 	}
 	
 	public void testTree(String testId, String testName, boolean isSuite,
-			int testCount) {
+			int testCount) throws IOException {
 		this.testTree(testId, testName, null, null, isSuite, testCount);
 	}
 
-	public void testStarted(String testId, String testName, boolean ignored) {
+	public void testStarted(String testId, String testName, boolean ignored) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_START);
 		jsonMsg.put("testId", testId);
@@ -66,7 +66,7 @@ public abstract class MessageSender {
 		println(jsonMsg.toString());
 	}
 	
-	public void testEnded(String testId, String testName, boolean ignored) {
+	public void testEnded(String testId, String testName, boolean ignored) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_END);
 		jsonMsg.put("testId", testId);
@@ -78,7 +78,7 @@ public abstract class MessageSender {
 	}
 	
 	public void testFailed(String testId, String testName, String expected,
-			String actual, String trace) {
+			String actual, String trace) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
 		jsonMsg.put("testId", testId);
@@ -92,7 +92,7 @@ public abstract class MessageSender {
 	}
 	
 	public void testAssumptionFailed(String testId, String testName,
-			String trace, String runId) {
+			String trace, String runId) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
 		jsonMsg.put("runId", runId);
@@ -106,11 +106,11 @@ public abstract class MessageSender {
 	}
 	
 	public void testAssumptionFailed(String testId, String testName,
-			String trace) {
+			String trace) throws IOException {
 		testAssumptionFailed(testId, testName, trace, null);
 	}
 
-	public void testError(String testId, String testName, String trace) {
+	public void testError(String testId, String testName, String trace) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_ERROR);
 		jsonMsg.put("testId", testId);
@@ -121,14 +121,10 @@ public abstract class MessageSender {
 		println(jsonMsg.toString());
 	}
 	
-	synchronized protected void println(String str) {
-		try {
-			writer.write(str);
-			writer.write('\n');
-			writer.flush();
-		} catch (IOException e) {
-			throw new RuntimeException("Could not send message", e);
-		}
+	synchronized protected void println(String str) throws IOException {
+		writer.write(str);
+		writer.write('\n');
+		writer.flush();
 	}
 
 	public void init() throws IOException {

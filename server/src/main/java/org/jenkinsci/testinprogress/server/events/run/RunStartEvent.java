@@ -35,24 +35,16 @@ public class RunStartEvent extends AbstractRunTestEvent {
 		return runId;
 	}
 
-	public String toString(boolean includeTimeStamp) {
+	@Override
+	public String toString() {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp = "";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
 		jsonMsg.put("runId", getRunId());
 		jsonMsg.put("testCount", testCount);
 		jsonMsg.put("fVersion", "v2");
 		
 		return jsonMsg.toString();		
-	}
-
-	@Override
-	public String toString() {
-		return toString(true);
 	}
 
 	@Override

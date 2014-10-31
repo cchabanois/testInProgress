@@ -57,27 +57,23 @@ public class TestFailedEvent extends AbstractRunTestEvent {
 		return assumptionFailed;
 	}
 	
-	public String toString(boolean includeTimeStamp) {
+	@Override
+	public String toString() {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_FAILED);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
-		jsonMsg.put("errorTrace",trace.concat("\n"));
-		jsonMsg.put("expectedMsg", expected.concat("\n"));
-		jsonMsg.put("actualMsg", actual.concat("\n"));
+		jsonMsg.put("errorTrace",trace);
+		jsonMsg.put("expectedMsg", expected);
+		jsonMsg.put("actualMsg", actual);
+		if (assumptionFailed) {
+			jsonMsg.put("assumptionFailed", assumptionFailed);
+		}
 		
 		return jsonMsg.toString();
-	}
-
-	@Override
-	public String toString() {
-		return toString(true);
 	}
 
 	@Override

@@ -44,13 +44,13 @@ public class SaveTestEventsListener implements IBuildTestEventListener {
 				return;
 			}
 			fileWriter
-					.write(runTestEvent.getRunTestEvent().toString(true) + '\n');
+					.write(runTestEvent.getRunTestEvent().toString() + '\n');
 			if (runTestEvent.getRunTestEvent() instanceof RunEndEvent) {
 				fileWriter.close();
 				fileWriters.remove(runTestEvent.getRunId());
 			}
 		} catch (IOException e) {
-			LOG.log(Level.WARNING, "Cannot save junit event", e);
+			LOG.log(Level.WARNING, "Cannot save test event", e);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class SaveTestEventsListener implements IBuildTestEventListener {
 			try {
 				fileWriter.close();
 			} catch (IOException e) {
-				LOG.log(Level.WARNING, "Cannot close junit events file", e);
+				LOG.log(Level.WARNING, "Cannot close test events file", e);
 			}
 		}
 		fileWriters.clear();

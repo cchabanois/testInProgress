@@ -38,13 +38,10 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 		return "ERROR";
 	}
 
-	public String toString(boolean includeTimeStamp) {
+	@Override
+	public String toString() {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_ERROR);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
@@ -54,11 +51,6 @@ public class TestErrorEvent extends AbstractRunTestEvent {
 		return jsonMsg.toString();		
 	}
 	
-	@Override
-	public String toString() {
-		return toString(true);
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -182,12 +182,13 @@ public class TestMessagesParser {
 		String errorTrace = getStringValue(jsonMsg, "errorTrace", "");
 		String expectedMsg = getStringValue(jsonMsg, "expectedMsg", "");
 		String actualMsg = getStringValue(jsonMsg, "actualMsg", "");
+		boolean assumptionFailed = (Boolean) getValue(jsonMsg, "assumptionFailed", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
 			listener.testFailed(timeStamp, failureKind, testId, testName,
 					errorTrace, expectedMsg,
-					actualMsg);
+					actualMsg, assumptionFailed);
 		}
 	}
 

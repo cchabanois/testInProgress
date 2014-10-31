@@ -17,5 +17,6 @@ public interface IRunTestEvent {
 	@Override
 	public int hashCode();
 
-	public String toString(boolean includeTimeStamp);
+	@Override
+	public String toString();
 }

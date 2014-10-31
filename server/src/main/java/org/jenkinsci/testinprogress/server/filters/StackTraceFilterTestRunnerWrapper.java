@@ -45,10 +45,10 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 	}
 
 	public void testFailed(long timestamp, int status, String testId,
-			String testName, String trace, String expected, String actual) {
+			String testName, String trace, String expected, String actual, boolean assumptionFailed) {
 		trace = stackTraceFilter.filter(trace);
 		testRunListener.testFailed(timestamp, status, testId, testName, trace,
-				expected, actual);
+				expected, actual, assumptionFailed);
 	}
 
 }

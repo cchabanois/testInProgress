@@ -25,21 +25,13 @@ public class RunEndEvent extends AbstractRunTestEvent {
 		return elapsedTime;
 	}
 
-	public String toString(boolean includeTimeStamp) {
+	@Override
+	public String toString() {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_END);
 		jsonMsg.put("elapsedTime", elapsedTime);
 		return jsonMsg.toString();
-	}
-
-	@Override
-	public String toString() {
-		return toString(true);
 	}
 
 	@Override

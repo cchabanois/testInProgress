@@ -51,11 +51,7 @@ public class TestEndEvent extends AbstractRunTestEvent {
 
 	public String toString(boolean includeTimeStamp) {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));	
 		jsonMsg.put("messageId", MessageIds.TEST_END);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);

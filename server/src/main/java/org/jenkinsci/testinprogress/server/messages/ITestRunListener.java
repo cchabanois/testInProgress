@@ -110,6 +110,6 @@ public interface ITestRunListener {
 	 * @param runId          
 	 */
 	public void testFailed(long timestamp, int status, String testId, String testName,
-			String trace, String expected, String actual);
+			String trace, String expected, String actual, boolean assumptionFailed);
 
 }

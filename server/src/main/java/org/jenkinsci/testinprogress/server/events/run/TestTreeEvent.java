@@ -61,13 +61,9 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		return "TSTTREE";
 	}
 
-	public String toString(boolean includeTimeStamp) {
+	public String toString() {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_TREE);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
@@ -78,11 +74,6 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		
 		
 		return jsonMsg.toString();
-	}
-
-	@Override
-	public String toString() {
-		return toString(true);
 	}
 
 	@Override

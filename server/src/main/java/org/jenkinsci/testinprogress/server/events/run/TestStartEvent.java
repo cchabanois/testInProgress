@@ -40,11 +40,7 @@ public class TestStartEvent extends AbstractRunTestEvent {
 
 	public String toString(boolean includeTimeStamp) {
 		JSONObject jsonMsg = new JSONObject();
-		String timeStamp ="";
-		if(includeTimeStamp){
-			timeStamp = Long.toString(getTimestamp());			
-		}
-		jsonMsg.put("timeStamp", timeStamp);
+		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_START);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);

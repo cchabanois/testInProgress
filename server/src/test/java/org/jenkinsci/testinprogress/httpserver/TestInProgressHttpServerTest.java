@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import tests.ParameterizedTest;
 import tests.ProgressParameterizedTestSuite;
 
 public class TestInProgressHttpServerTest {

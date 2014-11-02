@@ -25,12 +25,12 @@ public class BuildTestEventsGeneratorTest {
 
 		// When
 		buildTestEventsGenerator.event(new RunStartEvent(0, 2));
-		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", true,
-				2));
+		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", null,
+				true));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "2", "firstTest",
-				false, 1));
+				"1", false));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "3", "secondTest",
-				false, 1));
+				"1", false));
 		buildTestEventsGenerator.event(new TestStartEvent(0, "2", "firstTest",
 				false));
 		buildTestEventsGenerator.event(new TestEndEvent(0, "2", "firstTest",
@@ -55,15 +55,15 @@ public class BuildTestEventsGeneratorTest {
 		BuildTestEventsGenerator buildTestEventsGenerator = new BuildTestEventsGenerator(
 				testRunIds, new IBuildTestEventListener[] { listener });
 		String runId = "myRunId";
-		
+
 		// When
 		buildTestEventsGenerator.event(new RunStartEvent(0, 2, runId));
-		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", true,
-				2));
+		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", null,
+				true));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "2", "firstTest",
-				false, 1));
+				"1", false));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "3", "secondTest",
-				false, 1));
+				"1", false));
 		buildTestEventsGenerator.event(new TestStartEvent(0, "2", "firstTest",
 				false));
 		buildTestEventsGenerator.event(new TestEndEvent(0, "2", "firstTest",
@@ -80,6 +80,5 @@ public class BuildTestEventsGeneratorTest {
 		verify(listener).event(
 				new BuildTestEvent(runId, new RunStartEvent(0, 2, runId)));
 	}
-	
-	
+
 }

@@ -33,6 +33,7 @@ var TestRun = (function($) {
 	function TestRun(elementId, runId) {
 		console.log("Test run : " + runId);
 		TestRun.index++;
+		this.testIdToTreeId = {};
 		this.tree = null;
 		this.runId = runId;
 		this.treeEvents = [];
@@ -96,7 +97,7 @@ var TestRun = (function($) {
 			if (events.length == 0) {
 				return;
 			}
-			if (events.length > 200) {
+			if (events.length > 50) {
 				this.expandNodes = false;
 			} else {
 				this.expandNodes = true;
@@ -105,6 +106,11 @@ var TestRun = (function($) {
 				this.handleTestEvent(events[i]);
 			}
 			if (this.tree != null) {
+				if (!this.expandNodes) {
+					// we don't expand nodes for all tests except the latest one
+					this.expandParent(this.currentNode);
+					this.collapseParentIfPassed(this.currentNode);
+				}
 				this.updateStats();
 				this.updateProgressBar();
 				this.updateSuiteIcon();
@@ -117,10 +123,7 @@ var TestRun = (function($) {
 				this.handleRunStartEvent(event);
 				break;
 			case "TSTTREE":
-				this.treeEvents.push(event);
-				if(this.tree!=null){
-					this.addNode(event);				
-				}
+				this.handleTestTreeEvent(event);
 				break;
 			case "FAILED":
 				this.handleTestFailedEvent(event);
@@ -210,6 +213,7 @@ var TestRun = (function($) {
 			
 		},
 		handleRunStartEvent : function(event) {
+			this.createTreeView();
 			this.testCount = event.testCount;
 			$("#" + this.progressId).progressbar({
 				value : 0,
@@ -223,14 +227,23 @@ var TestRun = (function($) {
 			this.setMessage("Finished after "
 					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
 		},
+		handleTestTreeEvent : function(treeEvent) {
+			var testId = treeEvent.testId;
+			var childNode = this.createNode(treeEvent);
+			var parentId = treeEvent.parentId;
+			var parentNode = this.getNodeByTestId(parentId);
+			if(parentNode != null && !parentNode.suite){
+				parentNode.iconSkin = TestRun.IconSkin.TESTSUITE
+				parentNode.suite = true;
+			}
+			var addedNodes = this.tree.addNodes(parentNode,childNode,true);
+			this.testIdToTreeId[testId] = addedNodes[0].tId;
+		},		
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
 			this.updateTestCount();
 			if (event.ignored) {
 				this.testIgnored++;
-			}
-			if (this.tree == null) {
-				this.createTreeView();
 			}
 			this.setMessage(event.testName);
 			this.currentNode = this.getNodeByTestId(event.testId);
@@ -321,51 +334,6 @@ var TestRun = (function($) {
 			this.updateNode(parentNode);
 			this.updateParentNode(parentNode);
 		},
-		createTreeNodes : function(treeEvents) {
-			var eventIndex = 0;
-			var testRun = this;
-			function createTreeNode() {
-				var event = treeEvents[eventIndex];
-				if( event == undefined)
-					return null;
-				if (event.suite == false) {
-					var testName = testRun.getShortTestName(event);
-					var newNode = {
-						name : testName,
-						iconSkin : TestRun.IconSkin.TEST,
-						title : testName,
-						// our properties :
-						id : event.testId,
-						suite : false,
-						testName : testName,
-						testStatus : TestRun.TestStatus.UNKNOWN
-					};
-					eventIndex++;
-					return newNode;
-				} else {
-					var newNode = {
-						name : event.testName,
-						title : event.testName,
-						iconSkin : TestRun.IconSkin.TESTSUITE,
-						children : [],
-						// our properties :
-						id : event.testId,
-						suite : true,
-						testName : event.testName,
-						testStatus : TestRun.TestStatus.UNKNOWN
-					};
-					eventIndex++;
-					for ( var i = 0; i < event.testCount; i++) {
-						var node = createTreeNode();
-						if(node == null)
-							break;
-						newNode.children.push(node);
-					}
-					return newNode;
-				}
-			}
-			return [ createTreeNode() ];
-		},		
 		createNode : function(event) {
 			var newNode;
 			var testRun = this;
@@ -376,7 +344,6 @@ var TestRun = (function($) {
 					iconSkin : TestRun.IconSkin.TEST,
 					title : testName,
 					// our properties :
-					id : event.testId,
 					suite : false,
 					testName : testName,
 					testStatus : TestRun.TestStatus.UNKNOWN
@@ -389,7 +356,6 @@ var TestRun = (function($) {
 					iconSkin : TestRun.IconSkin.TESTSUITE,
 					children : [],
 					// our properties :
-					id : event.testId,
 					suite : true,
 					testName : event.testName,
 					testStatus : TestRun.TestStatus.UNKNOWN
@@ -399,7 +365,6 @@ var TestRun = (function($) {
 			return newNode;
 		},
 		createTreeView : function() {
-			var treeNodes = this.createTreeNodes(this.treeEvents);
 			$.fn.zTree.init($("#" + this.treeId), {
 				view : {
 					nameIsHTML : true,
@@ -420,11 +385,12 @@ var TestRun = (function($) {
 						$('#' + this.stackTraceId).html(trace);
 					}, this)
 				}
-			}, treeNodes);
+			}, []);
 			this.tree = $.fn.zTree.getZTreeObj(this.treeId);
 		},
 		getNodeByTestId : function(testId) {
-			var node = this.tree.getNodeByParam("id", testId, null);
+			var tId = this.testIdToTreeId[testId];
+			var node = this.tree.getNodeByTId(tId);
 			return node;
 		},
 		getShortTestName : function(event) {
@@ -481,20 +447,6 @@ var TestRun = (function($) {
 				}
 			}
 			this.tree.updateNode(node);
-		},
-		addNode : function(event) {
-			var testId = event.testId;
-			var childNode = this.getNodeByTestId(testId);
-			if(childNode == undefined){
-				childNode = this.createNode(event);
-				var parentId = event.parentId;
-				var parentNode = this.getNodeByTestId(parentId);
-				if(!parentNode.suite){
-					parentNode.iconSkin = TestRun.IconSkin.TESTSUITE
-					parentNode.suite = true;
-				}
-				this.tree.addNodes(parentNode,childNode,false);
-			}			
 		},
 		expandParent : function(node) {
 			var parent = node.getParentNode();
@@ -606,7 +558,7 @@ var TestRuns = (function($) {
 								
 							    $.ajax({
 							        type: 'GET',
-							        url: "http://localhost:8080/buildTestEvents?fromIndex="+this.eventsCount,
+							        url: "/buildTestEvents?fromIndex="+this.eventsCount,
 							        dataType: "json", // data type of response
 							        success: handler
 							    });

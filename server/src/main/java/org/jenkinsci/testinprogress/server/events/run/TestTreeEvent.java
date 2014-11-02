@@ -13,30 +13,17 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 	private final String testId;
 	private final String testName;
 	private final String parentId;
-	private final String parentName;
 	private final boolean isSuite;
-	private final int testCount;
 
-	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, String parentName,
-			boolean isSuite, int testCount) {
+	public TestTreeEvent(long timestamp, String testId, String testName, String parentId, 
+			boolean isSuite) {
 		super(timestamp);
-		this.testCount = testCount;
 		this.testId = testId;
 		this.isSuite = isSuite;
 		this.testName = testName;
 		this.parentId = parentId;
-		this.parentName = parentName;
 	}
 	
-	public TestTreeEvent(long timestamp, String testId, String testName,
-			boolean isSuite, int testCount) {
-		this(timestamp,testId,testName,null,null,isSuite,testCount);
-	}
-
-	public int getTestCount() {
-		return testCount;
-	}
-
 	public String getTestId() {
 		return testId;
 	}
@@ -53,10 +40,6 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		return parentId;
 	}
 	
-	public String getParentName(){
-		return parentName;
-	}
-
 	public String getType() {
 		return "TSTTREE";
 	}
@@ -68,10 +51,7 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		jsonMsg.put("parentId", parentId);
-		jsonMsg.put("parentName", parentName);
 		jsonMsg.put("isSuite", isSuite);
-		jsonMsg.put("testCount", testCount);
-		
 		
 		return jsonMsg.toString();
 	}
@@ -81,13 +61,10 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + (isSuite ? 1231 : 1237);
-		result = prime * result + testCount;
 		result = prime * result + ((testId == null) ? 0 : testId.hashCode());		
 		result = prime * result
 				+ ((testName == null) ? 0 : testName.hashCode());
 		result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
-		result = prime * result
-				+ ((parentName == null) ? 0 : parentName.hashCode());
 		return result;
 	}
 
@@ -101,8 +78,6 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 			return false;
 		TestTreeEvent other = (TestTreeEvent) obj;
 		if (isSuite != other.isSuite)
-			return false;
-		if (testCount != other.testCount)
 			return false;
 		if (testId == null) {
 			if (other.testId != null)
@@ -118,11 +93,6 @@ public class TestTreeEvent extends AbstractRunTestEvent {
 			if (other.parentId!= null)
 				return false;
 		} else if (!parentId.equals(other.parentId))
-			return false;
-		if (parentName == null) {
-			if (other.parentName != null)
-				return false;
-		} else if (!parentName.equals(other.parentName))
 			return false;
 		return true;
 	}

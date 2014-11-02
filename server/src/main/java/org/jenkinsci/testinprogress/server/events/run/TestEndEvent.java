@@ -55,8 +55,9 @@ public class TestEndEvent extends AbstractRunTestEvent {
 		jsonMsg.put("messageId", MessageIds.TEST_END);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
-		jsonMsg.put("ignored", ignored);
-	
+		if (ignored) {
+			jsonMsg.put("ignored", ignored);
+		}
 		return jsonMsg.toString();		
 	}
 

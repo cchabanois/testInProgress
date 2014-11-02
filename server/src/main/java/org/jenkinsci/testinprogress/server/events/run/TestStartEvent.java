@@ -44,7 +44,9 @@ public class TestStartEvent extends AbstractRunTestEvent {
 		jsonMsg.put("messageId", MessageIds.TEST_START);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
-		jsonMsg.put("ignored", ignored);
+		if (ignored) {
+			jsonMsg.put("ignored", ignored);
+		}
 		return jsonMsg.toString();
 
 	}

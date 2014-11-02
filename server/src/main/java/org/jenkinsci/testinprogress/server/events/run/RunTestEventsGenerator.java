@@ -48,8 +48,8 @@ public class RunTestEventsGenerator implements ITestRunListener {
 	}
 
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount) {
-		fireEvent(new TestTreeEvent(timestamp,testId, testName, parentId, parentName, isSuite, testCount));
+			String parentId, boolean isSuite) {
+		fireEvent(new TestTreeEvent(timestamp,testId, testName, parentId, isSuite));
 	}
 
 	public void testFailed(long timestamp,int status, String testId, String testName,

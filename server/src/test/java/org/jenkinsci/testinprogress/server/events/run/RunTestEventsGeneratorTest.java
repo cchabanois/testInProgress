@@ -35,11 +35,11 @@ public class RunTestEventsGeneratorTest {
 		// Given
 
 		// When
-		eventsGenerator.testTreeEntry(200, "1","testproject.AllTests",null,null,true,2);
+		eventsGenerator.testTreeEntry(200, "1","testproject.AllTests","0",true);
 
 		// Then
 		verify(listener).event(
-				new TestTreeEvent(200, "1", "testproject.AllTests", true, 2));
+				new TestTreeEvent(200, "1", "testproject.AllTests", "0", true));
 	}
 
 	@Test

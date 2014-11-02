@@ -40,8 +40,8 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 	}
 
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount) {
-		testRunListener.testTreeEntry(timestamp, testId, testName, parentId, parentName, isSuite, testCount);
+			String parentId, boolean isSuite) {
+		testRunListener.testTreeEntry(timestamp, testId, testName, parentId, isSuite);
 	}
 
 	public void testFailed(long timestamp, int status, String testId,

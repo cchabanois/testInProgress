@@ -80,15 +80,13 @@ public interface ITestRunListener {
 	 * @param testId a unique id for the test
 	 * @param testName the name of the test
 	 * @param parentId Id of the parent to which this test belong. In case it does not belong just send empty string.
-	 * @param parentName Name of the parent to which this test belong. In case it does not belong just send empty string.
 	 * @param isSuite true or false depending on whether the test is a suite
-	 * @param testCount: an integer indicating the number of tests
 	 * @param runId
 	 * 
 	 * @see MessageIds#TEST_TREE
 	 */
 	public void testTreeEntry(long timestamp, String testId, String testName,
-			String parentId, String parentName, boolean isSuite, int testCount);
+			String parentId, boolean isSuite);
 
 	/**
 	 * An individual test has failed with a stack trace.

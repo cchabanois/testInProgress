@@ -125,14 +125,12 @@ public class TestMessagesParser {
 		String testName = jsonMsg.getString("testName");
 		String testId = getStringValue(jsonMsg, "testId", testName);
 		String parentId = getStringValue(jsonMsg, "parentId", null);
-		String parentName = getStringValue(jsonMsg, "parentName", null);
 		boolean isSuite = (Boolean)getValue(jsonMsg, "isSuite", false);
-		int count = (Integer) getValue(jsonMsg, "testCount", 1);
 		
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
-			listener.testTreeEntry(timeStamp, testId, testName, parentId, parentName, isSuite, count);
+			listener.testTreeEntry(timeStamp, testId, testName, parentId, isSuite);
 		}
 	}
 

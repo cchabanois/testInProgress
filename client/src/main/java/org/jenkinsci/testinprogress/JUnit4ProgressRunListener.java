@@ -41,17 +41,16 @@ public class JUnit4ProgressRunListener extends RunListener {
 		messageSender = messageSenderFactory.getMessageSender();
 		messageSender.init();
 		messageSender.testRunStarted(description.testCount());
-		sendTestTree(description);
+		sendTestTree(null, description);
 		startTime = System.currentTimeMillis();
 	}
 
-	private void sendTestTree(Description description) throws IOException {
+	private void sendTestTree(String parentId, Description description) throws IOException {
 		String id = getTestId(description);
-		messageSender.testTree(id, description.getDisplayName(), description
-				.isSuite(), description.isSuite() ? description.getChildren()
-				.size() : 1);
+		messageSender.testTree(id, description.getDisplayName(), parentId,description
+				.isSuite());
 		for (Description childDescription : description.getChildren()) {
-			sendTestTree(childDescription);
+			sendTestTree(id, childDescription);
 		}
 	}
 
@@ -82,8 +81,8 @@ public class JUnit4ProgressRunListener extends RunListener {
 		String id = getTestId(failure.getDescription());
 		Throwable exception = failure.getException();
 		if (exception instanceof AssertionError) {
-			String expected = "";
-			String actual = "";
+			String expected = null;
+			String actual = null;
 			if (exception instanceof junit.framework.ComparisonFailure) {
 				junit.framework.ComparisonFailure comparisonFailure = (junit.framework.ComparisonFailure) exception;
 				expected = comparisonFailure.getExpected();

@@ -65,9 +65,9 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 			messageSender.testRunStarted(test.countTestCases());
 			Description description = getDescription(test);
 			if (description != null) {
-				sendTestTree(description);
+				sendTestTree(null, description);
 			} else if (test instanceof TestSuite) {
-				sendTestTree((TestSuite) test);
+				sendTestTree(null, (TestSuite) test);
 			} else {
 				throw new BuildException("Test suite not supported");
 			}
@@ -77,38 +77,36 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 		}
 	}
 
-	private void sendTestTree(Description description) {
+	private void sendTestTree(String parentId, Description description) {
 		try {
 			String id = getTestId(description.getDisplayName());
-			messageSender.testTree(id, description.getDisplayName(),
-					description.isSuite(), description.isSuite() ? description
-							.getChildren().size() : 1);
+			messageSender.testTree(id, description.getDisplayName(), parentId,
+					description.isSuite());
 			for (Description childDescription : description.getChildren()) {
-				sendTestTree(childDescription);
+				sendTestTree(parentId, childDescription);
 			}
 		} catch (IOException e) {
 			throw new BuildException(e);
 		}
 	}
 
-	private void sendTestTree(TestSuite testSuite) {
+	private void sendTestTree(String parentId, TestSuite testSuite) {
 		try {
 			String id = getTestId(testSuite.toString());
-			messageSender.testTree(id, testSuite.toString(), true,
-					testSuite.testCount());
+			messageSender.testTree(id, testSuite.toString(), parentId,true);
 			for (Enumeration<Test> enumeration = testSuite.tests(); enumeration
 					.hasMoreElements();) {
 				Test childTest = enumeration.nextElement();
 				if (childTest instanceof TestSuite) {
-					sendTestTree((TestSuite) childTest);
+					sendTestTree(id, (TestSuite) childTest);
 				} else {
 					if (childTest.countTestCases() != 1) {
 						throw new BuildException("Test not supported :"
 								+ childTest.toString());
 					}
 					String childId = getTestId(childTest.toString());
-					messageSender.testTree(childId, childTest.toString(),
-							false, 1);
+					messageSender.testTree(childId, childTest.toString(),id,
+							false);
 				}
 			}
 		} catch (IOException e) {

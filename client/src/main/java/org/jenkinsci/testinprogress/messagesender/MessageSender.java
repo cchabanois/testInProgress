@@ -35,26 +35,18 @@ public abstract class MessageSender {
 		println(jsonMsg.toString());
 	}
 	
-	public void testTree(String testId, String testName, String parentId,String parentName, boolean isSuite,
-			int testCount) throws IOException {
+	public void testTree(String testId, String testName, String parentId, boolean isSuite) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_TREE);
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 		
 		jsonMsg.put("parentId", parentId);
-		jsonMsg.put("parentName", parentName);
 		jsonMsg.put("isSuite", isSuite);
-		jsonMsg.put("testCount", testCount);
 		
 		println(jsonMsg.toString());
 	}
 	
-	public void testTree(String testId, String testName, boolean isSuite,
-			int testCount) throws IOException {
-		this.testTree(testId, testName, null, null, isSuite, testCount);
-	}
-
 	public void testStarted(String testId, String testName, boolean ignored) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_START);
@@ -84,9 +76,9 @@ public abstract class MessageSender {
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
-		jsonMsg.put("errorTrace",trace.concat("\n"));
-		jsonMsg.put("expectedMsg", expected.concat("\n"));
-		jsonMsg.put("actualMsg", actual.concat("\n"));
+		jsonMsg.put("errorTrace",trace);
+		jsonMsg.put("expectedMsg", expected);
+		jsonMsg.put("actualMsg", actual);
 		
 		println(jsonMsg.toString());
 	}
@@ -99,7 +91,7 @@ public abstract class MessageSender {
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
-		jsonMsg.put("errorTrace",trace.concat("\n"));
+		jsonMsg.put("errorTrace",trace);
 		jsonMsg.put("assumptionFailed", true);
 		
 		println(jsonMsg.toString());
@@ -116,7 +108,7 @@ public abstract class MessageSender {
 		jsonMsg.put("testId", testId);
 		jsonMsg.put("testName", testName);
 
-		jsonMsg.put("errorTrace",trace.concat("\n"));
+		jsonMsg.put("errorTrace",trace);
 		
 		println(jsonMsg.toString());
 	}

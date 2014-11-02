@@ -36,7 +36,6 @@ var TestRun = (function($) {
 		this.testIdToTreeId = {};
 		this.tree = null;
 		this.runId = runId;
-		this.treeEvents = [];
 		this.currentNode = null;
 		this.elementId = elementId;
 		this.testCount = 0;
@@ -159,7 +158,7 @@ var TestRun = (function($) {
 					'background' : 'darkred'
 				});
 			}
-			$("#" + this.progressId).progressbar("value", this.testEnded + this.errors +  this.failures);
+			$("#" + this.progressId).progressbar("value", this.testEnded);
 		},
 		updateSuiteIcon : function() {
 			var legendClass = "";
@@ -266,10 +265,6 @@ var TestRun = (function($) {
 			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
-			this.updateParentNode(this.currentNode);
-			if (this.expandNodes) {
-				this.collapseParentIfPassed(this.currentNode);
-			}
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
@@ -278,10 +273,6 @@ var TestRun = (function($) {
 			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
-			this.updateParentNode(this.currentNode);
-			if (this.expandNodes) {
-				this.collapseParentIfPassed(this.currentNode);
-			}
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;

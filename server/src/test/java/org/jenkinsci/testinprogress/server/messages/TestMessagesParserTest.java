@@ -32,8 +32,7 @@ public class TestMessagesParserTest {
 		// Then
 		verify(testRunListener).testRunStarted(anyLong(), eq(6),anyString());
 		verify(testRunListener).testTreeEntry(anyLong(), eq("1"),
-				eq("testproject.AllTests"), isNull(String.class),
-				isNull(String.class), eq(true), eq(2));
+				eq("testproject.AllTests"), isNull(String.class), eq(true));
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
 				eq("testAddWillFail(testproject.CalcTest)"),eq(false));
 		verify(testRunListener).testStarted(anyLong(), eq("4"),
@@ -53,7 +52,7 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener).testRunStarted(0, 6, null);
-		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests",null,null,true,2);
+		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests",null,true);
 		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false);
 		verify(testRunListener).testStarted(4500, "4",
 				"testIgnored(testproject.CalcTest)",true);
@@ -74,9 +73,9 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener)
-				.testRunStarted(anyLong(), anyInt(), anyString());
+				.testRunStarted(anyLong(), anyInt(), isNull(String.class));
 		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(), anyString(),
-				anyString(), anyString(), anyString(), eq(false), anyInt());
+				anyString(), anyString(), eq(false));
 		verify(testRunListener, times(numTests)).testStarted(anyLong(),
 				anyString(), anyString(), anyBoolean());
 		verify(testRunListener, times(numTests)).testEnded(anyLong(),
@@ -90,7 +89,7 @@ public class TestMessagesParserTest {
 		if (timeStamp)
 			timeSt="timeStamp:0,";
 		sb.append("{"+timeSt+"messageId:TESTC,testCount:6,fVersion:v2}\n");
-		sb.append("{"+timeSt+"messageId:TSTTREE,testId:1,testName:testproject.AllTests,isSuite:true,testCount:2}\n");
+		sb.append("{"+timeSt+"messageId:TSTTREE,testId:1,testName:testproject.AllTests,isSuite:true}\n");
 		if (timeStamp)
 			timeSt="timeStamp:500,";
 		sb.append("{"+timeSt+"messageId:TESTS,testId:3,testName:testAddWillFail(testproject.CalcTest)}\n");

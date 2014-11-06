@@ -1,4 +1,4 @@
-package org.jenkinsci.testinprogress.httpserver.utils;
+package org.jenkinsci.testinprogress.utils;
 
 import java.io.IOException;
 import java.net.ServerSocket;

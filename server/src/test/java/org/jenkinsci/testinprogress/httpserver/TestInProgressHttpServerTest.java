@@ -2,14 +2,16 @@ package org.jenkinsci.testinprogress.httpserver;
 
 import java.io.File;
 
-import org.jenkinsci.testinprogress.httpserver.utils.TestInProgressServers;
+import org.jenkinsci.testinprogress.TestInProgressServers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
+import tests.ProgressDynamicTestSuite;
 import tests.ProgressParameterizedTestSuite;
 
 public class TestInProgressHttpServerTest {
@@ -22,7 +24,7 @@ public class TestInProgressHttpServerTest {
 	public void setUp() throws Exception {
 		File testEventsDir = tempFolder.newFolder();
 		testEventsDir.mkdirs();
-		testInProgressServers = new TestInProgressServers(testEventsDir);
+		testInProgressServers = new TestInProgressServers(testEventsDir, 0, 0);
 		testInProgressServers.start();
 		System.setProperty("TEST_IN_PROGRESS_PORT",
 				Integer.toString(testInProgressServers.getBuildTestEventsServerPort()));
@@ -35,14 +37,21 @@ public class TestInProgressHttpServerTest {
 	}
 
 	@Test
+	@Ignore
 	public void testParameterizedTests() {
-		runTests(ProgressParameterizedTestSuite.class);
+		runJunitTests(ProgressParameterizedTestSuite.class);
 	}
 
-	public void runTests(Class<?> classes) {
+	@Test
+	@Ignore
+	public void testDynamicTestSuite() {
+		runJunitTests(ProgressDynamicTestSuite.class);
+	}
+	
+	public void runJunitTests(Class<?> classes) {
 		JUnitCore jUnitCore = new JUnitCore();
 		jUnitCore.run(classes);
 
 	}
-
+	
 }

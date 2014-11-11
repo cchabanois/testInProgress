@@ -6,6 +6,7 @@
 		<script type="text/javascript" src="ztree/js/jquery.ztree.exhide-3.5.min.js"></script>
 		<script type="text/javascript" src="numeral/numeral.min.js"></script>
 		<script type="text/javascript" src="js/testEvents.js"></script>
+		<script type="text/javascript" src="js/httpRestEventsReceiver.js"></script>
 		<link rel="stylesheet" type="text/css"
 		        href="css/testEvents.css" />
 		<link rel="stylesheet" type="text/css"
@@ -20,8 +21,9 @@
 			<script type="text/javascript">
 				jQuery.noConflict();
 				jQuery(function() {
-					testRuns = new TestRuns("results");
-					testRuns.start();				
+					testRuns = new TestRuns("results");	
+					httpRestEventsReceiver = new HttpRestEventsReceiver(testRuns);
+					httpRestEventsReceiver.start();
 				});
 			</script>
 		</div>

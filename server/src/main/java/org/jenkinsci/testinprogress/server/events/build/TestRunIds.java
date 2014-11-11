@@ -1,9 +1,7 @@
 package org.jenkinsci.testinprogress.server.events.build;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Generate and Keep all run ids for a build.
@@ -12,7 +10,7 @@ import java.util.Set;
  * 
  */
 public class TestRunIds implements ITestRunIds {
-	private final Set<String> runIds = new HashSet<String>();
+	private final List<String> runIds = new ArrayList<String>();
 
 	public synchronized List<String> getRunIds() {
 		return new ArrayList<String>(runIds);

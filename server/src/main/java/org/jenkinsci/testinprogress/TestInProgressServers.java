@@ -5,12 +5,14 @@ import java.io.File;
 import org.jenkinsci.testinprogress.httpserver.TestInProgressHttpServer;
 import org.jenkinsci.testinprogress.server.BuildTestEventsServer;
 import org.jenkinsci.testinprogress.server.build.BuildTestResults;
+import org.jenkinsci.testinprogress.server.build.CompletedBuildTestEvents;
 import org.jenkinsci.testinprogress.server.events.build.IBuildTestEventListener;
 import org.jenkinsci.testinprogress.server.events.build.TestRunIds;
 import org.jenkinsci.testinprogress.server.filters.StackTraceFilter;
 import org.jenkinsci.testinprogress.server.listeners.BuildTestStats;
 import org.jenkinsci.testinprogress.server.listeners.RunningBuildTestEvents;
 import org.jenkinsci.testinprogress.server.listeners.SaveTestEventsListener;
+import org.jenkinsci.testinprogress.server.persistence.TestEventsDirs;
 import org.jenkinsci.testinprogress.utils.FreePortsFinder;
 
 /**
@@ -20,7 +22,7 @@ import org.jenkinsci.testinprogress.utils.FreePortsFinder;
  *
  */
 public class TestInProgressServers {
-	private final File testEventsDir;
+	private final TestEventsDirs testEventsDirs;
 	private final TestRunIds testRunIds = new TestRunIds();
 	private final RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
 	private final BuildTestStats buildTestStats = new BuildTestStats();
@@ -38,9 +40,9 @@ public class TestInProgressServers {
 	 * @param httpPort
 	 *            the port for the http server or 0 for any free port
 	 */
-	public TestInProgressServers(File testEventsDir,
+	public TestInProgressServers(File testEventsRootDir,
 			int buildTestEventsServerPort, int httpPort) {
-		this.testEventsDir = testEventsDir;
+		this.testEventsDirs = new TestEventsDirs(testEventsRootDir);
 		this.buildTestEventsServerPort = buildTestEventsServerPort;
 		this.httpPort = httpPort;
 	}
@@ -49,14 +51,20 @@ public class TestInProgressServers {
 		if (httpPort == 0) {
 			this.httpPort = FreePortsFinder.findFreePort();
 		}
-		BuildTestResults buildTestResults = new BuildTestResults(testEventsDir,
+		File previousBuildTestEventsDir = testEventsDirs.getLatestBuildTestEventsDir();
+		File buildTestEventsDir = testEventsDirs.createBuildTestEventsDir();
+		BuildTestResults buildTestResults = new BuildTestResults(buildTestEventsDir,
 				testRunIds, runningBuildTestEvents, buildTestStats);
-		testInProgressHttpServer = createTestInProgressHttpServer(httpPort, buildTestResults);
+		CompletedBuildTestEvents completedBuildTestEvents = null;
+		if (previousBuildTestEventsDir != null) {
+			completedBuildTestEvents = new CompletedBuildTestEvents(previousBuildTestEventsDir);
+		}
+		testInProgressHttpServer = createTestInProgressHttpServer(httpPort, completedBuildTestEvents, buildTestResults);
 		testInProgressHttpServer.start();
 		if (buildTestEventsServerPort == 0) {
 			this.buildTestEventsServerPort = FreePortsFinder.findFreePort();
 		}
-		buildTestEventsServer = createBuildTestEventsServer(buildTestEventsServerPort, testEventsDir);
+		buildTestEventsServer = createBuildTestEventsServer(buildTestEventsServerPort, buildTestEventsDir);
 		buildTestEventsServer.start();
 	}
 
@@ -84,13 +92,13 @@ public class TestInProgressServers {
 		return buildTestEventsServer;
 	}
 
-	private TestInProgressHttpServer createTestInProgressHttpServer(int httpPort,
+	private TestInProgressHttpServer createTestInProgressHttpServer(int httpPort, CompletedBuildTestEvents previousBuildTestEvents,
 			BuildTestResults buildTestResults) {
 		String baseUri = "http://localhost:" + Integer.toString(httpPort) + '/';
 		System.out.println("Test In progress page : " + baseUri
 				+ "testinprogress/index.html");
 		TestInProgressHttpServer httpServer = new TestInProgressHttpServer(
-				baseUri, buildTestResults);
+				baseUri, previousBuildTestEvents, buildTestResults);
 		return httpServer;
 	}
 

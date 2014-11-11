@@ -41,10 +41,7 @@ public class SaveTestEventsListenerTest {
 		saveTestEventsListener.event(new BuildTestEvent("run2", new RunEndEvent(3000,2000)));
 		
 		// Then
-		TestRunIds testRunIds = new TestRunIds();
-		testRunIds.addRunId("run1");
-		testRunIds.addRunId("run2");
-		CompletedBuildTestEvents completedBuildTestEvents = new CompletedBuildTestEvents(testRunIds, directory);
+		CompletedBuildTestEvents completedBuildTestEvents = new CompletedBuildTestEvents(directory);
 		List<BuildTestEvent> events = completedBuildTestEvents.getEvents();
 		assertTrue(events.contains(new BuildTestEvent("run1", new RunStartEvent(1000,4))));
 		assertTrue(events.contains(new BuildTestEvent("run2", new RunStartEvent(2000,3))));

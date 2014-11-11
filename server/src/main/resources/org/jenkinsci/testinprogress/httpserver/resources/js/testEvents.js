@@ -475,10 +475,6 @@ var TestRuns = (function($) {
 	}
 
 	TestRuns.prototype = {
-		start : function(event) {
-			this.handleTestsPreviousBuild($.proxy(this.handleTestsCurrentBuild,
-					this));
-		},
 		runIdToElementId : function(runId) {
 			if (this.runIdToElementIdMap[runId] == null) {
 				this.index++;
@@ -486,76 +482,30 @@ var TestRuns = (function($) {
 			}
 			return this.runIdToElementIdMap[runId];
 		},
-		handleTestsPreviousBuild : function(previousTestsHandled) {
-/*
-			remoteAction.getPreviousTestEvents($.proxy(function(t) {
-				var buildTestEventsList = t.responseObject();
-				var buildEvents = buildTestEventsList.buildTestEvents;
-				var runIdToRunEvents = {};
-				for ( var i = 0; i < buildEvents.length; i++) {
-					var buildEvent = buildEvents[i];
-					if (runIdToRunEvents[buildEvent.runId] == null) {
-						runIdToRunEvents[buildEvent.runId] = [];
-					}
-					runIdToRunEvents[buildEvent.runId]
-							.push(buildEvent.runTestEvent);
+		handlePreviousBuildTestEvents : function(buildEvents) {
+			var runIdToRunEvents = {};
+			for (var i = 0; i < buildEvents.length; i++) {
+				var buildEvent = buildEvents[i];
+				if (runIdToRunEvents[buildEvent.runId] == null) {
+					runIdToRunEvents[buildEvent.runId] = [];
 				}
-				var testRuns = [];
-				for ( var runId in runIdToRunEvents) {
-					var testRun = testRuns[runId];
+				runIdToRunEvents[buildEvent.runId]
+						.push(buildEvent.runTestEvent);
+			}
+			var testRuns = [];
+			for ( var runId in runIdToRunEvents) {
+				var testRun = testRuns[runId];
 
-					if (testRun == null) {
-						var elementId = this.runIdToElementId(runId);
-						$('#' + this.elementId).append(
-								"<div id='" + elementId + "'></div>");
-						$("#" + elementId).fadeTo(0, 0.4);
-						testRun = new TestRun(elementId, runId);
-						this.previousTestRuns[runId] = testRun;
-					}
-					testRun.handleTestEvents(runIdToRunEvents[runId]);
+				if (testRun == null) {
+					var elementId = this.runIdToElementId(runId);
+					$('#' + this.elementId).append(
+							"<div id='" + elementId + "'></div>");
+					$("#" + elementId).fadeTo(0, 0.4);
+					testRun = new TestRun(elementId, runId);
+					this.previousTestRuns[runId] = testRun;
 				}
-				previousTestsHandled();
-			}, this)); */
-			previousTestsHandled();
-		},
-		handleTestsCurrentBuild : function() {
-			var callFunction = $
-					.proxy(
-							function() {
-								var time1 = (new Date()).getTime();
-								var handler = $.proxy(
-										function(t) {
-											var time2 = (new Date())
-													.getTime();
-											console
-													.log("Time to get events : "
-															+ (time2 - time1));
-											var buildTestEventsList = t;
-									//				.responseObject();
-									//		this.building = buildTestEventsList.building;
-											this
-													.handleTestEvents(buildTestEventsList); // .buildTestEvents);
-											this.eventsCount += buildTestEventsList.length; // .buildTestEvents.length;
-											var time3 = (new Date())
-													.getTime();
-											console
-													.log("Time to handle events : "
-															+ (time3 - time2));
-											// call the function again in 2 seconds
-											if (this.building) {
-												setTimeout(callFunction, 2000);
-											}
-										}, this);
-								
-							    $.ajax({
-							        type: 'GET',
-							        url: "/buildTestEvents?fromIndex="+this.eventsCount,
-							        dataType: "json", // data type of response
-							        success: handler
-							    });
-											
-							}, this);
-			callFunction();
+				testRun.handleTestEvents(runIdToRunEvents[runId]);
+			}
 		},
 		handleTestEvents : function(buildEvents) {
 			var runIdToRunEvents = {};

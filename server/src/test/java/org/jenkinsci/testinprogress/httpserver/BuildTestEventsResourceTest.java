@@ -18,6 +18,7 @@ import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
 import org.jenkinsci.testinprogress.server.events.build.IBuildTestEvents;
 import org.jenkinsci.testinprogress.server.events.run.RunEndEvent;
 import org.jenkinsci.testinprogress.server.events.run.RunStartEvent;
+import org.jenkinsci.testinprogress.utils.FreePortsFinder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,11 +35,12 @@ public class BuildTestEventsResourceTest {
 
 	@Before
 	public void setUp() throws IOException {
-		server = new TestInProgressHttpServer("http://localhost:8080/",
+		int port = FreePortsFinder.findFreePort();
+		server = new TestInProgressHttpServer(String.format("http://localhost:%d/", port),
 				buildTestEvents);
 		server.start();
 		Client c = ClientBuilder.newClient();
-		target = c.target("http://localhost:8080");
+		target = c.target(String.format("http://localhost:%d",port));
 	}
 
 	@After

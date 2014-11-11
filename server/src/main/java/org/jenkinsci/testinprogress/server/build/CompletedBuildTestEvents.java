@@ -3,12 +3,14 @@ package org.jenkinsci.testinprogress.server.build;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
 import org.jenkinsci.testinprogress.server.events.build.IBuildTestEvents;
-import org.jenkinsci.testinprogress.server.events.build.TestRunIds;
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEvent;
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEventListener;
 import org.jenkinsci.testinprogress.server.events.run.RunTestEventsGenerator;
@@ -23,21 +25,26 @@ import org.jenkinsci.testinprogress.server.messages.TestMessagesParser;
  */
 public class CompletedBuildTestEvents implements IBuildTestEvents {
 
-	public final File directory;
-	private final TestRunIds runIds;
+	private final File testEventsDir;
 
-	public CompletedBuildTestEvents(TestRunIds runIds, File directory) {
-		this.directory = directory;
-		this.runIds = runIds;
+	public CompletedBuildTestEvents(File testEventsDir) {
+		this.testEventsDir = testEventsDir;
 	}
 
 	public List<BuildTestEvent> getEvents() {
 		final ArrayList<BuildTestEvent> testEvents = new ArrayList<BuildTestEvent>();
-		for (final String runId : runIds.getRunIds()) {
+		File[] testEventsFiles = testEventsDir.listFiles(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".events");
+			}
+		});
+		for (File testEventsFile : testEventsFiles) {
 			FileReader fileReader;
 			try {
-				fileReader = new FileReader(new File(directory, runId
-						+ ".events"));
+				fileReader = new FileReader(testEventsFile);
+				final String runId = testEventsFile.getName().substring(0,
+						testEventsFile.getName().length() - ".events".length());
 				RunTestEventsGenerator eventsGenerator = new RunTestEventsGenerator(
 						new IRunTestEventListener[] { new IRunTestEventListener() {
 							public void event(IRunTestEvent testEvent) {
@@ -49,10 +56,25 @@ public class CompletedBuildTestEvents implements IBuildTestEvents {
 						new ITestRunListener[] { eventsGenerator });
 				parser.processTestMessages(fileReader);
 			} catch (FileNotFoundException e) {
-				// no file for this run id ...
+				// should not happen
 			}
 		}
+		Collections.sort(testEvents, new BuildTestEventComparator());
 		return testEvents;
 	}
 
+	private static class BuildTestEventComparator implements Comparator<BuildTestEvent>{
+
+		public int compare(BuildTestEvent buildTestEvent1, BuildTestEvent buildTestEvent2) {
+			if (buildTestEvent1.getRunTestEvent().getTimestamp() < buildTestEvent2.getRunTestEvent().getTimestamp()) {
+				return -1;
+			}
+			if (buildTestEvent1.getRunTestEvent().getTimestamp() > buildTestEvent2.getRunTestEvent().getTimestamp()) {
+				return 1;
+			}
+			return 0;
+		}
+		
+	}
+	
 }

@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="${resURL}/plugin/testInProgress/ztree/js/jquery.ztree.exhide-3.5.min.js"></script>
 		<script type="text/javascript" src="${resURL}/plugin/testInProgress/numeral/numeral.min.js"></script>
 		<script src='${resURL}/plugin/testInProgress/js/testEvents.js' type='text/javascript'/>
+		<script src='${resURL}/plugin/testInProgress/js/jenkinsAjaxEventsReceiver.js' type='text/javascript'/>
 		<link rel="stylesheet" type="text/css"
 		        href="${resURL}/plugin/testInProgress/css/testEvents.css" />
 		<link rel="stylesheet" type="text/css"
@@ -21,8 +22,9 @@
 			<script type="text/javascript">
 				jQuery.noConflict();
 				jQuery(function() {
-					testRuns = new TestRuns("results");
-					testRuns.start();				
+					testRuns = new TestRuns("results");	
+					jenkinsAjaxEventsReceiver = new JenkinsAjaxEventsReceiver(testRuns);
+					jenkinsAjaxEventsReceiver.start();			
 				});
 			</script>
 		</div>

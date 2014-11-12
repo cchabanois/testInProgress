@@ -33,9 +33,9 @@ var TestRun = (function($) {
 	function TestRun(elementId, runId) {
 		console.log("Test run : " + runId);
 		TestRun.index++;
+		this.testIdToTreeId = {};
 		this.tree = null;
 		this.runId = runId;
-		this.treeEvents = [];
 		this.currentNode = null;
 		this.elementId = elementId;
 		this.testCount = 0;
@@ -96,7 +96,7 @@ var TestRun = (function($) {
 			if (events.length == 0) {
 				return;
 			}
-			if (events.length > 200) {
+			if (events.length > 50) {
 				this.expandNodes = false;
 			} else {
 				this.expandNodes = true;
@@ -105,6 +105,11 @@ var TestRun = (function($) {
 				this.handleTestEvent(events[i]);
 			}
 			if (this.tree != null) {
+				if (!this.expandNodes) {
+					// we don't expand nodes for all tests except the latest one
+					this.expandParent(this.currentNode);
+					this.collapseParentIfPassed(this.currentNode);
+				}
 				this.updateStats();
 				this.updateProgressBar();
 				this.updateSuiteIcon();
@@ -117,10 +122,7 @@ var TestRun = (function($) {
 				this.handleRunStartEvent(event);
 				break;
 			case "TSTTREE":
-				this.treeEvents.push(event);
-				if(this.tree!=null){
-					this.addNode(event);				
-				}
+				this.handleTestTreeEvent(event);
 				break;
 			case "FAILED":
 				this.handleTestFailedEvent(event);
@@ -156,7 +158,7 @@ var TestRun = (function($) {
 					'background' : 'darkred'
 				});
 			}
-			$("#" + this.progressId).progressbar("value", this.testEnded + this.errors +  this.failures);
+			$("#" + this.progressId).progressbar("value", this.testEnded);
 		},
 		updateSuiteIcon : function() {
 			var legendClass = "";
@@ -210,6 +212,7 @@ var TestRun = (function($) {
 			
 		},
 		handleRunStartEvent : function(event) {
+			this.createTreeView();
 			this.testCount = event.testCount;
 			$("#" + this.progressId).progressbar({
 				value : 0,
@@ -223,14 +226,23 @@ var TestRun = (function($) {
 			this.setMessage("Finished after "
 					+ (event.elapsedTime / 1000).toFixed(2) + " seconds");
 		},
+		handleTestTreeEvent : function(treeEvent) {
+			var testId = treeEvent.testId;
+			var childNode = this.createNode(treeEvent);
+			var parentId = treeEvent.parentId;
+			var parentNode = this.getNodeByTestId(parentId);
+			if(parentNode != null && !parentNode.suite){
+				parentNode.iconSkin = TestRun.IconSkin.TESTSUITE
+				parentNode.suite = true;
+			}
+			var addedNodes = this.tree.addNodes(parentNode,childNode,true);
+			this.testIdToTreeId[testId] = addedNodes[0].tId;
+		},		
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
 			this.updateTestCount();
 			if (event.ignored) {
 				this.testIgnored++;
-			}
-			if (this.tree == null) {
-				this.createTreeView();
 			}
 			this.setMessage(event.testName);
 			this.currentNode = this.getNodeByTestId(event.testId);
@@ -253,10 +265,6 @@ var TestRun = (function($) {
 			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
-			this.updateParentNode(this.currentNode);
-			if (this.expandNodes) {
-				this.collapseParentIfPassed(this.currentNode);
-			}
 		},
 		handleTestErrorEvent : function(event) {
 			this.errors++;
@@ -265,10 +273,6 @@ var TestRun = (function($) {
 			this.currentNode.elapsedTime = 0;
 			this.updateNode(this.currentNode);
 			this.currentNode.trace = event.trace;
-			this.updateParentNode(this.currentNode);
-			if (this.expandNodes) {
-				this.collapseParentIfPassed(this.currentNode);
-			}
 		},
 		handleTestEndEvent : function(event) {
 			this.testEnded++;
@@ -321,51 +325,6 @@ var TestRun = (function($) {
 			this.updateNode(parentNode);
 			this.updateParentNode(parentNode);
 		},
-		createTreeNodes : function(treeEvents) {
-			var eventIndex = 0;
-			var testRun = this;
-			function createTreeNode() {
-				var event = treeEvents[eventIndex];
-				if( event == undefined)
-					return null;
-				if (event.suite == false) {
-					var testName = testRun.getShortTestName(event);
-					var newNode = {
-						name : testName,
-						iconSkin : TestRun.IconSkin.TEST,
-						title : testName,
-						// our properties :
-						id : event.testId,
-						suite : false,
-						testName : testName,
-						testStatus : TestRun.TestStatus.UNKNOWN
-					};
-					eventIndex++;
-					return newNode;
-				} else {
-					var newNode = {
-						name : event.testName,
-						title : event.testName,
-						iconSkin : TestRun.IconSkin.TESTSUITE,
-						children : [],
-						// our properties :
-						id : event.testId,
-						suite : true,
-						testName : event.testName,
-						testStatus : TestRun.TestStatus.UNKNOWN
-					};
-					eventIndex++;
-					for ( var i = 0; i < event.testCount; i++) {
-						var node = createTreeNode();
-						if(node == null)
-							break;
-						newNode.children.push(node);
-					}
-					return newNode;
-				}
-			}
-			return [ createTreeNode() ];
-		},		
 		createNode : function(event) {
 			var newNode;
 			var testRun = this;
@@ -376,7 +335,6 @@ var TestRun = (function($) {
 					iconSkin : TestRun.IconSkin.TEST,
 					title : testName,
 					// our properties :
-					id : event.testId,
 					suite : false,
 					testName : testName,
 					testStatus : TestRun.TestStatus.UNKNOWN
@@ -389,7 +347,6 @@ var TestRun = (function($) {
 					iconSkin : TestRun.IconSkin.TESTSUITE,
 					children : [],
 					// our properties :
-					id : event.testId,
 					suite : true,
 					testName : event.testName,
 					testStatus : TestRun.TestStatus.UNKNOWN
@@ -399,7 +356,6 @@ var TestRun = (function($) {
 			return newNode;
 		},
 		createTreeView : function() {
-			var treeNodes = this.createTreeNodes(this.treeEvents);
 			$.fn.zTree.init($("#" + this.treeId), {
 				view : {
 					nameIsHTML : true,
@@ -420,11 +376,12 @@ var TestRun = (function($) {
 						$('#' + this.stackTraceId).html(trace);
 					}, this)
 				}
-			}, treeNodes);
+			}, []);
 			this.tree = $.fn.zTree.getZTreeObj(this.treeId);
 		},
 		getNodeByTestId : function(testId) {
-			var node = this.tree.getNodeByParam("id", testId, null);
+			var tId = this.testIdToTreeId[testId];
+			var node = this.tree.getNodeByTId(tId);
 			return node;
 		},
 		getShortTestName : function(event) {
@@ -482,20 +439,6 @@ var TestRun = (function($) {
 			}
 			this.tree.updateNode(node);
 		},
-		addNode : function(event) {
-			var testId = event.testId;
-			var childNode = this.getNodeByTestId(testId);
-			if(childNode == undefined){
-				childNode = this.createNode(event);
-				var parentId = event.parentId;
-				var parentNode = this.getNodeByTestId(parentId);
-				if(!parentNode.suite){
-					parentNode.iconSkin = TestRun.IconSkin.TESTSUITE
-					parentNode.suite = true;
-				}
-				this.tree.addNodes(parentNode,childNode,false);
-			}			
-		},
 		expandParent : function(node) {
 			var parent = node.getParentNode();
 			while (parent != null && parent.open == false) {
@@ -532,10 +475,6 @@ var TestRuns = (function($) {
 	}
 
 	TestRuns.prototype = {
-		start : function(event) {
-			this.handleTestsPreviousBuild($.proxy(this.handleTestsCurrentBuild,
-					this));
-		},
 		runIdToElementId : function(runId) {
 			if (this.runIdToElementIdMap[runId] == null) {
 				this.index++;
@@ -543,70 +482,30 @@ var TestRuns = (function($) {
 			}
 			return this.runIdToElementIdMap[runId];
 		},
-		handleTestsPreviousBuild : function(previousTestsHandled) {
-			remoteAction.getPreviousTestEvents($.proxy(function(t) {
-				var buildTestEventsList = t.responseObject();
-				var buildEvents = buildTestEventsList.buildTestEvents;
-				var runIdToRunEvents = {};
-				for ( var i = 0; i < buildEvents.length; i++) {
-					var buildEvent = buildEvents[i];
-					if (runIdToRunEvents[buildEvent.runId] == null) {
-						runIdToRunEvents[buildEvent.runId] = [];
-					}
-					runIdToRunEvents[buildEvent.runId]
-							.push(buildEvent.runTestEvent);
+		handlePreviousBuildTestEvents : function(buildEvents) {
+			var runIdToRunEvents = {};
+			for (var i = 0; i < buildEvents.length; i++) {
+				var buildEvent = buildEvents[i];
+				if (runIdToRunEvents[buildEvent.runId] == null) {
+					runIdToRunEvents[buildEvent.runId] = [];
 				}
-				var testRuns = [];
-				for ( var runId in runIdToRunEvents) {
-					var testRun = testRuns[runId];
+				runIdToRunEvents[buildEvent.runId]
+						.push(buildEvent.runTestEvent);
+			}
+			var testRuns = [];
+			for ( var runId in runIdToRunEvents) {
+				var testRun = testRuns[runId];
 
-					if (testRun == null) {
-						var elementId = this.runIdToElementId(runId);
-						$('#' + this.elementId).append(
-								"<div id='" + elementId + "'></div>");
-						$("#" + elementId).fadeTo(0, 0.4);
-						testRun = new TestRun(elementId, runId);
-						this.previousTestRuns[runId] = testRun;
-					}
-					testRun.handleTestEvents(runIdToRunEvents[runId]);
+				if (testRun == null) {
+					var elementId = this.runIdToElementId(runId);
+					$('#' + this.elementId).append(
+							"<div id='" + elementId + "'></div>");
+					$("#" + elementId).fadeTo(0, 0.4);
+					testRun = new TestRun(elementId, runId);
+					this.previousTestRuns[runId] = testRun;
 				}
-				previousTestsHandled();
-			}, this));
-		},
-		handleTestsCurrentBuild : function() {
-			var callFunction = $
-					.proxy(
-							function() {
-								var time1 = (new Date()).getTime();
-								remoteAction
-										.getTestEvents(
-												this.eventsCount,
-												$
-														.proxy(
-																function(t) {
-																	var time2 = (new Date())
-																			.getTime();
-																	console
-																			.log("Time to get events : "
-																					+ (time2 - time1));
-																	var buildTestEventsList = t
-																			.responseObject();
-																	this.building = buildTestEventsList.building;
-																	this
-																			.handleTestEvents(buildTestEventsList.buildTestEvents);
-																	this.eventsCount += buildTestEventsList.buildTestEvents.length;
-																	var time3 = (new Date())
-																			.getTime();
-																	console
-																			.log("Time to handle events : "
-																					+ (time3 - time2));
-																}, this));
-								// call the function again in 2 seconds
-								if (this.building) {
-									setTimeout(callFunction, 2000);
-								}
-							}, this);
-			callFunction();
+				testRun.handleTestEvents(runIdToRunEvents[runId]);
+			}
 		},
 		handleTestEvents : function(buildEvents) {
 			var runIdToRunEvents = {};

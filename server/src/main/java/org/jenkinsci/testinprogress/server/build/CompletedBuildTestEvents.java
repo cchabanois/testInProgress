@@ -14,8 +14,9 @@ import org.jenkinsci.testinprogress.server.events.build.IBuildTestEvents;
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEvent;
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEventListener;
 import org.jenkinsci.testinprogress.server.events.run.RunTestEventsGenerator;
+import org.jenkinsci.testinprogress.server.messages.AllVersionsTestMessagesParser;
+import org.jenkinsci.testinprogress.server.messages.ITestMessagesParser;
 import org.jenkinsci.testinprogress.server.messages.ITestRunListener;
-import org.jenkinsci.testinprogress.server.messages.TestMessagesParser;
 
 /**
  * Retrieve build test events for a completed build
@@ -52,7 +53,7 @@ public class CompletedBuildTestEvents implements IBuildTestEvents {
 										testEvent));
 							}
 						} });
-				TestMessagesParser parser = new TestMessagesParser(
+				ITestMessagesParser parser = new AllVersionsTestMessagesParser(
 						new ITestRunListener[] { eventsGenerator });
 				parser.processTestMessages(fileReader);
 			} catch (FileNotFoundException e) {

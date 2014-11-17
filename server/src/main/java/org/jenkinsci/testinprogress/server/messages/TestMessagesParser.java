@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * copied from org.eclipse.jdt.internal.junit.model.RemoteTestRunnerClient and
  * modified
  */
-public class TestMessagesParser {
+public class TestMessagesParser implements ITestMessagesParser {
 	private final static Logger LOG = Logger
 			.getLogger(TestMessagesParser.class.getName());	
 
@@ -198,7 +198,7 @@ public class TestMessagesParser {
 		}
 	}
 	
-	public Object getValue(JSONObject jsonData, String key, Object defaultValue) {
+	private Object getValue(JSONObject jsonData, String key, Object defaultValue) {
 		try {
 			Object data = jsonData.get(key);
 			return data;
@@ -207,7 +207,7 @@ public class TestMessagesParser {
 		}
 	}
 	
-	public String getStringValue(JSONObject jsonData,String key, Object defaultValue){
+	private String getStringValue(JSONObject jsonData,String key, Object defaultValue){
 		Object value = this.getValue(jsonData, key, defaultValue);
 		if (value == null) {
 			return null;

@@ -8,8 +8,9 @@ import org.jenkinsci.testinprogress.server.events.run.IRunTestEventListener;
 import org.jenkinsci.testinprogress.server.events.run.RunTestEventsGenerator;
 import org.jenkinsci.testinprogress.server.filters.StackTraceFilter;
 import org.jenkinsci.testinprogress.server.filters.StackTraceFilterTestRunnerWrapper;
+import org.jenkinsci.testinprogress.server.messages.AllVersionsTestMessagesParser;
+import org.jenkinsci.testinprogress.server.messages.ITestMessagesParser;
 import org.jenkinsci.testinprogress.server.messages.ITestRunListener;
-import org.jenkinsci.testinprogress.server.messages.TestMessagesParser;
 
 /**
  * Receives test messages from an InputStream and add test events to
@@ -35,7 +36,7 @@ public class TestEventsReceiver implements Runnable {
 				listeners);
 		StackTraceFilterTestRunnerWrapper wrapper = new StackTraceFilterTestRunnerWrapper(
 				eventsGenerator, stackTraceFilter);
-		TestMessagesParser parser = new TestMessagesParser(
+		ITestMessagesParser parser = new AllVersionsTestMessagesParser(
 				new ITestRunListener[] { wrapper });
 		parser.processTestMessages(new InputStreamReader(in));
 	}

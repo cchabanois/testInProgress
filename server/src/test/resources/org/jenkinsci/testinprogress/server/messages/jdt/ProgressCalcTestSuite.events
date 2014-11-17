@@ -1,0 +1,61 @@
+1358801215332 %TESTC  6 v2
+1358801215333 %TSTTREE1,testproject.ProgressCalcTestSuite,true,2
+1358801215347 %TSTTREE2,testproject.CalcTest,true,4
+1358801215347 %TSTTREE3,testIgnored(testproject.CalcTest),false,1
+1358801215347 %TSTTREE4,testFail(testproject.CalcTest),false,1
+1358801215347 %TSTTREE5,testAddWillFail(testproject.CalcTest),false,1
+1358801215347 %TSTTREE6,testAddWillSucceed(testproject.CalcTest),false,1
+1358801215347 %TSTTREE7,testproject.CalcTest2,true,2
+1358801215347 %TSTTREE8,testStringCompare(testproject.CalcTest2),false,1
+1358801215347 %TSTTREE9,testDivideBy0(testproject.CalcTest2),false,1
+1358801215347 %TESTS  3,@Ignore: testIgnored(testproject.CalcTest)
+1358801215349 %TESTE  3,@Ignore: testIgnored(testproject.CalcTest)
+1358801228928 %TESTS  4,testFail(testproject.CalcTest)
+1358801228928 %FAILED 4,testFail(testproject.CalcTest)
+%TRACES 
+java.lang.AssertionError: this test failed
+	at testproject.CalcTest.testFail(CalcTest.java:30)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)
+
+
+%TRACEE 
+1358801228932 %TESTE  4,testFail(testproject.CalcTest)
+1358801228932 %TESTS  5,testAddWillFail(testproject.CalcTest)
+1358801228932 %FAILED 5,testAddWillFail(testproject.CalcTest)
+%TRACES 
+java.lang.AssertionError: expected:<6> but was:<5>
+	at testproject.CalcTest.testAddWillFail(CalcTest.java:20)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)
+
+
+%TRACEE 
+1358801228935 %TESTE  5,testAddWillFail(testproject.CalcTest)
+1358801228935 %TESTS  6,testAddWillSucceed(testproject.CalcTest)
+1358801228935 %TESTE  6,testAddWillSucceed(testproject.CalcTest)
+1358801228935 %TESTS  8,testStringCompare(testproject.CalcTest2)
+1358801228935 %FAILED 8,testStringCompare(testproject.CalcTest2)
+%EXPECTS
+5
+%EXPECTE
+%ACTUALS
+23
+%ACTUALE
+%TRACES 
+org.junit.ComparisonFailure: expected:<[5]> but was:<[23]>
+	at testproject.CalcTest2.testStringCompare(CalcTest2.java:11)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)
+
+
+%TRACEE 
+1358801228947 %TESTE  8,testStringCompare(testproject.CalcTest2)
+1358801228949 %TESTS  9,testDivideBy0(testproject.CalcTest2)
+1358801228949 %ERROR  9,testDivideBy0(testproject.CalcTest2)
+%TRACES 
+java.lang.ArithmeticException: / by zero
+	at testproject.CalcTest2.testDivideBy0(CalcTest2.java:16)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:39)
+
+
+%TRACEE 
+1358801228950 %TESTE  9,testDivideBy0(testproject.CalcTest2)
+1358801228950 %RUNTIME19

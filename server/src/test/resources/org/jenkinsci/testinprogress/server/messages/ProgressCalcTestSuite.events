@@ -1,4 +1,4 @@
-{"timeStamp":"1414947114155","testCount":6,"messageId":"TESTC","fVersion":"v2"}
+{"timeStamp":"1414947114155","testCount":6,"messageId":"TESTC","fVersion":"v3"}
 {"testName":"tests.ProgressCalcTestsSuite","testId":"1","timeStamp":"1414947114156","messageId":"TSTTREE","isSuite":true}
 {"parentId":"1","testName":"tests.CalcTestsSuite","testId":"2","timeStamp":"1414947114157","messageId":"TSTTREE","isSuite":true}
 {"parentId":"2","testName":"tests.CalcTest","testId":"3","timeStamp":"1414947114158","messageId":"TSTTREE","isSuite":true}

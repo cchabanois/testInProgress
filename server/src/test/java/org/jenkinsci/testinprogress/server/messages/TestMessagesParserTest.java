@@ -22,7 +22,7 @@ public class TestMessagesParserTest {
 	public void testTestMessagesParser() {
 		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
-		TestMessagesParser handler = new TestMessagesParser(
+		ITestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
 		String allMessages = getAllMessages(false);
 
@@ -43,7 +43,7 @@ public class TestMessagesParserTest {
 	public void testTestMessagesParserWithTimestampField() {
 		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
-		TestMessagesParser handler = new TestMessagesParser(
+		ITestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
 		String allMessages = getAllMessages(true);
 
@@ -62,7 +62,7 @@ public class TestMessagesParserTest {
 	public void testMessageParserFromFile() {
 		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		// Given
-		TestMessagesParser handler = new TestMessagesParser(
+		ITestMessagesParser handler = new TestMessagesParser(
 				new ITestRunListener[] { testRunListener });
 		InputStream is = getClass().getResourceAsStream(
 				"ProgressCalcTestSuite.events");

@@ -23,7 +23,7 @@ public class ProgressSuiteTest extends AbstractProgressSuiteTest {
 		// Then
 		JSONObject[] messages = result.get();
 		assertTestMessageMatches(messages, new JSONObject(
-				"{messageId:'TESTC', fVersion:'v2', testCount:6}"), JSONCompareMode.LENIENT);
+				"{messageId:'TESTC', fVersion:'v3', testCount:6}"), JSONCompareMode.LENIENT);
 		assertTestMessageMatches(messages, new JSONObject(
 				"{messageId:'RUNTIME'}"), JSONCompareMode.LENIENT);
 	}

@@ -8,6 +8,14 @@ import org.json.JSONObject;
 /**
  * Abstract class used to send test messages
  * 
+ * Generally, the sequence of methods called will be :
+ * testRunStarted : runId is optional, must be unique for the build
+ * testTree (1..n) : creates the tree of tests
+ * testStarted
+ * (testFailed/testAssumptionFailed/testError)
+ * testEnded
+ * testRunEnded
+ * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
@@ -20,7 +28,7 @@ public abstract class MessageSender {
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
 		jsonMsg.put("runId", runId);
 		jsonMsg.put("testCount", testCount);
-		jsonMsg.put("fVersion", "v2");
+		jsonMsg.put("fVersion", "v3");
 		println(jsonMsg.toString());
 	}
 	

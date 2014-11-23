@@ -62,7 +62,7 @@ public class JUnitProgressResultFormatter implements JUnitResultFormatter {
 			messageSender = messageSenderFactory.getMessageSender();
 			messageSender.init();
 			Test test = TestSuiteHelper.getSuite(suite, null);
-			messageSender.testRunStarted(test.countTestCases());
+			messageSender.testRunStarted();
 			Description description = getDescription(test);
 			if (description != null) {
 				sendTestTree(null, description);

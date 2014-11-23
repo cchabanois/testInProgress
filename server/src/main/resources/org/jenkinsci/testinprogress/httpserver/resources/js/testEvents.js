@@ -153,12 +153,19 @@ var TestRun = (function($) {
 			$("#" + this.failuresId).text(this.failures);
 		},
 		updateProgressBar : function() {
+			$("#" + this.progressId).progressbar({
+				value : this.testEnded,
+				max : this.testCount
+			});
 			if (this.errors > 0 || this.failures > 0) {
 				$("#" + this.progressId + " > div").css({
 					'background' : 'darkred'
 				});
+			} else {
+				$("#" + this.progressId + " > div").css({
+					'background' : 'green'
+				});
 			}
-			$("#" + this.progressId).progressbar("value", this.testEnded);
 		},
 		updateSuiteIcon : function() {
 			var legendClass = "";
@@ -199,28 +206,9 @@ var TestRun = (function($) {
 		setMessage : function(message) {
 			$("#" + this.testMessageId).text(message);
 		},
-		updateTestCount : function(){
-			if(this.testStarted > this.testCount){
-				this.testCount = this.testStarted;
-				var cvalue = $("#" + this.progressId).progressbar("value");
-				$("#" + this.progressId).progressbar({
-					value : cvalue,
-					max : this.testCount
-				});
-				
-			}
-			
-		},
 		handleRunStartEvent : function(event) {
 			this.createTreeView();
 			this.testCount = event.testCount;
-			$("#" + this.progressId).progressbar({
-				value : 0,
-				max : this.testCount
-			});
-			$("#" + this.progressId + " > div").css({
-				'background' : 'green'
-			});
 		},
 		handleRunStopEvent : function(event) {
 			this.setMessage("Finished after "
@@ -237,10 +225,12 @@ var TestRun = (function($) {
 			}
 			var addedNodes = this.tree.addNodes(parentNode,childNode,true);
 			this.testIdToTreeId[testId] = addedNodes[0].tId;
+			if (!treeEvent.suite) {
+				this.testCount++;
+			}
 		},		
 		handleTestStartEvent : function(event) {
 			this.testStarted++;
-			this.updateTestCount();
 			if (event.ignored) {
 				this.testIgnored++;
 			}

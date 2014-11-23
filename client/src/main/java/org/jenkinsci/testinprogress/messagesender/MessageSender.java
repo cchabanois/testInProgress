@@ -23,17 +23,16 @@ public abstract class MessageSender {
 	// @GuardedBy("this")
 	protected Writer writer;
 
-	public void testRunStarted(int testCount, String runId) throws IOException {
+	public void testRunStarted(String runId) throws IOException {
 		JSONObject jsonMsg = new JSONObject();
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
 		jsonMsg.put("runId", runId);
-		jsonMsg.put("testCount", testCount);
 		jsonMsg.put("fVersion", "v3");
 		println(jsonMsg.toString());
 	}
 	
-	public void testRunStarted(int testCount) throws IOException {
-		testRunStarted(testCount,null);		
+	public void testRunStarted() throws IOException {
+		testRunStarted(null);		
 	}
 
 	public void testRunEnded(long elapsedTime) throws IOException {

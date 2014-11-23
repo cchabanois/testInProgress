@@ -40,7 +40,7 @@ public class JUnit4ProgressRunListener extends RunListener {
 	public void testRunStarted(Description description) throws Exception {
 		messageSender = messageSenderFactory.getMessageSender();
 		messageSender.init();
-		messageSender.testRunStarted(description.testCount());
+		messageSender.testRunStarted();
 		sendTestTree(null, description);
 		startTime = System.currentTimeMillis();
 	}

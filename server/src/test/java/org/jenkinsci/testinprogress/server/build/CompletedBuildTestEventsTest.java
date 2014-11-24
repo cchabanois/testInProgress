@@ -41,13 +41,13 @@ public class CompletedBuildTestEventsTest {
 		File testEventsDir = temporaryFolder.newFolder();
 		File file1 = new File(testEventsDir, "file1.events");
 		Files.write(""
-				+ "{'timeStamp':1,'testCount':6,'messageId':'TESTC','fVersion':'v2'}\n"
+				+ "{'timeStamp':1,'messageId':'TESTC','fVersion':'v3'}\n"
 				+ "{'testName':'tests.ProgressCalcTestsSuite','testId':'1','timeStamp':3,'messageId':'TSTTREE','isSuite':true}"
 				, file1, Charset.forName("UTF-8"));
 		
 		File file2 = new File(testEventsDir, "file2.events");
 		Files.write(""
-				+ "{'timeStamp':2,'testCount':3,'messageId':'TESTC','fVersion':'v2'}\n"
+				+ "{'timeStamp':2,'messageId':'TESTC','fVersion':'v3'}\n"
 				+ "{'testName':'tests.ProgressCalcTestsSuite2','testId':'4','timeStamp':4,'messageId':'TSTTREE','isSuite':true}"
 				, file2, Charset.forName("UTF-8"));
 		return testEventsDir;

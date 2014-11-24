@@ -94,10 +94,8 @@ public class TestMessagesParser implements ITestMessagesParser {
 		String msgId = getValue(jsonMsg, "messageId", "").toString().trim();
 
 		if (msgId.contentEquals(MessageIds.TEST_RUN_START.trim())) {
-			int count = 0;
-			fVersion = getValue(jsonMsg, "fVersion", "v2").toString();
-			count = jsonMsg.getInt("testCount");
-			notifyTestRunStarted(jsonMsg, count);
+			fVersion = getValue(jsonMsg, "fVersion", "v3").toString();
+			notifyTestRunStarted(jsonMsg);
 		} else if (msgId.contentEquals(MessageIds.TEST_START.trim())) {
 			notifyTestStarted(jsonMsg);
 
@@ -164,13 +162,13 @@ public class TestMessagesParser implements ITestMessagesParser {
 		}
 	}
 
-	private void notifyTestRunStarted(JSONObject jsonMsg, final int count) {
+	private void notifyTestRunStarted(JSONObject jsonMsg) {
 		long timeStamp = getTimeStamp(jsonMsg);
 		String runId = getStringValue(jsonMsg, "runId", null);
 		startTime = timeStamp;
 		for (int i = 0; i < listeners.length; i++) {
 			ITestRunListener listener = listeners[i];
-			listener.testRunStarted(timeStamp, count, runId);
+			listener.testRunStarted(timeStamp, runId);
 		}
 	}
 

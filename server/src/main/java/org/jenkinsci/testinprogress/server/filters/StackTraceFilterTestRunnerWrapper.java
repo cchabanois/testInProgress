@@ -19,8 +19,8 @@ public class StackTraceFilterTestRunnerWrapper implements ITestRunListener {
 		this.stackTraceFilter = stackTraceFilter;
 	}
 
-	public void testRunStarted(long timestamp, int testCount, String runId) {
-		testRunListener.testRunStarted(timestamp, testCount, runId);
+	public void testRunStarted(long timestamp, String runId) {
+		testRunListener.testRunStarted(timestamp, runId);
 	}
 
 	public void testRunEnded(long timestamp, long elapsedTime) {

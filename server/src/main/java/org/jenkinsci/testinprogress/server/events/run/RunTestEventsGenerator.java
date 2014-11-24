@@ -20,8 +20,8 @@ public class RunTestEventsGenerator implements ITestRunListener {
 		this.listeners = listeners;
 	}
 
-	public void testRunStarted(long timestamp, int testCount, String runId) {
-		fireEvent(new RunStartEvent(timestamp,testCount,runId));
+	public void testRunStarted(long timestamp, String runId) {
+		fireEvent(new RunStartEvent(timestamp, runId));
 	}
 
 	public void testRunEnded(long timestamp, long elapsedTime) {

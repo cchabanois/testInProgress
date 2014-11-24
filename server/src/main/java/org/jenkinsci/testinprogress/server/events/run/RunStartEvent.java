@@ -10,21 +10,15 @@ import org.json.JSONObject;
  * 
  */
 public class RunStartEvent extends AbstractRunTestEvent {
-	private final int testCount;
 	private final String runId;
 	
-	public RunStartEvent(long timestamp, int testCount, String runId) {
+	public RunStartEvent(long timestamp, String runId) {
 		super(timestamp);
-		this.testCount = testCount;
 		this.runId = runId;
 	}
 	
-	public RunStartEvent(long timestamp, int testCount) {
-		this(timestamp,testCount,null);
-	}
-
-	public int getTestCount() {
-		return testCount;
+	public RunStartEvent(long timestamp) {
+		this(timestamp,null);
 	}
 
 	public String getType() {
@@ -41,8 +35,7 @@ public class RunStartEvent extends AbstractRunTestEvent {
 		jsonMsg.put("timeStamp", Long.toString(getTimestamp()));
 		jsonMsg.put("messageId", MessageIds.TEST_RUN_START);
 		jsonMsg.put("runId", getRunId());
-		jsonMsg.put("testCount", testCount);
-		jsonMsg.put("fVersion", "v2");
+		jsonMsg.put("fVersion", "v3");
 		
 		return jsonMsg.toString();		
 	}
@@ -51,7 +44,7 @@ public class RunStartEvent extends AbstractRunTestEvent {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + testCount;
+		result = prime * result + ((runId == null) ? 0 : runId.hashCode());
 		return result;
 	}
 
@@ -64,10 +57,12 @@ public class RunStartEvent extends AbstractRunTestEvent {
 		if (getClass() != obj.getClass())
 			return false;
 		RunStartEvent other = (RunStartEvent) obj;
-		if (testCount != other.testCount)
+		if (runId == null) {
+			if (other.runId != null)
+				return false;
+		} else if (!runId.equals(other.runId))
 			return false;
 		return true;
 	}
-
 
 }

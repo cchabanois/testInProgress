@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
 import org.jenkinsci.testinprogress.server.events.build.IBuildTestEventListener;
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEvent;
-import org.jenkinsci.testinprogress.server.events.run.RunStartEvent;
 import org.jenkinsci.testinprogress.server.events.run.TestEndEvent;
 import org.jenkinsci.testinprogress.server.events.run.TestErrorEvent;
 import org.jenkinsci.testinprogress.server.events.run.TestFailedEvent;
+import org.jenkinsci.testinprogress.server.events.run.TestTreeEvent;
 
 /**
  * Test statistics for a build
@@ -24,8 +24,11 @@ public class BuildTestStats implements IBuildTestEventListener {
 
 	public void event(BuildTestEvent buildTestEvent) {
 		IRunTestEvent runTestEvent = buildTestEvent.getRunTestEvent();
-		if (runTestEvent instanceof RunStartEvent) {
-			testsCount.addAndGet(((RunStartEvent) runTestEvent).getTestCount());
+		if (runTestEvent instanceof TestTreeEvent) {
+			TestTreeEvent testTreeEvent = (TestTreeEvent)runTestEvent;
+			if (!testTreeEvent.isSuite()) {
+				testsCount.incrementAndGet();
+			}
 		} else if (runTestEvent instanceof TestFailedEvent) {
 			testsFailedCount.incrementAndGet();
 		} else if (runTestEvent instanceof TestErrorEvent) {

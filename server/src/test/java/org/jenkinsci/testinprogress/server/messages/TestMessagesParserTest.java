@@ -30,7 +30,7 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new StringReader(allMessages));
 
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), eq(6),anyString());
+		verify(testRunListener).testRunStarted(anyLong(), anyString());
 		verify(testRunListener).testTreeEntry(anyLong(), eq("1"),
 				eq("testproject.AllTests"), isNull(String.class), eq(true));
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
@@ -51,7 +51,7 @@ public class TestMessagesParserTest {
 		handler.processTestMessages(new StringReader(allMessages));
 
 		// Then
-		verify(testRunListener).testRunStarted(0, 6, null);
+		verify(testRunListener).testRunStarted(0, null);
 		verify(testRunListener).testTreeEntry(0,"1","testproject.AllTests",null,true);
 		verify(testRunListener).testStarted(500, "3","testAddWillFail(testproject.CalcTest)",false);
 		verify(testRunListener).testStarted(4500, "4",
@@ -73,7 +73,7 @@ public class TestMessagesParserTest {
 
 		// Then
 		verify(testRunListener)
-				.testRunStarted(anyLong(), anyInt(), isNull(String.class));
+				.testRunStarted(anyLong(), isNull(String.class));
 		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(), anyString(),
 				anyString(), anyString(), eq(false));
 		verify(testRunListener, times(numTests)).testStarted(anyLong(),

@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.jenkinsci.testinprogress.server.build.CompletedBuildTestEvents;
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
-import org.jenkinsci.testinprogress.server.events.build.TestRunIds;
 import org.jenkinsci.testinprogress.server.events.run.RunEndEvent;
 import org.jenkinsci.testinprogress.server.events.run.RunStartEvent;
 import org.junit.Before;
@@ -35,16 +34,16 @@ public class SaveTestEventsListenerTest {
 		saveTestEventsListener.init();
 		
 		// When
-		saveTestEventsListener.event(new BuildTestEvent("run1", new RunStartEvent(1000,4)));
-		saveTestEventsListener.event(new BuildTestEvent("run2", new RunStartEvent(2000,3)));
+		saveTestEventsListener.event(new BuildTestEvent("run1", new RunStartEvent(1000)));
+		saveTestEventsListener.event(new BuildTestEvent("run2", new RunStartEvent(2000)));
 		saveTestEventsListener.event(new BuildTestEvent("run1", new RunEndEvent(5000,4000)));
 		saveTestEventsListener.event(new BuildTestEvent("run2", new RunEndEvent(3000,2000)));
 		
 		// Then
 		CompletedBuildTestEvents completedBuildTestEvents = new CompletedBuildTestEvents(directory);
 		List<BuildTestEvent> events = completedBuildTestEvents.getEvents();
-		assertTrue(events.contains(new BuildTestEvent("run1", new RunStartEvent(1000,4))));
-		assertTrue(events.contains(new BuildTestEvent("run2", new RunStartEvent(2000,3))));
+		assertTrue(events.contains(new BuildTestEvent("run1", new RunStartEvent(1000))));
+		assertTrue(events.contains(new BuildTestEvent("run2", new RunStartEvent(2000))));
 		assertTrue(events.contains(new BuildTestEvent("run1", new RunEndEvent(5000,4000))));
 		assertTrue(events.contains(new BuildTestEvent("run2", new RunEndEvent(3000,2000))));
 	}

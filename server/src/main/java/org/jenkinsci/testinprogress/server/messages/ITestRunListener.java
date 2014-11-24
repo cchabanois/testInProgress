@@ -38,7 +38,7 @@ public interface ITestRunListener {
 	 *            the number of individual tests that will be run
 	 * @param runId the runId or null to guess it
 	 */
-	public void testRunStarted(long timestamp, int testCount, String runId);
+	public void testRunStarted(long timestamp, String runId);
 
 	/**
 	 * A test run has ended.

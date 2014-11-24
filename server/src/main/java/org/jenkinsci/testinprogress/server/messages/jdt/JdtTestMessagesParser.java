@@ -370,7 +370,7 @@ public class JdtTestMessagesParser implements ITestMessagesParser {
 	private void notifyTestRunStarted(final int count) {
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
-			listener.testRunStarted(timestamp, count, null);
+			listener.testRunStarted(timestamp, null);
 		}
 	}
 

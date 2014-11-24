@@ -24,7 +24,7 @@ public class BuildTestEventsGeneratorTest {
 				testRunIds, new IBuildTestEventListener[] { listener });
 
 		// When
-		buildTestEventsGenerator.event(new RunStartEvent(0, 2));
+		buildTestEventsGenerator.event(new RunStartEvent(0));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", null,
 				true));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "2", "firstTest",
@@ -45,7 +45,7 @@ public class BuildTestEventsGeneratorTest {
 		List<String> runIds = testRunIds.getRunIds();
 		assertTrue(runIds.contains("suite"));
 		verify(listener).event(
-				new BuildTestEvent("suite", new RunStartEvent(0, 2)));
+				new BuildTestEvent("suite", new RunStartEvent(0)));
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class BuildTestEventsGeneratorTest {
 		String runId = "myRunId";
 
 		// When
-		buildTestEventsGenerator.event(new RunStartEvent(0, 2, runId));
+		buildTestEventsGenerator.event(new RunStartEvent(0, runId));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "1", "suite", null,
 				true));
 		buildTestEventsGenerator.event(new TestTreeEvent(0, "2", "firstTest",
@@ -78,7 +78,7 @@ public class BuildTestEventsGeneratorTest {
 		List<String> runIds = testRunIds.getRunIds();
 		assertTrue(runIds.contains(runId));
 		verify(listener).event(
-				new BuildTestEvent(runId, new RunStartEvent(0, 2, runId)));
+				new BuildTestEvent(runId, new RunStartEvent(0, runId)));
 	}
 
 }

@@ -53,7 +53,7 @@ public class BuildTestEventsResourceTest {
 			IOException {
 		// Given
 		List<BuildTestEvent> events = Lists.newArrayList(new BuildTestEvent(
-				"runId", new RunStartEvent(0, 30)), new BuildTestEvent("runId",
+				"runId", new RunStartEvent(0)), new BuildTestEvent("runId",
 				new RunEndEvent(10, 100)));
 		when(buildTestEvents.getEvents()).thenReturn(events);
 
@@ -66,7 +66,7 @@ public class BuildTestEventsResourceTest {
 		@SuppressWarnings("unchecked")
 		List<Object> result = mapper.readValue(is, List.class);
 		assertEquals(
-				"[{runId=runId, runTestEvent={timestamp=0, testCount=30, type=TESTC}}, {runId=runId, runTestEvent={timestamp=10, elapsedTime=100, type=RUNTIME}}]",
+				"[{runId=runId, runTestEvent={timestamp=0, type=TESTC}}, {runId=runId, runTestEvent={timestamp=10, elapsedTime=100, type=RUNTIME}}]",
 				result.toString());
 	}
 
@@ -74,7 +74,7 @@ public class BuildTestEventsResourceTest {
 	public void testGetFromIndex() throws JsonParseException, JsonMappingException, IOException {
 		// Given
 		List<BuildTestEvent> events = Lists.newArrayList(new BuildTestEvent(
-				"runId", new RunStartEvent(0, 30)), new BuildTestEvent("runId",
+				"runId", new RunStartEvent(0)), new BuildTestEvent("runId",
 				new RunEndEvent(10, 100)));
 		when(buildTestEvents.getEvents()).thenReturn(events);
 

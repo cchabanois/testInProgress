@@ -32,10 +32,9 @@ public class AllVersionsTestMessagesParserTest {
 		handler.processTestMessages(new InputStreamReader(is));
 
 		// Then
-		verify(testRunListener)
-				.testRunStarted(anyLong(), anyInt(), isNull(String.class));
-		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(), anyString(),
-				anyString(), anyString(), eq(false));
+		verify(testRunListener).testRunStarted(anyLong(), isNull(String.class));
+		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(),
+				anyString(), anyString(), anyString(), eq(false));
 		verify(testRunListener, times(numTests)).testStarted(anyLong(),
 				anyString(), anyString(), anyBoolean());
 		verify(testRunListener, times(numTests)).testEnded(anyLong(),
@@ -54,9 +53,8 @@ public class AllVersionsTestMessagesParserTest {
 		// When
 		handler.processTestMessages(new InputStreamReader(is));
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), anyInt(),
-				isNull(String.class));
+		verify(testRunListener).testRunStarted(anyLong(), isNull(String.class));
 		verify(testRunListener).testRunEnded(anyLong(), anyLong());
-	}	
-	
+	}
+
 }

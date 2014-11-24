@@ -26,8 +26,7 @@ public class JdtTestMessagesParserTest {
 		// When
 		handler.processTestMessages(new StringReader(allMessages));
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), eq(6),
-				isNull(String.class));
+		verify(testRunListener).testRunStarted(anyLong(), isNull(String.class));
 		verify(testRunListener).testTreeEntry(anyLong(), eq("1"),
 				eq("testproject.AllTests"), isNull(String.class), eq(true));
 		verify(testRunListener).testStarted(anyLong(), eq("3"),
@@ -45,7 +44,7 @@ public class JdtTestMessagesParserTest {
 		// When
 		handler.processTestMessages(new StringReader(allMessages));
 		// Then
-		verify(testRunListener).testRunStarted(0, 6, null);
+		verify(testRunListener).testRunStarted(0, null);
 		verify(testRunListener).testTreeEntry(0, "1", "testproject.AllTests",
 				null, true);
 		verify(testRunListener).testStarted(500, "3",
@@ -64,8 +63,7 @@ public class JdtTestMessagesParserTest {
 		// When
 		handler.processTestMessages(new InputStreamReader(is));
 		// Then
-		verify(testRunListener).testRunStarted(anyLong(), anyInt(),
-				isNull(String.class));
+		verify(testRunListener).testRunStarted(anyLong(), isNull(String.class));
 		verify(testRunListener).testRunEnded(anyLong(), anyLong());
 	}
 

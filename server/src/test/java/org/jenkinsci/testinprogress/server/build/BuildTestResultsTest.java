@@ -40,17 +40,17 @@ public class BuildTestResultsTest {
 		// Given
 		BuildTestResults testEvents = new BuildTestResults(persistenceRootFile,
 				testRunIds, runningBuildTestEvents, buildTestStats);
-		event(new BuildTestEvent("run1", new RunStartEvent(1000,1)));
-		event(new BuildTestEvent("run2", new RunStartEvent(2000,2)));
+		event(new BuildTestEvent("run1", new RunStartEvent(1000)));
+		event(new BuildTestEvent("run2", new RunStartEvent(2000)));
 
 		// When
 		List<BuildTestEvent> events = testEvents.getEvents();
 
 		// Then
 		assertTrue(events.contains(new BuildTestEvent("run1",
-				new RunStartEvent(1000,1))));
+				new RunStartEvent(1000))));
 		assertTrue(events.contains(new BuildTestEvent("run2",
-				new RunStartEvent(2000,2))));
+				new RunStartEvent(2000))));
 	}
 
 	private void event(BuildTestEvent buildTestEvent) {
@@ -65,9 +65,9 @@ public class BuildTestResultsTest {
 	public void testGetEventsAfterBuildHasRun() {
 		// Given
 		BuildTestEvent firstEvent = new BuildTestEvent("run1",
-				new RunStartEvent(1000,1));
+				new RunStartEvent(1000));
 		BuildTestEvent secondEvent = new BuildTestEvent("run2",
-				new RunStartEvent(2000,1));
+				new RunStartEvent(2000));
 		BuildTestResults testEvents = new BuildTestResults(persistenceRootFile,
 				testRunIds, runningBuildTestEvents, buildTestStats);
 		event(firstEvent);

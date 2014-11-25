@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jenkinsci.testinprogress.server.messages.jdt.JdtTestMessagesParser;
+import org.jenkinsci.testinprogress.server.messages.json.v2.Jsonv2TestMessagesParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +31,9 @@ public class AllVersionsTestMessagesParser implements ITestMessagesParser {
 				try {
 					JSONObject message = new JSONObject(firstMessage);
 					String version = message.getString("fVersion");
+					if ("v2".equals(version)) {
+						testMessagesParser = new Jsonv2TestMessagesParser(listeners);
+					} else
 					if ("v3".equals(version)) {
 						testMessagesParser = new TestMessagesParser(listeners);
 					}

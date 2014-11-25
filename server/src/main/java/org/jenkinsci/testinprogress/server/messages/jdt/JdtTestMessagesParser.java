@@ -225,7 +225,7 @@ public class JdtTestMessagesParser implements ITestMessagesParser {
 	 */
 	private int fFailureKind;
 
-	Deque<Suite> suitesStack = new ArrayDeque<Suite>();
+	private final Deque<Suite> suitesStack = new ArrayDeque<Suite>();
 	
 	private String readMessage(PushbackReader in) throws IOException {
 		StringBuffer buf = new StringBuffer(128);

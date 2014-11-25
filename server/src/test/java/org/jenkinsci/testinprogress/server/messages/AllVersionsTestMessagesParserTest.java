@@ -43,13 +43,37 @@ public class AllVersionsTestMessagesParserTest {
 	}
 
 	@Test
+	public void testParseJsonV2Format() {
+		// Given
+		ITestRunListener testRunListener = mock(ITestRunListener.class);
+		ITestMessagesParser handler = new AllVersionsTestMessagesParser(
+				new ITestRunListener[] { testRunListener });
+		InputStream is = getClass().getResourceAsStream(
+				"json/v2/ProgressCalcTestSuite.events");
+		int numTests = 6;
+
+		// When
+		handler.processTestMessages(new InputStreamReader(is));
+
+		// Then
+		verify(testRunListener).testRunStarted(anyLong(), isNull(String.class));
+		verify(testRunListener, times(numTests)).testTreeEntry(anyLong(),
+				anyString(), anyString(), anyString(), eq(false));
+		verify(testRunListener, times(numTests)).testStarted(anyLong(),
+				anyString(), anyString(), anyBoolean());
+		verify(testRunListener, times(numTests)).testEnded(anyLong(),
+				anyString(), anyString(), anyBoolean());
+		verify(testRunListener).testRunEnded(anyLong(), anyLong());
+	}	
+	
+	@Test
 	public void testParseJdtFormat() {
 		// Given
 		ITestRunListener testRunListener = mock(ITestRunListener.class);
 		ITestMessagesParser handler = new AllVersionsTestMessagesParser(
 				new ITestRunListener[] { testRunListener });
 		InputStream is = getClass().getResourceAsStream(
-				"ProgressCalcTestSuite.events");
+				"jdt/ProgressCalcTestSuite.events");
 		// When
 		handler.processTestMessages(new InputStreamReader(is));
 		// Then

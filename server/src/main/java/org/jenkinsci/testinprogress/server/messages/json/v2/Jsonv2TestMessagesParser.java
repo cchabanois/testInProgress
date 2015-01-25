@@ -109,10 +109,13 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void notifyTestTreeEntry(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
-		String testId = getStringValue(jsonMsg, "testId", testName);
-		String parentId = getStringValue(jsonMsg, "parentId", null);
-		String parentName = getStringValue(jsonMsg, "parentName", null);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String testId = getStringValue(jsonMsg, "testId");
+		if (testId == null) {
+			testId = testName;
+		}
+		String parentId = getStringValue(jsonMsg, "parentId");
+		String parentName = getStringValue(jsonMsg, "parentName");
+		String runId = getStringValue(jsonMsg, "runId");
 		boolean isSuite = (Boolean) getValue(jsonMsg, "isSuite", false);
 		int count = (Integer) getValue(jsonMsg, "testCount", 1);
 		long timeStamp = getTimeStamp(jsonMsg);
@@ -139,7 +142,7 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void testRunEnded(JSONObject jsonMsg, final long elapsedTime) {
 		long timeStamp = getTimeStamp(jsonMsg);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String runId = getStringValue(jsonMsg, "runId");
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			listener.testRunEnded(timeStamp, elapsedTime);
@@ -148,8 +151,11 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void notifyTestEnded(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
-		String testId = getStringValue(jsonMsg, "testId", testName);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String testId = getStringValue(jsonMsg, "testId");
+		if (testId == null) {
+			testId = testName;
+		}			
+		String runId = getStringValue(jsonMsg, "runId");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
@@ -160,8 +166,11 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void notifyTestStarted(final JSONObject jsonMsg) {
 		String testName = jsonMsg.getString("testName");
-		String testId = getStringValue(jsonMsg, "testId", testName);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String testId = getStringValue(jsonMsg, "testId");
+		if (testId == null) {
+			testId = testName;
+		}
+		String runId = getStringValue(jsonMsg, "runId");
 		boolean ignored = (Boolean) getValue(jsonMsg, "ignored", false);
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
@@ -172,7 +181,7 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void notifyTestRunStarted(JSONObject jsonMsg, final int count) {
 		long timeStamp = getTimeStamp(jsonMsg);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String runId = getStringValue(jsonMsg, "runId");
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
 			listener.testRunStarted(timeStamp, runId);
@@ -181,11 +190,14 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private void notifyTestFailed(JSONObject jsonMsg, int failureKind) {
 		String testName = jsonMsg.getString("testName");
-		String testId = getStringValue(jsonMsg, "testId", testName);
-		String errorTrace = getStringValue(jsonMsg, "errorTrace", null);
-		String expectedMsg = getStringValue(jsonMsg, "expectedMsg", null);
-		String actualMsg = getStringValue(jsonMsg, "actualMsg", null);
-		String runId = getStringValue(jsonMsg, "runId", null);
+		String testId = getStringValue(jsonMsg, "testId");
+		if (testId == null) {
+			testId = testName;
+		}
+		String errorTrace = getStringValue(jsonMsg, "errorTrace");
+		String expectedMsg = getStringValue(jsonMsg, "expectedMsg");
+		String actualMsg = getStringValue(jsonMsg, "actualMsg");
+		String runId = getStringValue(jsonMsg, "runId");
 		long timeStamp = getTimeStamp(jsonMsg);
 		for (int i = 0; i < fListeners.length; i++) {
 			ITestRunListener listener = fListeners[i];
@@ -210,9 +222,10 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 		}
 	}
 
-	private String getStringValue(JSONObject jsonData,String key, Object defaultValue){
-		Object value = this.getValue(jsonData, key, defaultValue);
-		if (value == null) {
+	private String getStringValue(JSONObject jsonData,String key){
+		Object value = this.getValue(jsonData, key, null);
+		if (value == null || "".equals(value)) {
+			// client for json v2 send "" when it has no value
 			return null;
 		} else {
 			return value.toString();
@@ -221,7 +234,7 @@ public class Jsonv2TestMessagesParser implements ITestMessagesParser {
 
 	private long getTimeStamp(JSONObject jsonMsg) {
 		long timeStamp;
-		String timeAsString = getStringValue(jsonMsg, "timeStamp", null);
+		String timeAsString = getStringValue(jsonMsg, "timeStamp");
 
 		if (timeAsString != null) {
 			timeStamp = Long.parseLong(timeAsString);

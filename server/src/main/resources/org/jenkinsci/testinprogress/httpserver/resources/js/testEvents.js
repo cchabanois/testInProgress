@@ -208,7 +208,6 @@ var TestRun = (function($) {
 		},
 		handleRunStartEvent : function(event) {
 			this.createTreeView();
-			this.testCount = event.testCount;
 		},
 		handleRunStopEvent : function(event) {
 			this.setMessage("Finished after "

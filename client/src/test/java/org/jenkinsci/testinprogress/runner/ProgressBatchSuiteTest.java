@@ -24,7 +24,7 @@ public class ProgressBatchSuiteTest extends AbstractProgressSuiteTest {
 		JSONObject[] messages = result.get();
 		printTestMessages(messages);
 		assertTestMessageMatches(messages, new JSONObject(
-				"{messageId:'TESTC', fVersion:'v3', testCount:5}"), JSONCompareMode.LENIENT);
+				"{messageId:'TESTC', fVersion:'v3'}"), JSONCompareMode.LENIENT);
 		assertTestMessageMatches(messages, new JSONObject(
 				"{messageId:'RUNTIME'}"), JSONCompareMode.LENIENT);
 	}

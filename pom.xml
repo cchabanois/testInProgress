@@ -9,6 +9,13 @@
   <version>1.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>testInProgress :: Aggregate POM</name>
+
+  <scm>
+    <connection>scm:git:ssh://github.com/jenkinsci/testInProgress-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/testInProgress-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/testInProgress-plugin</url>
+  </scm>
+
   <modules>
     <module>client</module>
     <module>server</module>

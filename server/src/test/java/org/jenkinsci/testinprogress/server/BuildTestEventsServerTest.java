@@ -87,7 +87,7 @@ public class BuildTestEventsServerTest {
 	@SuppressWarnings("unchecked")
 	private <B extends IRunTestEvent> B waitForBuildTestEvent(String runId, Class<B> type) throws TimeoutException {
 		long t1 = System.nanoTime();
-		while (TimeUnit.MILLISECONDS.convert(System.nanoTime() - t1 , TimeUnit.NANOSECONDS) < 100) {
+		while (TimeUnit.MILLISECONDS.convert(System.nanoTime() - t1 , TimeUnit.NANOSECONDS) < 500) {
 			for (BuildTestEvent event : listener.getBuildTestEvents()) {
 				if (runId.equals(event.getRunId()) && type.isInstance(event.getRunTestEvent())) {
 					return (B)event.getRunTestEvent();
